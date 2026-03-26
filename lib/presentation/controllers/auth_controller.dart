@@ -72,23 +72,23 @@ class AuthController extends GetxController {
   }
 
   void _gotoOnboardingPage() {
-    Get.offAllNamed(Routes.onboarding);
+    Get.offAllNamed(AppRoutes.onboarding);
   }
 
   void _gotoLandingPage() {
-    Get.offAllNamed(Routes.landing);
+    Get.offAllNamed(AppRoutes.landing);
   }
 
   void _gotoProfileSetupPage() {
-    Get.offAllNamed(Routes.profileSetup);
+    Get.offAllNamed(AppRoutes.profileSetup);
   }
 
   void _gotoLanguageSelectionPage() {
-    Get.offAllNamed(Routes.languageSelection);
+    Get.offAllNamed(AppRoutes.languageSelection);
   }
 
   void _gotoProfileReviewPage() {
-    Get.offAllNamed(Routes.profileReview);
+    Get.offAllNamed(AppRoutes.profileReview);
   }
 
   Future<void> onLogoutPressed() async {
@@ -107,7 +107,7 @@ class AuthController extends GetxController {
   }
 
   void _gotoLoginPage() {
-    Get.offAllNamed(Routes.login);
+    Get.offAllNamed(AppRoutes.login);
   }
 
   void loginWithFirebaseToken(String token) async {

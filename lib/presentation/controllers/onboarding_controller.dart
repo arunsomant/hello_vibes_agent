@@ -32,7 +32,7 @@ class OnboardingController extends GetxController {
 
   void _gotoLogin() {
     _saveOnboardingCompleted();
-    Get.offAllNamed(Routes.login);
+    Get.offAllNamed(AppRoutes.login);
   }
 
   void onPageChanged(int index) {

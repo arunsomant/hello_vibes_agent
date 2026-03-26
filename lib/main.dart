@@ -5,11 +5,9 @@ import 'app/app.dart';
 import 'core/config/firebase_options.dart';
 import 'core/services/notification_service.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await NotificationService().initialize();
   runApp(const App());
 }

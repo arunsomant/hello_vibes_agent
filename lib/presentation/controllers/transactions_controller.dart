@@ -25,7 +25,7 @@ class TransactionsController extends GetxController {
   }
 
   void onCoinPressed() {
-    Get.offUntilOrToNamed(Routes.wallet);
+    Get.offUntilOrToNamed(AppRoutes.wallet);
   }
 
   void onFilterPressed() {

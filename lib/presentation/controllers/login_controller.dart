@@ -53,7 +53,7 @@ class LoginController extends GetxController
   }
 
   void _gotoProfileSetupPage() {
-    Get.offAllNamed(Routes.profileSetup);
+    Get.offAllNamed(AppRoutes.profileSetup);
   }
 
   void onCountryCodeSelected(Country country) {
@@ -88,7 +88,7 @@ class LoginController extends GetxController
     required String countryCode,
   }) {
     Get.toNamed(
-      Routes.otpVerification,
+      AppRoutes.otpVerification,
       arguments: {
         'mobile': mobile,
         'countryCode': countryCode,

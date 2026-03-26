@@ -63,7 +63,7 @@ class CallsController extends GetxController {
   }
 
   void _gotoWalletPage() {
-    Get.toNamed(Routes.wallet);
+    Get.toNamed(AppRoutes.wallet);
   }
 
   void _showToast(String message) {

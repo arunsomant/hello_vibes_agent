@@ -124,7 +124,7 @@ class ProfileSetupController extends GetxController
   }
 
   void _gotoLanguageSelectionPage() {
-    Get.offNamed(Routes.languageSelection);
+    Get.offNamed(AppRoutes.languageSelection);
   }
 
   void onDateOfBirthFieldTapped() {

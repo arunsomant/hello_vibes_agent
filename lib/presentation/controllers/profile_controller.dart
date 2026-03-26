@@ -29,14 +29,14 @@ class ProfileController extends GetxController {
   }
 
   void _gotoWallet() {
-    Get.toNamed(Routes.wallet);
+    Get.toNamed(AppRoutes.wallet);
   }
 
   void _gotoAccountSettings() {
-    Get.toNamed(Routes.accountSettings);
+    Get.toNamed(AppRoutes.accountSettings);
   }
 
   void _gotoProfileEdit() {
-    Get.toNamed(Routes.profileEdit);
+    Get.toNamed(AppRoutes.profileEdit);
   }
 }

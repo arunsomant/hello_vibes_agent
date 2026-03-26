@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+
 import '../bindings/account_settings_binding.dart';
 import '../bindings/bank_details_binding.dart';
 import '../bindings/calling_binding.dart';
@@ -33,77 +34,77 @@ import 'app_routes.dart';
 class AppPages {
   static final pages = [
     GetPage(
-      name: Routes.splash,
+      name: AppRoutes.splash,
       page: () => SplashPage(),
       binding: SplashBinding(),
     ),
     GetPage(
-      name: Routes.onboarding,
+      name: AppRoutes.onboarding,
       page: () => OnboardingPage(),
       binding: OnboardingBinding(),
     ),
     GetPage(
-      name: Routes.login,
+      name: AppRoutes.login,
       page: () => LoginPage(),
       binding: LoginBinding(),
     ),
     GetPage(
-      name: Routes.otpVerification,
+      name: AppRoutes.otpVerification,
       page: () => OtpVerificationPage(),
       binding: OtpVerificationBinding(),
     ),
     GetPage(
-      name: Routes.profileSetup,
+      name: AppRoutes.profileSetup,
       page: () => ProfileSetupPage(),
       binding: ProfileSetupBinding(),
     ),
     GetPage(
-      name: Routes.languageSelection,
+      name: AppRoutes.languageSelection,
       page: () => LanguageSelectionPage(),
       binding: LanguageSelectionBinding(),
     ),
     GetPage(
-      name: Routes.profileReview,
+      name: AppRoutes.profileReview,
       page: () => ProfileReviewPage(),
       binding: ProfileReviewBinding(),
     ),
     GetPage(
-      name: Routes.landing,
+      name: AppRoutes.landing,
       page: () => LandingPage(),
       binding: LandingBinding(),
     ),
     GetPage(
-      name: Routes.favourites,
+      name: AppRoutes.favourites,
       page: () => FavouritesPage(),
       binding: FavouritesBinding(),
     ),
     GetPage(
-      name: Routes.profileEdit,
+      name: AppRoutes.profileEdit,
       page: () => ProfileEditPage(),
       binding: ProfileEditBinding(),
     ),
     GetPage(
-      name: Routes.accountSettings,
+      name: AppRoutes.accountSettings,
       page: () => AccountSettingsPage(),
       binding: AccountSettingsBinding(),
     ),
     GetPage(
-      name: Routes.wallet,
+      name: AppRoutes.wallet,
       page: () => WalletPage(),
       binding: WalletBinding(),
     ),
     GetPage(
-      name: Routes.bankDetails,
+      name: AppRoutes.bankDetails,
       page: () => BankDetailsPage(),
       binding: BankDetailsBinding(),
     ),
     GetPage(
-      name: Routes.voiceCalling,
+      name: AppRoutes.voiceCalling,
       page: () => VoiceCallingPage(),
       binding: CallingBinding(),
     ),
     GetPage(
-      name: Routes.videoCalling,
+      name: AppRoutes.videoCalling,
       page: () => VideoCallingPage(),
       binding: CallingBinding(),
     ),

@@ -40,10 +40,10 @@ class ProfileReviewController extends GetxController {
   }
 
   void _gotoSettingsPage() {
-    Get.toNamed(Routes.accountSettings);
+    Get.toNamed(AppRoutes.accountSettings);
   }
 
   void _gotoProfileSetupPage() {
-    Get.toNamed(Routes.profileSetup);
+    Get.toNamed(AppRoutes.profileSetup);
   }
 }

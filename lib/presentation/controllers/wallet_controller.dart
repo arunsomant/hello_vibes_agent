@@ -13,6 +13,6 @@ class WalletController extends GetxController {
   double get lifetimeEarningsInInr => user.value.lifetimeEarningsInInr;
 
   void onRequestRedeemPressed() {
-    Get.toNamed(Routes.bankDetails);
+    Get.toNamed(AppRoutes.bankDetails);
   }
 }

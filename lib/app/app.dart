@@ -37,7 +37,7 @@ class App extends StatelessWidget {
           theme: AppTheme.theme(),
           defaultTransition: Transition.native,
           debugShowCheckedModeBanner: false,
-          initialRoute: Routes.splash,
+          initialRoute: AppRoutes.splash,
           initialBinding: InitialBinding(),
           getPages: AppPages.pages,
           navigatorObservers: [AppRouteObserver()],
