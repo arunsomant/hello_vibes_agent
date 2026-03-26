@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "876809816317",
+    "project_id": "mingletalks",
+    "storage_bucket": "mingletalks.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:876809816317:android:e22d96d28bf9648e3d5694",
+        "android_client_info": {
+          "package_name": "com.mingletalk.agent"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "876809816317-hg0iab9pu13h7mpo89ormcqclgcc73of.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBst4BE-vQccFmSRiHx7SOx_YkNARK_ilg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "876809816317-hg0iab9pu13h7mpo89ormcqclgcc73of.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "876809816317-jafnms20305bbpesji0ua1rf26o9ta1f.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mingletalk.agent"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

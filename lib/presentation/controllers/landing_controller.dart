@@ -1,0 +1,131 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:mingle_talk_agent/presentation/pages/landing/welcome_dialog.dart';
+
+import '../../core/services/callkit_service.dart';
+import '../../core/services/firebase_message_service.dart';
+import '../../data/models/user.dart';
+import '../../data/repositories/firebase_repository.dart';
+import '../../data/repositories/user_repository.dart';
+import '../pages/rating/rating_dialog.dart';
+import '../widgets/index.dart';
+import 'auth_controller.dart';
+
+class LandingController extends GetxController
+    with GetSingleTickerProviderStateMixin {
+  final UserRepository userRepository;
+  final FirebaseRepository firebaseRepository;
+
+  LandingController({
+    required this.userRepository,
+    required this.firebaseRepository,
+  });
+
+  User get user => Get.find<AuthController>().user.value;
+
+  late TabController tabController = TabController(length: 3, vsync: this);
+
+  final activeTabIndex = 0.obs;
+
+  var showBottomBar = true.obs;
+
+  double scrollPosition = 0;
+
+  @override
+  void onInit() {
+    tabController.addListener(() {
+      activeTabIndex(tabController.index);
+    });
+    _updateFirebaseToken();
+    super.onInit();
+  }
+
+  @override
+  void onReady() {
+    _showWelcomeDialog();
+    super.onReady();
+  }
+
+  bool onScrollNotification(ScrollNotification notification) {
+    if (notification.metrics.axisDirection == AxisDirection.down ||
+        notification.metrics.axisDirection == AxisDirection.up) {
+      final double currentScrollPosition = notification.metrics.pixels;
+      if ((currentScrollPosition > scrollPosition + 10) &&
+          showBottomBar.isTrue) {
+        showBottomBar(false);
+      } else if ((currentScrollPosition < scrollPosition) &&
+          showBottomBar.isFalse) {
+        showBottomBar(true);
+      }
+      scrollPosition = currentScrollPosition;
+    }
+    return false;
+  }
+
+  void _updateFirebaseToken() async {
+    try {
+      bool tokenSaved = await firebaseRepository.getFirebaseTokenSaved();
+      if (!tokenSaved || true) {
+        final token = await FirebaseMessageService().getToken();
+        final String? voIPToken = await CallkitService().getVoIPToken();
+        if (token != null && token.isNotEmpty) {
+          var response = await firebaseRepository.updateFirebaseToken(
+            token,
+            voIPToken: voIPToken,
+          );
+          firebaseRepository.saveFirebaseTokenSaved(response.success);
+        }
+      }
+    } catch (_) {}
+  }
+
+  void onTabClicked(int index) {
+    tabController.animateTo(index);
+  }
+
+  void askForCallingExperience(User user) {
+    AppDialog.showBottomSheet(
+      isDismissible: false,
+      child: RatingDialog(user: user),
+    );
+  }
+
+  void onOnlineStatusChanged(bool isOnline) async {
+    final onlineStatus = user.isOnline;
+    _onlineStatusChange(isOnline, user);
+    try {
+      final response = await userRepository.onlineStatusUpdate(user);
+      if (!response.success) {
+        _onlineStatusChange(onlineStatus, user);
+        _showToast(response.message);
+      }
+    } catch (_) {
+    } finally {}
+  }
+
+  void _onlineStatusChange(bool isOnline, User user) {
+    Get.find<AuthController>().user(user.copyWith(isOnline: isOnline));
+  }
+
+  void _showWelcomeDialog() async {
+    if (!await userRepository.getWelcomeDialogShown()) {
+      AppDialog.showDialog(
+        isDismissible: false,
+        child: WelcomeDialog(
+          onIAgreePressed: () {
+            _onWelcomeDialogIAgreePressed();
+            Get.back();
+          },
+        ),
+      );
+    }
+  }
+
+  void _showToast(String message) {
+    AppDialog.showToast(message);
+  }
+
+  void _onWelcomeDialogIAgreePressed() {
+    userRepository.saveWelcomeDialogShown(true);
+  }
+}
