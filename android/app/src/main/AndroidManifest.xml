@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.mingletalk.mingle_talk_agent">
+    package="com.mingletalk.agent">
    <application
         android:label="mingle_talk_agent"
         android:name="${applicationName}"
