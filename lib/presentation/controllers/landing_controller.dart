@@ -65,7 +65,7 @@ class LandingController extends GetxController
   void _updateFirebaseToken() async {
     try {
       bool tokenSaved = await firebaseRepository.getFirebaseTokenSaved();
-      if (!tokenSaved || true) {
+      if (!tokenSaved) {
         final token = await FirebaseMessageService().getToken();
         final String? voIPToken = await CallkitService().getVoIPToken();
         if (token != null && token.isNotEmpty) {
