@@ -35,5 +35,9 @@ class ApiEndpoints {
 
   static const String callEnd = '/terminate';
 
+  static const String callReject = '/reject';
+
   static const String callAccept = '/accept';
+
+  static const String callStart = '/start';
 }

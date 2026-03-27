@@ -16,7 +16,7 @@ class AccountSettingsController extends GetxController {
 
   void onLogoutPressed() {
     if (Get.isRegistered<AuthController>()) {
-      Get.find<AuthController>().onLogoutPressed();
+      Get.find<AuthController>().logout();
     }
   }
 }

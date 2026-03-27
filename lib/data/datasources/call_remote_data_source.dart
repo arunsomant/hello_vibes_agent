@@ -20,10 +20,25 @@ class CallRemoteDataSource {
     return CallResponse.fromMap(response);
   }
 
+  Future<AppResponse> startCall({required Call call}) async {
+    final response = await apiHelper.post(
+      '${ApiEndpoints.calls}/${call.uuid}${ApiEndpoints.callStart}',
+    );
+    return AppResponse.fromMap(response);
+  }
+
   Future<AppResponse> endCall({required Call call}) async {
     final response = await apiHelper.post(
       '${ApiEndpoints.calls}/${call.uuid}${ApiEndpoints.callEnd}',
     );
+    return AppResponse.fromMap(response);
+  }
+
+  Future<AppResponse> rejectCall({required Call call}) async {
+    final response = await apiHelper.post(
+      '${ApiEndpoints.calls}/${call.uuid}${ApiEndpoints.callReject}',
+    );
+    print(response);
     return AppResponse.fromMap(response);
   }
 }

@@ -15,8 +15,6 @@ abstract class AppRoutes {
 
   static const String landing = '/landing';
 
-  static const String favourites = '/favourites';
-
   static const String profileEdit = '/profile-edit';
 
   static const String accountSettings = '/account-settings';

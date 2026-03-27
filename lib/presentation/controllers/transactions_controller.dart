@@ -45,7 +45,8 @@ class TransactionsController extends GetxController {
       if (response.success) {
         transactions(response.paginationResponse.data);
       }
-    } catch (_) {
+    } catch (e) {
+      print(e);
     } finally {
       busyTransactions(false);
     }

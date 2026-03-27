@@ -5,11 +5,13 @@ import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../core/services/livekit_service.dart';
 import '../../data/models/call.dart';
 import '../../data/models/user.dart';
 import '../../data/repositories/call_repository.dart';
 import '../widgets/index.dart';
 import 'landing_controller.dart';
+
 
 class CallingController extends GetxController {
   final CallRepository callRepository;
@@ -43,7 +45,8 @@ class CallingController extends GetxController {
   bool _isCallControlsVisible = true;
   final loudSpeakerOn = false.obs;
   final micOn = true.obs;
-  Room? room;
+  final LiveKitService liveKitService = LiveKitService.initialize();
+  Room? get room => liveKitService.room;
   EventsListener<RoomEvent>? _roomListener;
   Participant? participant;
 
@@ -62,7 +65,6 @@ class CallingController extends GetxController {
         'Expected argument of type CallingArguments, but got ${args.runtimeType}',
       );
     }
-    _startIncrementingDuration();
     bottomSheetController.addListener(() {
       _isCallControlsVisible =
           bottomSheetController.size > bottomSheetInitialSize;
@@ -79,13 +81,7 @@ class CallingController extends GetxController {
       _timer = null;
     }
     _hideTimer?.cancel();
-    _roomListener?.dispose();
-    if (room != null) {
-      if (room!.hasListeners) {
-        room?.removeListener(_listenToRoomEvents);
-      }
-      room?.disconnect();
-    }
+    _disconnectLiveKit();
     super.onClose();
   }
 
@@ -143,15 +139,17 @@ class CallingController extends GetxController {
   void onVolumeTap() {
     _startHideTimer();
     loudSpeakerOn.toggle();
+    liveKitService.setSpeakerphoneOn(loudSpeakerOn.value);
   }
 
   void onCallEndTap() {
-    _endCall();
+    _disconnectLiveKit();
   }
 
   void onMicTap() {
     _startHideTimer();
     micOn.toggle();
+    liveKitService.setMicEnabled(micOn.value);
   }
 
   void _checkConfigurations() async {
@@ -171,7 +169,6 @@ class CallingController extends GetxController {
       callStatus(CallStatus.initiated);
       final response = await callRepository.acceptCall(uuid: uuid);
       if (response.success) {
-        _showToast('initiate call');
         callStatus(CallStatus.ringing);
         livekitUrl = response.livekitUrl;
         livekitToken = response.token;
@@ -179,6 +176,7 @@ class CallingController extends GetxController {
         _initLiveKit();
       } else {
         callStatus(CallStatus.ended);
+        _disconnectLiveKit();
         _delayedBack();
         _showToast(response.message);
       }
@@ -218,22 +216,15 @@ class CallingController extends GetxController {
   }
 
   Future<void> _initLiveKit() async {
-    room = Room();
-    if (room != null) {
-      _roomListener = room!.createListener();
-    }
-
     try {
-      print(livekitUrl);
-      print(livekitToken);
-      await room?.prepareConnection(livekitUrl, livekitToken);
-      await room?.connect(livekitUrl, livekitToken);
-      // 4. Publish local camera and mic
-      /*await room.localParticipant?.setCameraEnabled(true);*/
-      await room?.localParticipant?.setMicrophoneEnabled(true);
-      room?.addListener(_listenToRoomEvents);
+      if (room != null) {
+        _roomListener = room!.createListener();
+        _listenToRoomEvents();
+        await liveKitService.connect(livekitUrl, livekitToken);
+        _startCall();
+      }
     } catch (e) {
-      print('Connection failed: $e');
+      _showToast('Failed to initialize call');
     }
   }
 
@@ -255,6 +246,26 @@ class CallingController extends GetxController {
     } finally {}
   }
 
+  void _startCall() async {
+    try {
+      final response = await callRepository.startCall(call: call);
+      if (!response.success) {
+        _showToast('Failed to connect call');
+        _disconnectLiveKit();
+        _delayedBack();
+      } else {
+        callStatus(CallStatus.agentJoined);
+      }
+    } catch (_) {
+      _showToast('Failed to end call');
+    } finally {}
+  }
+
+  void _disconnectLiveKit() async {
+    await liveKitService.disconnect();
+    _roomListener?.dispose();
+  }
+
   void _delayedBack() {
     Future.delayed(Duration(seconds: 2)).then((value) {
       Get.back();
@@ -264,21 +275,28 @@ class CallingController extends GetxController {
   void _listenToRoomEvents() {
     _roomListener?.on<RoomDisconnectedEvent>((event) {
       callStatus(CallStatus.ended);
-      _showToast('${event.reason}');
-      _delayedBack();
+      print('LIVEKIT_EVENT - RoomDisconnectedEvent: ${event.reason}');
+      _endCall();
     });
 
-    _roomListener?.on<ParticipantConnectedEvent>((event) {
+    _roomListener?.on<RoomConnectedEvent>((event) {
+      callStatus(CallStatus.agentJoined);
       _startIncrementingDuration();
+      print('LIVEKIT_EVENT - RoomConnectedEvent: ${event.room.name}');
+    });
+
+    /*_roomListener?.on<ParticipantConnectedEvent>((event) {
+      _startIncrementingDuration();
+      print('LIVEKIT_EVENT - ParticipantConnectedEvent: ${event.participant.identity}');
       callStatus(CallStatus.agentJoined);
       participant = event.participant;
-    });
+    });*/
 
     _roomListener?.on<ParticipantDisconnectedEvent>((event) {
       participant = null;
+      print('LIVEKIT_EVENT - ParticipantDisconnectedEvent: ${event.participant.identity}');
       callStatus(CallStatus.ended);
-      _showToast('Disconnected');
-      _delayedBack();
+      _disconnectLiveKit();
     });
   }
 

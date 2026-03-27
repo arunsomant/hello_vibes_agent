@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mingle_talk_agent/presentation/pages/landing/welcome_dialog.dart';
-
 import '../../core/services/callkit_service.dart';
 import '../../core/services/firebase_message_service.dart';
 import '../../data/models/user.dart';
 import '../../data/repositories/firebase_repository.dart';
 import '../../data/repositories/user_repository.dart';
+import '../pages/landing/welcome_dialog.dart';
 import '../pages/rating/rating_dialog.dart';
 import '../widgets/index.dart';
 import 'auth_controller.dart';
@@ -68,6 +67,7 @@ class LandingController extends GetxController
       if (!tokenSaved) {
         final token = await FirebaseMessageService().getToken();
         final String? voIPToken = await CallkitService().getVoIPToken();
+        final String deviceType = await CallkitService().getVoIPToken();
         if (token != null && token.isNotEmpty) {
           var response = await firebaseRepository.updateFirebaseToken(
             token,

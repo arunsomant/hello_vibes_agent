@@ -10,6 +10,7 @@ class TransactionRemoteDataSource {
 
   Future<TransactionsResponse> transactions() async {
     final response = await apiHelper.get(ApiEndpoints.transactions);
+    print(response);
     return TransactionsResponse.fromMap(response);
   }
 

@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import '../bindings/account_settings_binding.dart';
 import '../bindings/bank_details_binding.dart';
 import '../bindings/calling_binding.dart';
-import '../bindings/favourites_binding.dart';
 import '../bindings/landing_binding.dart';
 import '../bindings/language_selection_binding.dart';
 import '../bindings/login_binding.dart';
@@ -17,7 +16,6 @@ import '../bindings/wallet_binding.dart';
 import '../pages/account_settings/account_settings_page.dart';
 import '../pages/calling/video_calling_page.dart';
 import '../pages/calling/voice_calling_page.dart';
-import '../pages/favourites/favourites_page.dart';
 import '../pages/landing/landing_page.dart';
 import '../pages/language_selection/language_selection_page.dart';
 import '../pages/login/login_page.dart';
@@ -72,11 +70,6 @@ class AppPages {
       name: AppRoutes.landing,
       page: () => LandingPage(),
       binding: LandingBinding(),
-    ),
-    GetPage(
-      name: AppRoutes.favourites,
-      page: () => FavouritesPage(),
-      binding: FavouritesBinding(),
     ),
     GetPage(
       name: AppRoutes.profileEdit,

@@ -66,7 +66,7 @@ class CallControlButtonsBottonSheet extends StatelessWidget {
                     svgAsset: loudSpeakerOn
                         ? AppAssetsMapper.icVolume
                         : AppAssetsMapper.icVolumeSlash,
-                    color: AppColors.iconPrimary,
+                    color: AppColors.iconSecondary,
                     backgroundColor: loudSpeakerOn
                         ? AppColors.buttonPrimary
                         : AppColors.backgroundOverlay,
@@ -75,7 +75,7 @@ class CallControlButtonsBottonSheet extends StatelessWidget {
                   AppButtonIcon(
                     size: 56,
                     svgAsset: AppAssetsMapper.icCallDown,
-                    color: AppColors.iconPrimary,
+                    color: AppColors.iconSecondary,
                     backgroundColor: AppColors.red,
                     sizeIcon: 36,
                     onTap: onCallEndTap,
@@ -85,7 +85,7 @@ class CallControlButtonsBottonSheet extends StatelessWidget {
                     svgAsset: micOn
                         ? AppAssetsMapper.icMic
                         : AppAssetsMapper.icMicOff,
-                    color: AppColors.iconPrimary,
+                    color: AppColors.iconSecondary,
                     backgroundColor: micOn
                         ? AppColors.buttonPrimary
                         : AppColors.backgroundOverlay,

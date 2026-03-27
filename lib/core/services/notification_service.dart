@@ -1,33 +1,73 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 
 import '../../data/models/call.dart';
 import '../../data/models/user.dart';
+import '../../data/repositories/call_repository.dart';
 import '../../presentation/routes/app_routes.dart';
+import '../config/firebase_options.dart';
+import 'callkit_service.dart';
 
-/*void showNotification(int hashCode, String title, String body,
-    {Map<String, dynamic>? payload}) {
-  flutterLocalNotificationsPlugin.show(
-      hashCode,
-      title,
-      body,
-      NotificationDetails(
-        android: AndroidNotificationDetails(channel.id, channel.name,
-            color: AppColors.primary600,
-            enableLights: channel.enableLights,
-            channelDescription: channel.description,
-            sound: channel.sound,
-            playSound: channel.playSound,
-            enableVibration: channel.enableVibration,
-            importance: channel.importance,
-            icon: "ic_notification",
-            largeIcon:
-                const DrawableResourceAndroidBitmap("@mipmap/launcher_icon"),
-            styleInformation: const MediaStyleInformation(
-                htmlFormatContent: true, htmlFormatTitle: true)),
-      ),
-      payload: payload != null ? json.encode(payload) : null);
-}*/
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  print("Handling a background message: ${message.messageId}");
+
+  print("Message data: ${message.data}");
+
+  _handleMessage(message.data);
+
+  print('Message also contained a notification: ${message.notification}');
+  if (message.notification == null) {
+    return;
+  }
+}
+
+void _handleMessage(Map<String, dynamic> data) async {
+  initCallkitListeners();
+  if (data['type'] == 'incoming_call') {
+    await CallkitService().showCallNotification(data);
+  }
+  if (data['type'] == 'call_ended') {
+    await CallkitService().dismissCallNotification(data);
+  }
+}
+
+void initCallkitListeners() {
+  CallkitService().initCallkitListeners(
+    onCallAccept: (callData) {
+      if (callData != null) {
+        final uuid = callData['call_uuid'];
+        final customerName = callData['customer_name'];
+        _navigateToVoiceCalling(uuid, customerName);
+      }
+    },
+    onCallDecline: (callData) async {
+      if (callData != null && callData.containsKey('call_uuid')) {
+        final callUuid = callData['call_uuid'];
+        try {
+          final response = await CallRepository.instance().rejectCall(
+            call: Call(uuid: callUuid),
+          );
+          print('Reject call: ${response.message}');
+        } catch (e) {
+          print('Reject call: $e');
+        }
+      }
+    },
+  );
+}
+
+void _navigateToVoiceCalling(dynamic uuid, dynamic customerName) {
+  Get.toNamed(
+    AppRoutes.voiceCalling,
+    arguments: CallingArguments(
+      uuid: uuid,
+      user: User(name: customerName ?? 'Unknown Caller'),
+    ),
+  );
+}
 
 class NotificationService {
   Future<void> initialize() async {
@@ -39,7 +79,10 @@ class NotificationService {
       sound: true,
     );
 
-    //FirebaseMessaging.onBackgroundMessage(onBackgroundMessage);
+    initCallkitListeners();
+
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
     // handle when app in active state
     foregroundNotification();
 
@@ -58,17 +101,11 @@ class NotificationService {
           Get.find<LandingController>().getNotificationsCount();
         }*/
       print("Message data: ${message.data}");
+      //'{reason: , call_uuid: 9824bc11-db24-4d63-9e3d-b8bf6cdd51a1, type: call_ended}'
       //'{call_uuid: 7205dc8a-7fbe-421c-865d-96e5a8dd3e9a, customer_name: Ben Doe, type: incoming_call, call_type: audio, room: call_7205dc8a-7fbe-421c-865d-96e5a8dd3e9a}'
 
-      if (message.data.containsKey('call_uuid')) {
-        Get.toNamed(
-          Routes.voiceCalling,
-          arguments: CallingArguments(
-            uuid: message.data['call_uuid'],
-            user: User(name: message.data['customer_name']),
-          ),
-        );
-      }
+      _handleMessage(message.data);
+
       print('Message also contained a notification: ${message.notification}');
       if (message.notification == null) {
         return;

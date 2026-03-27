@@ -206,7 +206,7 @@ class CallsTab extends GetView<CallsController> {
                           '${call.coins}',
                           type: AppTextType.t12r,
                           maxLine: 2,
-                          color: AppColors.textError,
+                          color: AppColors.textPositive,
                           dummy: busy,
                           maxDummy: 2,
                         ),

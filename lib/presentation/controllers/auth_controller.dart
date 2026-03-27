@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../core/utils/app_exception.dart';
 import '../../data/models/user.dart';
 import '../../data/repositories/auth_repository.dart';
 import '../../data/repositories/user_repository.dart';
@@ -35,6 +36,9 @@ class AuthController extends GetxController {
       } else {
         _gotoLoginPage();
       }
+    } on UnauthorisedException catch (_) {
+      AppDialog.showSnackBar('Login Failed', 'Something went wrong!');
+      logout();
     } catch (_) {
       _showToast(
         'An error occurred while fetching user data. Please try again.',
@@ -91,7 +95,7 @@ class AuthController extends GetxController {
     Get.offAllNamed(AppRoutes.profileReview);
   }
 
-  Future<void> onLogoutPressed() async {
+  Future<void> logout() async {
     try {
       final response = await authRepository.logout();
       if (response.success) {
@@ -100,8 +104,9 @@ class AuthController extends GetxController {
         _showToast(response.message);
       }
     } catch (_) {
-      _showToast('An error occurred while logging out. Please try again.');
+      _showToast('An error occurred while logging out.');
     } finally {
+      await authRepository.clearAccessToken();
       _gotoLoginPage();
     }
   }

@@ -9,9 +9,7 @@ class ApiClient {
   ApiClient();
 
   final InterceptedClient http = InterceptedClient.build(
-    interceptors: [
-      AppApiInterceptor()
-    ],
+    interceptors: [AppApiInterceptor()],
     retryPolicy: CustomRetryPolicy(),
     onRequestTimeout: () {
       debugPrint('Request timed out');
