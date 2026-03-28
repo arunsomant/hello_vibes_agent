@@ -26,11 +26,12 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 void _handleMessage(Map<String, dynamic> data) async {
   initCallkitListeners();
-  if (data['type'] == 'incoming_call') {
-    await CallkitService().showCallNotification(data);
+  final call = CallAlertNotification.fromMap(data);
+  if (call.callAlertType == CallAlertType.incomingCall) {
+    await CallkitService().showCallNotification(call);
   }
-  if (data['type'] == 'call_ended') {
-    await CallkitService().dismissCallNotification(data);
+  if (call.callAlertType == CallAlertType.callEnded) {
+    await CallkitService().dismissCallNotification(call);
   }
 }
 
@@ -38,22 +39,19 @@ void initCallkitListeners() {
   CallkitService().initCallkitListeners(
     onCallAccept: (callData) {
       if (callData != null) {
-        final uuid = callData['call_uuid'];
-        final customerName = callData['customer_name'];
+        final call = CallAlertNotification.fromMap(callData);
+        final uuid = call.uuid;
+        final customerName = call.customerName;
         _navigateToVoiceCalling(uuid, customerName);
       }
     },
     onCallDecline: (callData) async {
-      if (callData != null && callData.containsKey('call_uuid')) {
-        final callUuid = callData['call_uuid'];
+      if (callData != null) {
+        final call = CallAlertNotification.fromMap(callData);
+        final uuid = call.uuid;
         try {
-          final response = await CallRepository.instance().rejectCall(
-            call: Call(uuid: callUuid),
-          );
-          print('Reject call: ${response.message}');
-        } catch (e) {
-          print('Reject call: $e');
-        }
+          await CallRepository.instance().rejectCall(call: Call(uuid: uuid));
+        } catch (_) {}
       }
     },
   );
@@ -71,8 +69,6 @@ void _navigateToVoiceCalling(dynamic uuid, dynamic customerName) {
 
 class NotificationService {
   Future<void> initialize() async {
-    // await Firebase.initializeApp();
-
     await FirebaseMessaging.instance.requestPermission(
       alert: true,
       badge: true,

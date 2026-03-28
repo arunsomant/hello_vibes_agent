@@ -9,7 +9,6 @@ class CallingArguments {
   CallingArguments({required this.user, required this.uuid});
 }
 
-
 class CallsResponse {
   final bool success;
   final PaginationResponse<Call> paginationResponse;
@@ -167,8 +166,6 @@ enum CallType implements JsonEnum {
   const CallType(this.value);
 }
 
-
-
 enum CallStatus implements JsonEnum {
   none('none'),
   initiated('initiated'),
@@ -184,4 +181,48 @@ enum CallStatus implements JsonEnum {
   CallStatus get defaultValue => CallStatus.none;
 
   const CallStatus(this.value);
+}
+
+enum CallAlertType implements JsonEnum {
+  incomingCall('incoming_call'),
+  callEnded('call_ended'),
+  callRejected('call_rejected');
+
+  @override
+  final String value;
+
+  @override
+  CallAlertType get defaultValue => CallAlertType.incomingCall;
+
+  const CallAlertType(this.value);
+}
+
+class CallAlertNotification {
+  final String uuid;
+  final String customerName;
+  final CallType callType;
+  final CallAlertType callAlertType;
+
+  CallAlertNotification({
+    this.uuid = '',
+    this.customerName = '',
+    this.callType = CallType.none,
+    this.callAlertType = CallAlertType.incomingCall,
+  });
+
+  factory CallAlertNotification.fromMap(Map<String, dynamic> json) {
+    return CallAlertNotification(
+      uuid: json['call_uuid'] ?? '',
+      customerName: json['customer_name'] ?? 'Unknown Caller',
+      callType: CallType.values.fromJson(json['call_type']),
+      callAlertType: CallAlertType.values.fromJson(json['type']),
+    );
+  }
+
+  Map<String, dynamic> toMap() => {
+    'call_uuid': uuid,
+    'customer_name': customerName,
+    'call_type': callType.value,
+    'type': callAlertType.value,
+  };
 }
