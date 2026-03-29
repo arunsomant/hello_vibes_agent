@@ -42,6 +42,7 @@ class CallsController extends GetxController {
   void onRefresh() {
     calls([]);
     _getCalls();
+    _getUserProfile();
   }
 
   void _getCalls() async {
@@ -55,6 +56,12 @@ class CallsController extends GetxController {
       _showToast('Failed to load calls');
     } finally {
       busyCalls(false);
+    }
+  }
+
+  void _getUserProfile() {
+    if (Get.isRegistered<AuthController>()) {
+      Get.find<AuthController>().getUserProfile();
     }
   }
 
