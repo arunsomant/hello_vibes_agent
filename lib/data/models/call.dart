@@ -5,8 +5,13 @@ import 'user.dart';
 class CallingArguments {
   final User user;
   final String uuid;
+  final CallType callType;
 
-  CallingArguments({required this.user, required this.uuid});
+  CallingArguments({
+    required this.user,
+    required this.uuid,
+    required this.callType,
+  });
 }
 
 class CallsResponse {

@@ -117,17 +117,16 @@ class AppButton extends StatelessWidget {
                           SizedBox(width: iconPadding),
                         ],
                         child ??
-                            Expanded(
-                              child: AppText(
-                                text,
-                                textAlign: TextAlign.center,
-                                type: textType ?? AppTextType.t14m,
-                                color: onPressed == null && !fillColor
-                                    ? AppColors.textHint
-                                    : textColor ?? AppColors.textSecondary,
-                                //style: textStyle,
-                              ),
-                        ),
+                            AppText(
+                              text,
+                              textAlign: TextAlign.center,
+                              type: textType ?? AppTextType.t14m,
+                              color: onPressed == null && !fillColor
+                                  ? AppColors.textHint
+                                  : textColor ?? AppColors.textSecondary,
+                              //style: textStyle,
+                            ),
+
                         if (suffixIconAsset != null) ...[
                           SizedBox(width: iconPadding),
                           AppSvgAsset(
