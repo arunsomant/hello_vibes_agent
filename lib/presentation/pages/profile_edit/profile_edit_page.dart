@@ -97,59 +97,76 @@ class ProfileEditPage extends GetView<ProfileSetupController> {
                     child: SafeArea(
                       top: false,
                       child: Column(
-                        spacing: AppSpacings.s16,
                         children: [
-                          ShakeView(
-                            controller: controller.shakeControllerName,
-                            child: AppInputText(
-                              controller: controller.textEditingControllerName,
-                              hintText: 'Enter Name Here',
-                              showHintAsLabel: false,
-                              label: 'Display Name',
-                            ),
-                          ),
-                          ShakeView(
-                            controller: controller.shakeControllerGender,
-                            child: Obx(() {
-                              return AppDropDownButton<String>(
-                                title: 'Select Gender',
-                                label: 'Gender',
-                                onChanged: controller.onGenderChanged,
-                                value: controller.selectedGender.value.isEmpty
-                                    ? null
-                                    : controller.selectedGender.value,
-                                items: controller.genders.map((gender) {
-                                  return DropdownMenuItem(
-                                    value: gender,
-                                    child: AppText(
-                                      gender.capitalizeFirst ?? '',
-                                      type: AppTextType.t16sb,
+                          Expanded(
+                            child: SingleChildScrollView(
+                              physics: NeverScrollableScrollPhysics(),
+                              child: Column(
+                                spacing: AppSpacings.s16,
+                                children: [
+                                  ShakeView(
+                                    controller: controller.shakeControllerName,
+                                    child: AppInputText(
+                                      controller:
+                                          controller.textEditingControllerName,
+                                      hintText: 'Enter Name Here',
+                                      showHintAsLabel: false,
+                                      label: 'Display Name',
                                     ),
-                                  );
-                                }).toList(),
-                              );
-                            }),
-                          ),
-                          ShakeView(
-                            controller: controller.shakeControllerDOB,
-                            child: AppInputText(
-                              onTap: controller.onDateOfBirthFieldTapped,
-                              controller: controller.textEditingControllerDOB,
-                              hintText: 'dd/mm/yyyy',
-                              showHintAsLabel: false,
-                              label: 'Date of Birth',
-                              suffixIcon: SizedBox(
-                                height: 24,
-                                width: 24,
-                                child: Center(
-                                  child: AppSvgAsset(
-                                    AppAssetsMapper.icCalendar,
                                   ),
-                                ),
+                                  ShakeView(
+                                    controller:
+                                        controller.shakeControllerGender,
+                                    child: Obx(() {
+                                      return AppDropDownButton<String>(
+                                        title: 'Select Gender',
+                                        label: 'Gender',
+                                        onChanged: controller.onGenderChanged,
+                                        value:
+                                            controller
+                                                .selectedGender
+                                                .value
+                                                .isEmpty
+                                            ? null
+                                            : controller.selectedGender.value,
+                                        items: controller.genders.map((gender) {
+                                          return DropdownMenuItem(
+                                            value: gender,
+                                            child: AppText(
+                                              gender.capitalizeFirst ?? '',
+                                              type: AppTextType.t16sb,
+                                            ),
+                                          );
+                                        }).toList(),
+                                      );
+                                    }),
+                                  ),
+                                  ShakeView(
+                                    controller: controller.shakeControllerDOB,
+                                    child: AppInputText(
+                                      onTap:
+                                          controller.onDateOfBirthFieldTapped,
+                                      controller:
+                                          controller.textEditingControllerDOB,
+                                      hintText: 'dd/mm/yyyy',
+                                      showHintAsLabel: false,
+                                      label: 'Date of Birth',
+                                      suffixIcon: SizedBox(
+                                        height: 24,
+                                        width: 24,
+                                        child: Center(
+                                          child: AppSvgAsset(
+                                            AppAssetsMapper.icCalendar,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                          Spacer(),
+                          const SizedBox(height: AppSpacings.s16),
                           AppButton(
                             text: 'Save',
                             onPressed: controller.onSavePressed,
