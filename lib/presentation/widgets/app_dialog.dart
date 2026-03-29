@@ -38,6 +38,7 @@ class AppDialog {
   }) {
     return Get.bottomSheet(
       child,
+      enableDrag: false,
       isScrollControlled: true,
       isDismissible: isDismissible,
       backgroundColor: AppColors.backgroundRaised,
