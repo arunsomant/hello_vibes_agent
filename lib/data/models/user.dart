@@ -1,5 +1,3 @@
-
-
 import '../../core/utils/app_extensions.dart';
 import 'avatar.dart';
 import 'language.dart';
@@ -250,6 +248,7 @@ class User {
     double? walletBalanceInInr,
     dynamic lifetimeEarningsInInr,
     double? rating,
+    Avatar? avatar,
   }) {
     return User(
       id: id ?? this.id,
@@ -271,6 +270,7 @@ class User {
       lifetimeEarningsInInr:
           lifetimeEarningsInInr ?? this.lifetimeEarningsInInr,
       rating: rating ?? this.rating,
+      avatar: avatar ?? this.avatar,
     );
   }
 }
