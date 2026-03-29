@@ -106,7 +106,7 @@ class CallsFilter extends GetView<CallsFilterController> {
                     height: AppSizes.appButtonHeightLarge,
                     onPressed: controller.onApplyPressed,
                     color: AppColors.buttonPrimary,
-                    textColor: AppColors.textPrimary,
+                    textColor: AppColors.textSecondary,
                   ),
                 ),
               ],
