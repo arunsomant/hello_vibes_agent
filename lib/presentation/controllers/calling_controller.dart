@@ -12,7 +12,6 @@ import '../../data/repositories/call_repository.dart';
 import '../widgets/index.dart';
 import 'landing_controller.dart';
 
-
 class CallingController extends GetxController {
   final CallRepository callRepository;
 
@@ -26,7 +25,7 @@ class CallingController extends GetxController {
 
   Call call = Call();
 
-  late CallType callType;
+  CallType callType = CallType.none;
 
   final duration = 0.obs;
 
@@ -46,6 +45,7 @@ class CallingController extends GetxController {
   final loudSpeakerOn = false.obs;
   final micOn = true.obs;
   final LiveKitService liveKitService = LiveKitService.initialize();
+
   Room? get room => liveKitService.room;
   EventsListener<RoomEvent>? _roomListener;
   Participant? participant;
@@ -59,6 +59,7 @@ class CallingController extends GetxController {
     if (args is CallingArguments) {
       user(args.user);
       uuid = args.uuid;
+      callType = args.callType;
       _checkConfigurations();
     } else {
       throw ArgumentError(
@@ -82,6 +83,7 @@ class CallingController extends GetxController {
     }
     _hideTimer?.cancel();
     _disconnectLiveKit();
+    _roomListener?.dispose();
     super.onClose();
   }
 
@@ -180,8 +182,7 @@ class CallingController extends GetxController {
         _delayedBack();
         _showToast(response.message);
       }
-    } catch (e) {
-      print(e);
+    } catch (_) {
       callStatus(CallStatus.ended);
       _delayedBack();
       _showToast('Failed to create call');
@@ -221,6 +222,9 @@ class CallingController extends GetxController {
         _roomListener = room!.createListener();
         _listenToRoomEvents();
         await liveKitService.connect(livekitUrl, livekitToken);
+        final videoCall = callType == CallType.video;
+        loudSpeakerOn(videoCall);
+        liveKitService.setSpeakerphoneOn(videoCall);
         _startCall();
       }
     } catch (e) {
@@ -233,7 +237,7 @@ class CallingController extends GetxController {
       final response = await callRepository.endCall(call: call);
       if (response.success) {
         Get.back();
-        if (Get.isRegistered<LandingController>()) {
+        if (Get.isRegistered<LandingController>() && duration.value > 0) {
           Get.find<LandingController>().askForCallingExperience(
             call.participant,
           );
@@ -263,7 +267,6 @@ class CallingController extends GetxController {
 
   void _disconnectLiveKit() async {
     await liveKitService.disconnect();
-    _roomListener?.dispose();
   }
 
   void _delayedBack() {
@@ -276,6 +279,7 @@ class CallingController extends GetxController {
     _roomListener?.on<RoomDisconnectedEvent>((event) {
       callStatus(CallStatus.ended);
       print('LIVEKIT_EVENT - RoomDisconnectedEvent: ${event.reason}');
+      _roomListener?.dispose();
       _endCall();
     });
 
@@ -294,7 +298,9 @@ class CallingController extends GetxController {
 
     _roomListener?.on<ParticipantDisconnectedEvent>((event) {
       participant = null;
-      print('LIVEKIT_EVENT - ParticipantDisconnectedEvent: ${event.participant.identity}');
+      print(
+        'LIVEKIT_EVENT - ParticipantDisconnectedEvent: ${event.participant.identity}',
+      );
       callStatus(CallStatus.ended);
       _disconnectLiveKit();
     });

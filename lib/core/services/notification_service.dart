@@ -16,7 +16,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
   print("Message data: ${message.data}");
 
-  _handleMessage(message.data);
+  _handleMessage(message);
 
   print('Message also contained a notification: ${message.notification}');
   if (message.notification == null) {
@@ -24,10 +24,18 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   }
 }
 
-void _handleMessage(Map<String, dynamic> data) async {
+void _handleMessage(RemoteMessage message) async {
+  Map<String, dynamic> data = message.data;
   initCallkitListeners();
   final call = CallAlertNotification.fromMap(data);
   if (call.callAlertType == CallAlertType.incomingCall) {
+    print(message.sentTime?.toLocal().toString());
+    print(DateTime.now().toString());
+    if (message.sentTime == null ||
+        DateTime.now().difference(message.sentTime!.toLocal()) >
+            const Duration(minutes: 1)) {
+      return;
+    }
     await CallkitService().showCallNotification(call);
   }
   if (call.callAlertType == CallAlertType.callEnded) {
@@ -42,7 +50,11 @@ void initCallkitListeners() {
         final call = CallAlertNotification.fromMap(callData);
         final uuid = call.uuid;
         final customerName = call.customerName;
-        _navigateToVoiceCalling(uuid, customerName);
+        if (call.callType == CallType.video) {
+          _navigateToVideoCalling(uuid, customerName);
+        } else {
+          _navigateToVoiceCalling(uuid, customerName);
+        }
       }
     },
     onCallDecline: (callData) async {
@@ -63,6 +75,18 @@ void _navigateToVoiceCalling(dynamic uuid, dynamic customerName) {
     arguments: CallingArguments(
       uuid: uuid,
       user: User(name: customerName ?? 'Unknown Caller'),
+      callType: CallType.audio,
+    ),
+  );
+}
+
+void _navigateToVideoCalling(dynamic uuid, dynamic customerName) {
+  Get.toNamed(
+    AppRoutes.videoCalling,
+    arguments: CallingArguments(
+      uuid: uuid,
+      user: User(name: customerName ?? 'Unknown Caller'),
+      callType: CallType.video,
     ),
   );
 }
@@ -100,7 +124,7 @@ class NotificationService {
       //'{reason: , call_uuid: 9824bc11-db24-4d63-9e3d-b8bf6cdd51a1, type: call_ended}'
       //'{call_uuid: 7205dc8a-7fbe-421c-865d-96e5a8dd3e9a, customer_name: Ben Doe, type: incoming_call, call_type: audio, room: call_7205dc8a-7fbe-421c-865d-96e5a8dd3e9a}'
 
-      _handleMessage(message.data);
+      _handleMessage(message);
 
       print('Message also contained a notification: ${message.notification}');
       if (message.notification == null) {
@@ -114,7 +138,6 @@ class NotificationService {
       /*if (Get.isRegistered<LandingController>()) {
           Get.find<LandingController>().getNotificationsCount();
         }*/
-
       print("Message data: ${message.data}");
       print('Message also contained a notification: ${message.notification}');
       if (message.data.containsKey('type')) {

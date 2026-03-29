@@ -17,7 +17,7 @@ class CallkitService {
       nameCaller: customerName,
       appName: 'Mingle Talk',
       //avatar: 'https://i.pravatar.cc/100',
-      // Fallback or retrieve from payloads
+      //Fallback or retrieve from payloads
       handle: '',
       // Number or handle
       type: 0,
@@ -33,6 +33,7 @@ class CallkitService {
       ),
       extra: data.toMap(),
       android: AndroidParams(
+        textColor: AppColors.textPrimary.toHex(),
         isCustomNotification: true,
         isShowLogo: false,
         ringtonePath: 'system_ringtone_default',
@@ -72,11 +73,11 @@ class CallkitService {
       if (event == null) return;
       switch (event.event) {
         case Event.actionCallAccept:
-          final callData = event.body['extra'] as Map<String, dynamic>?;
+          final callData = (event.body['extra'])?.cast<String, dynamic>();
           onCallAccept?.call(callData);
           break;
         case Event.actionCallDecline:
-          final callData = event.body['extra'] as Map<String, dynamic>?;
+          final callData = (event.body['extra'])?.cast<String, dynamic>();
           onCallDecline?.call(callData);
           break;
         default:
