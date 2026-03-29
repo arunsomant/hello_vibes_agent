@@ -41,7 +41,7 @@ class AppNetworkImage extends StatelessWidget {
         child:
             placeholder ??
             AppSvgAsset(
-              "assets/images/image_placeholder.svg",
+              AppAssetsMapper.imagePlaceholder,
               color: AppColors.iconPrimary,
               fit: fit ?? BoxFit.cover,
             ),
@@ -101,7 +101,7 @@ class AppSvgAsset extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (asset.isEmpty) {
-      return AppPlaceholderWidget.image;
+      return AppPlaceholderWidget.image(width: width, height: height);
     }
     return SvgPicture.asset(
       asset,
@@ -176,8 +176,12 @@ class AppFileImage extends StatelessWidget {
 }
 
 class AppPlaceholderWidget {
-  static AppSvgAsset get image =>
-      const AppSvgAsset('assets/images/no_image.svg', fit: BoxFit.cover);
+  static AppSvgAsset image({double? width, double? height}) => AppSvgAsset(
+    AppAssetsMapper.imagePlaceholder,
+    fit: BoxFit.cover,
+    width: width,
+    height: height,
+  );
 }
 
 class AppCircleImage extends StatelessWidget {
