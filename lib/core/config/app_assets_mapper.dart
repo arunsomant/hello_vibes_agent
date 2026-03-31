@@ -44,6 +44,7 @@ class AppAssetsMapper {
   static const icDocumentText = 'assets/images/ic_document_text.svg';
   static const listEmpty = 'assets/images/ic_document_text.svg';
   static const icLanguage = 'assets/images/ic_language.svg';
+  static const icVideSlash = 'assets/images/ic_video_slash.svg';
 
   //hv
   static const logoHV = 'assets/images/hv/logo.png';

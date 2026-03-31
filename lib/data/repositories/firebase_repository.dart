@@ -9,24 +9,25 @@ class FirebaseRepository {
 
   FirebaseRepository({required this.apiHelper});
 
-  Future<bool> getFirebaseTokenSaved() async {
-    return await _authLocalDataSource.getFirebaseTokenSaved();
+  Future<bool> getDeviceDetailsAdded() async {
+    return await _authLocalDataSource.getDeviceDetailsAdded();
   }
 
-  Future<void> saveFirebaseTokenSaved(bool tokenSaved) async {
-    await _authLocalDataSource.saveFirebaseTokenSaved(tokenSaved);
+  Future<void> saveDeviceDetailsAdded(bool tokenSaved) async {
+    await _authLocalDataSource.saveDeviceDetailsAdded(tokenSaved);
   }
 
   Future<void> clear() async {
-    await saveFirebaseTokenSaved(false);
+    await saveDeviceDetailsAdded(false);
   }
 
-  Future<AppResponse> updateFirebaseToken(
-    String firebaseToken, {
-    String? voIPToken,
+  Future<AppResponse> updateFirebaseToken({
+    required String firebaseToken,
+    required String voIPToken,
+    required String deviceType,
   }) async {
-    var body = {'fcm': firebaseToken};
-    if (voIPToken != null && voIPToken.isNotEmpty) {
+    var body = {'fcm': firebaseToken, 'device_type': deviceType};
+    if (voIPToken.isNotEmpty) {
       body.addAll({'voip_token': voIPToken});
     }
     final response = await apiHelper.post(ApiEndpoints.fcmToken, body: body);

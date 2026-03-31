@@ -22,7 +22,7 @@ export 'shimmer.dart';
 export 'star_rating.dart';
 export 'terms_and_privacy.dart';
 export 'app_button_icon.dart';
-export 'call_control_buttons_botton_sheet.dart';
+export 'call_control_buttons_bottom_sheet.dart';
 export 'app_radio_button.dart';
 export 'app_refresh_indicator.dart';
 export 'app_error_widget.dart';

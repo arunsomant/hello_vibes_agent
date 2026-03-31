@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../core/services/callkit_service.dart';
 import '../../core/services/firebase_message_service.dart';
 import '../../data/models/user.dart';
@@ -63,17 +64,23 @@ class LandingController extends GetxController
 
   void _updateFirebaseToken() async {
     try {
-      bool tokenSaved = await firebaseRepository.getFirebaseTokenSaved();
+      bool tokenSaved = await firebaseRepository.getDeviceDetailsAdded();
       if (!tokenSaved) {
         final token = await FirebaseMessageService().getToken();
         final String? voIPToken = await CallkitService().getVoIPToken();
-        final String deviceType = await CallkitService().getVoIPToken();
+        String deviceType = 'Unknown';
+        if (GetPlatform.isAndroid) {
+          deviceType = 'android';
+        } else if (GetPlatform.isIOS) {
+          deviceType = 'ios';
+        }
         if (token != null && token.isNotEmpty) {
           var response = await firebaseRepository.updateFirebaseToken(
-            token,
-            voIPToken: voIPToken,
+            firebaseToken: token,
+            voIPToken: voIPToken ?? '',
+            deviceType: deviceType,
           );
-          firebaseRepository.saveFirebaseTokenSaved(response.success);
+          firebaseRepository.saveDeviceDetailsAdded(response.success);
         }
       }
     } catch (_) {}

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../core/config/app_assets_mapper.dart';
@@ -7,8 +7,8 @@ import '../../core/theme/app_radii.dart';
 import '../../core/theme/app_spacings.dart';
 import 'index.dart';
 
-class CallControlButtonsBottonSheet extends StatelessWidget {
-  const CallControlButtonsBottonSheet({
+class CallControlButtonsBottomSheet extends StatelessWidget {
+  const CallControlButtonsBottomSheet({
     super.key,
     required this.controller,
     required this.bottomSheetMaximumSize,
@@ -17,8 +17,11 @@ class CallControlButtonsBottonSheet extends StatelessWidget {
     this.onVolumeTap,
     this.onCallEndTap,
     this.onMicTap,
+    this.onVideoTap,
     this.loudSpeakerOn = false,
     this.micOn = true,
+    this.videoOn = false,
+    this.isVideoCall = false,
   });
 
   final DraggableScrollableController controller;
@@ -29,9 +32,11 @@ class CallControlButtonsBottonSheet extends StatelessWidget {
 
   final double bottomSheetMaximumHeight;
 
-  final VoidCallback? onVolumeTap, onCallEndTap, onMicTap;
+  final VoidCallback? onVolumeTap, onCallEndTap, onMicTap, onVideoTap;
 
-  final bool loudSpeakerOn, micOn;
+  final bool loudSpeakerOn, micOn, videoOn;
+
+  final bool isVideoCall;
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +66,7 @@ class CallControlButtonsBottonSheet extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  AppButtonIcon(
+                  if(!isVideoCall)AppButtonIcon(
                     size: 44,
                     svgAsset: loudSpeakerOn
                         ? AppAssetsMapper.icVolume
@@ -71,6 +76,17 @@ class CallControlButtonsBottonSheet extends StatelessWidget {
                         ? AppColors.buttonPrimary
                         : AppColors.backgroundOverlay,
                     onTap: onVolumeTap,
+                  ),
+                  if(isVideoCall)AppButtonIcon(
+                    size: 44,
+                    svgAsset: videoOn
+                        ? AppAssetsMapper.icVideoCall
+                        : AppAssetsMapper.icVideSlash,
+                    color: AppColors.iconSecondary,
+                    backgroundColor: videoOn
+                        ? AppColors.buttonPrimary
+                        : AppColors.backgroundOverlay,
+                    onTap: onVideoTap,
                   ),
                   AppButtonIcon(
                     size: 56,

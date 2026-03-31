@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../core/services/callkit_service.dart';
 import '../../core/services/livekit_service.dart';
 import '../../data/models/call.dart';
 import '../../data/models/user.dart';
@@ -44,14 +45,20 @@ class CallingController extends GetxController {
   bool _isCallControlsVisible = true;
   final loudSpeakerOn = false.obs;
   final micOn = true.obs;
+  final videoOn = true.obs;
   final LiveKitService liveKitService = LiveKitService.initialize();
 
   Room? get room => liveKitService.room;
   EventsListener<RoomEvent>? _roomListener;
-  Participant? participant;
+  Rx<RemoteParticipant?> participant = Rx<RemoteParticipant?>(null);
+  Rx<LocalParticipant?> localParticipant = Rx<LocalParticipant?>(null);
 
   String livekitUrl = '';
   String livekitToken = '';
+
+  final participantVideoEnabled = false.obs;
+
+  final participantAudioEnabled = false.obs;
 
   @override
   void onInit() {
@@ -84,6 +91,7 @@ class CallingController extends GetxController {
     _hideTimer?.cancel();
     _disconnectLiveKit();
     _roomListener?.dispose();
+    liveKitService.dispose();
     super.onClose();
   }
 
@@ -154,6 +162,16 @@ class CallingController extends GetxController {
     liveKitService.setMicEnabled(micOn.value);
   }
 
+  void onVideoTap() {
+    _startHideTimer();
+    videoOn.toggle();
+    liveKitService.setVideoEnabled(videoOn.value);
+  }
+
+  void onFlipCameraTap() {
+    liveKitService.flipCamera();
+  }
+
   void _checkConfigurations() async {
     final permissionsGranted = await _checkPermissions();
     if (!permissionsGranted) {
@@ -221,8 +239,12 @@ class CallingController extends GetxController {
       if (room != null) {
         _roomListener = room!.createListener();
         _listenToRoomEvents();
-        await liveKitService.connect(livekitUrl, livekitToken);
         final videoCall = callType == CallType.video;
+        await liveKitService.connect(
+          livekitUrl,
+          livekitToken,
+          enableVideo: videoCall,
+        );
         loudSpeakerOn(videoCall);
         liveKitService.setSpeakerphoneOn(videoCall);
         _startCall();
@@ -234,6 +256,12 @@ class CallingController extends GetxController {
 
   void _endCall() async {
     try {
+      await CallkitService().dismissCallNotification(
+        CallAlertNotification(
+          uuid: call.uuid,
+          customerName: call.participant.name,
+        ),
+      );
       final response = await callRepository.endCall(call: call);
       if (response.success) {
         Get.back();
@@ -278,15 +306,43 @@ class CallingController extends GetxController {
   void _listenToRoomEvents() {
     _roomListener?.on<RoomDisconnectedEvent>((event) {
       callStatus(CallStatus.ended);
-      print('LIVEKIT_EVENT - RoomDisconnectedEvent: ${event.reason}');
-      _roomListener?.dispose();
+      debugPrint('LIVEKIT_EVENT - RoomDisconnectedEvent: ${event.reason}');
       _endCall();
+      _roomListener?.dispose();
+      liveKitService.dispose();
     });
 
     _roomListener?.on<RoomConnectedEvent>((event) {
       callStatus(CallStatus.agentJoined);
       _startIncrementingDuration();
       print('LIVEKIT_EVENT - RoomConnectedEvent: ${event.room.name}');
+      localParticipant(event.room.localParticipant);
+      if (event.room.remoteParticipants.isNotEmpty) {
+        participant(event.room.remoteParticipants[0]);
+      }
+      _saveCallDetails();
+    });
+    _roomListener?.on<LocalTrackPublishedEvent>((event) {
+      if (event.publication.kind == TrackType.AUDIO) {
+        micOn(true);
+      } else if (event.publication.kind == TrackType.VIDEO) {
+        videoOn(true);
+      }
+      localParticipant(event.participant);
+      localParticipant.refresh();
+    });
+    _roomListener?.on<TrackPublishedEvent>((event) {
+      debugPrint(
+        'LIVEKIT_EVENT - TrackPublishedEvent:  ${event.publication.kind}',
+      );
+      if (event.publication.kind == TrackType.VIDEO) {
+        participantVideoEnabled(
+          event.participant.videoTrackPublications.firstOrNull?.muted != true,
+        );
+      }
+      participantAudioEnabled(
+        event.participant.audioTrackPublications.firstOrNull?.muted != true,
+      );
     });
 
     /*_roomListener?.on<ParticipantConnectedEvent>((event) {
@@ -297,13 +353,52 @@ class CallingController extends GetxController {
     });*/
 
     _roomListener?.on<ParticipantDisconnectedEvent>((event) {
-      participant = null;
+      participant(null);
       print(
         'LIVEKIT_EVENT - ParticipantDisconnectedEvent: ${event.participant.identity}',
       );
       callStatus(CallStatus.ended);
       _disconnectLiveKit();
     });
+    _roomListener?.on<TrackMutedEvent>((event) {
+      if (event.participant is RemoteParticipant) {
+        if (event.publication.kind == TrackType.AUDIO) {
+          participantAudioEnabled(false);
+        } else if (event.publication.kind == TrackType.VIDEO) {
+          participantVideoEnabled(false);
+        }
+        _showToast(
+          'Remote user turned ${event.publication.kind == TrackType.AUDIO ? 'audio' : 'video'} off',
+        );
+      }
+    });
+    _roomListener?.on<TrackSubscribedEvent>((event) {
+      debugPrint(
+        'LIVEKIT_EVENT - TrackSubscribedEvent: ${event.publication.kind}',
+      );
+      if (event.publication.kind == TrackType.VIDEO) {
+        participant(event.participant);
+        update();
+      }
+    });
+    _roomListener?.on<TrackUnmutedEvent>((event) {
+      if (event.participant is RemoteParticipant) {
+        if (event.publication.kind == TrackType.AUDIO) {
+          participantAudioEnabled(true);
+        } else if (event.publication.kind == TrackType.VIDEO) {
+          participantVideoEnabled(true);
+        }
+        _showToast(
+          'Remote user turned ${event.publication.kind == TrackType.AUDIO ? 'audio' : 'video'} on',
+        );
+      }
+    });
+  }
+
+  void _saveCallDetails() async {
+    try {
+      await callRepository.saveCallDetails(call);
+    } catch (_) {}
   }
 
   void _showToast(String message) {

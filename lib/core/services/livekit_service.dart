@@ -14,14 +14,24 @@ class LiveKitService {
 
   Room? get room => _room;
 
+  CameraPosition _cameraPosition = CameraPosition.front;
+
   Future<void> connect(
     String url,
     String token, {
-    bool audioOnly = true,
+    bool enableVideo = false,
   }) async {
     await room?.prepareConnection(url, token);
     await _room?.connect(url, token);
     await room?.localParticipant?.setMicrophoneEnabled(true);
+    if (enableVideo) {
+      try {
+        LocalVideoTrack localVideo = await LocalVideoTrack.createCameraTrack(
+          const CameraCaptureOptions(cameraPosition: CameraPosition.front),
+        );
+        await room?.localParticipant?.publishVideoTrack(localVideo);
+      } catch (_) {}
+    }
   }
 
   Future<void> disconnect() async {
@@ -29,6 +39,15 @@ class LiveKitService {
       if (room != null) {
         await room?.localParticipant?.unpublishAllTracks();
         await room?.disconnect();
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  Future<void> dispose() async {
+    try {
+      if (room != null) {
         await room?.dispose();
       }
     } catch (e) {
@@ -63,7 +82,17 @@ class LiveKitService {
       try {
         await _room!.localParticipant!.setMicrophoneEnabled(enabled);
       } catch (error) {
-        print('could not publish audio: $error');
+        debugPrint('Could not publish audio: $error');
+      }
+    }
+  }
+
+  Future<void> setVideoEnabled(bool enabled) async {
+    if (_room?.localParticipant != null) {
+      try {
+        await _room!.localParticipant!.setCameraEnabled(enabled);
+      } catch (error) {
+        debugPrint('Could not publish video: $error');
       }
     }
   }
@@ -72,7 +101,7 @@ class LiveKitService {
     try {
       await room!.setSpeakerOn(on, forceSpeakerOutput: on);
     } catch (e) {
-      print(e);
+      debugPrint('Could not set speaker: $e');
     }
   }
 
@@ -80,7 +109,25 @@ class LiveKitService {
     try {
       await room!.startAudio();
     } catch (e) {
-      print(e);
+      debugPrint('Could not start audio: $e');
+    }
+  }
+
+  Future<void> flipCamera() async {
+    final track =
+        room?.localParticipant?.videoTrackPublications.firstOrNull?.track;
+    if (track is LocalVideoTrack) {
+      try {
+        CameraPosition newPosition = _cameraPosition == CameraPosition.front
+            ? CameraPosition.back
+            : CameraPosition.front;
+        await track.restartTrack(
+          CameraCaptureOptions(cameraPosition: newPosition),
+        );
+        _cameraPosition = newPosition;
+      } catch (e) {
+        debugPrint('Failed to flip camera: $e');
+      }
     }
   }
 

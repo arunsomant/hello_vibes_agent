@@ -2,7 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthLocalDataSource {
   static const String token = 'authorization_token';
-  static const String firebaseTokenSaved = 'firebase_token_saved';
+  static const String deviceDetailsSaved = 'device_details_saved';
   static const String onboardingCompleted = 'onboarding_completed';
 
   Future<bool> saveAccessToken(String accessToken) async {
@@ -19,14 +19,14 @@ class AuthLocalDataSource {
     await saveAccessToken('');
   }
 
-  Future<bool> saveFirebaseTokenSaved(bool tokenSaved) async {
+  Future<bool> saveDeviceDetailsAdded(bool tokenSaved) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return await prefs.setBool(firebaseTokenSaved, tokenSaved);
+    return await prefs.setBool(deviceDetailsSaved, tokenSaved);
   }
 
-  Future<bool> getFirebaseTokenSaved() async {
+  Future<bool> getDeviceDetailsAdded() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(firebaseTokenSaved) ?? false;
+    return prefs.getBool(deviceDetailsSaved) ?? false;
   }
 
   Future<bool> saveOnboardingCompleted(bool completed) async {

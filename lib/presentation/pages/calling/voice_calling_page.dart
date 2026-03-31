@@ -54,7 +54,7 @@ class VoiceCallingPage extends GetView<CallingController> {
           ],
         ),
         bottomSheet: Obx(() {
-          return CallControlButtonsBottonSheet(
+          return CallControlButtonsBottomSheet(
             controller: controller.bottomSheetController,
             bottomSheetMaximumSize: controller.bottomSheetMaximumSize.value,
             bottomSheetInitialSize: controller.bottomSheetInitialSize,
