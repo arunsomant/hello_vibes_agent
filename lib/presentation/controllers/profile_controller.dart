@@ -18,7 +18,9 @@ class ProfileController extends GetxController {
     _gotoProfileEdit();
   }
 
-  void onLanguagePreferencePressed() {}
+  void onLanguagePreferencePressed() {
+    _gotoLanguagePreference();
+  }
 
   void onWalletPressed() {
     _gotoWallet();
@@ -38,5 +40,9 @@ class ProfileController extends GetxController {
 
   void _gotoProfileEdit() {
     Get.toNamed(AppRoutes.profileEdit);
+  }
+
+  void _gotoLanguagePreference() {
+    Get.toNamed(AppRoutes.languageSelection);
   }
 }

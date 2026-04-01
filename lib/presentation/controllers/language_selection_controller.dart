@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:mingle_talk_agent/presentation/controllers/profile_controller.dart';
 
 import '../../data/models/language.dart';
 import '../../data/repositories/user_repository.dart';
@@ -43,9 +44,11 @@ class LanguageSelectionController extends GetxController {
   void onSubmitPressed() async {
     try {
       busy(true);
-      final response = await userRepository.updateLanguages(selectedLanguages.value);
+      final response = await userRepository.updateLanguages(
+        selectedLanguages.value,
+      );
       if (response.success) {
-        _gotoLanding();
+        _gotoNextPage();
       }
     } catch (_) {
       _showToast('Failed to update languages');
@@ -70,13 +73,21 @@ class LanguageSelectionController extends GetxController {
     }
   }
 
-  void _showToast(String message) {
-    AppDialog.showToast(message);
-  }
-
   void _gotoLanding() {
-    if(Get.isRegistered<AuthController>()) {
+    if (Get.isRegistered<AuthController>()) {
       Get.find<AuthController>().gotoLandingPage();
     }
+  }
+
+  void _gotoNextPage() {
+    if (Get.isRegistered<ProfileController>()) {
+      Get.back();
+    } else {
+      _gotoLanding();
+    }
+  }
+
+  void _showToast(String message) {
+    AppDialog.showToast(message);
   }
 }
