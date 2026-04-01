@@ -215,7 +215,7 @@ class CallAlertNotification {
     this.callAlertType = CallAlertType.incomingCall,
   });
 
-  factory CallAlertNotification.fromMap(Map<String, dynamic> json) {
+  factory CallAlertNotification.fromMap(Map<dynamic, dynamic> json) {
     return CallAlertNotification(
       uuid: json['call_uuid'] ?? '',
       customerName: json['customer_name'] ?? 'Unknown Caller',

@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:get/get.dart';
 
 import '../../core/services/callkit_service.dart';
 import '../../core/services/firebase_message_service.dart';
+import '../../data/models/call.dart';
 import '../../data/models/user.dart';
 import '../../data/repositories/firebase_repository.dart';
 import '../../data/repositories/user_repository.dart';
 import '../pages/landing/welcome_dialog.dart';
 import '../pages/rating/rating_dialog.dart';
+import '../routes/app_routes.dart';
 import '../widgets/index.dart';
 import 'auth_controller.dart';
 
@@ -43,7 +46,67 @@ class LandingController extends GetxController
   @override
   void onReady() {
     _showWelcomeDialog();
+    _checkForActiveCalls();
     super.onReady();
+  }
+
+  void _checkForActiveCalls() async {
+    try {
+      await Future.delayed(Duration(microseconds: 500));
+      var currentCall = await _getCurrentCall();
+      if (currentCall != null &&
+          (currentCall['accepted'] == true ||
+              currentCall['isAccepted'] == true ||
+              currentCall['isCallConnected'] == true)) {
+        if (currentCall != null) {
+          final call = CallAlertNotification.fromMap(currentCall['extra']);
+          final uuid = call.uuid;
+          final customerName = call.customerName;
+          if (call.callType == CallType.video) {
+            _navigateToVideoCalling(uuid, customerName);
+          } else {
+            _navigateToVoiceCalling(uuid, customerName);
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Exception while checking active calls: $e');
+    }
+  }
+
+  Future<dynamic> _getCurrentCall() async {
+    try {
+      final List<dynamic> calls = await FlutterCallkitIncoming.activeCalls();
+      if (calls.isNotEmpty) {
+        return calls[0];
+      } else {
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Exception while fetching active calls: $e');
+    }
+  }
+
+  void _navigateToVoiceCalling(dynamic uuid, dynamic customerName) {
+    Get.toNamed(
+      AppRoutes.voiceCalling,
+      arguments: CallingArguments(
+        uuid: uuid,
+        user: User(name: customerName ?? 'Unknown Caller'),
+        callType: CallType.audio,
+      ),
+    );
+  }
+
+  void _navigateToVideoCalling(dynamic uuid, dynamic customerName) {
+    Get.toNamed(
+      AppRoutes.videoCalling,
+      arguments: CallingArguments(
+        uuid: uuid,
+        user: User(name: customerName ?? 'Unknown Caller'),
+        callType: CallType.video,
+      ),
+    );
   }
 
   bool onScrollNotification(ScrollNotification notification) {

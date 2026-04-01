@@ -92,6 +92,7 @@ class CallingController extends GetxController {
     _disconnectLiveKit();
     _roomListener?.dispose();
     liveKitService.dispose();
+    CallkitService().dismissAllCallNotification();
     super.onClose();
   }
 

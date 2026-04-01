@@ -65,6 +65,10 @@ class CallkitService {
     return FlutterCallkitIncoming.endCall(callUuid);
   }
 
+  Future<void> dismissAllCallNotification() {
+    return  FlutterCallkitIncoming.endAllCalls();
+  }
+
   void initCallkitListeners({
     Function(Map<String, dynamic>? callData)? onCallAccept,
     Function(Map<String, dynamic>? callData)? onCallDecline,
