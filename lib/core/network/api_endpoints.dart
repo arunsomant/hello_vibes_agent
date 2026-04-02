@@ -23,7 +23,7 @@ class ApiEndpoints {
 
   static const String updateOnlineStatus = '/agent/toggle-availability';
 
-  static const String logout = '/agent/logout';
+  static const String logout = '/logout';
 
   static const String transactions = '/wallet/transactions';
 

@@ -38,4 +38,9 @@ class AuthLocalDataSource {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool(onboardingCompleted) ?? false;
   }
+
+  Future<bool> clearAll() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return await prefs.clear();
+  }
 }

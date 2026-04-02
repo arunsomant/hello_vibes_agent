@@ -55,6 +55,10 @@ class AuthRepository {
     return response;
   }
 
+  Future<void> clearAllLocalData() async {
+    await localDataSource.clearAll();
+  }
+
   Future<LoginResponse> loginUsingFirebase({required String token}) async {
     return await remoteDataSource.loginUsingFirebase(token: token);
   }

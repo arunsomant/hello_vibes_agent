@@ -106,7 +106,7 @@ class AuthController extends GetxController {
     } catch (_) {
       _showToast('An error occurred while logging out.');
     } finally {
-      await authRepository.clearAccessToken();
+      await authRepository.clearAllLocalData();
       _gotoLoginPage();
     }
   }

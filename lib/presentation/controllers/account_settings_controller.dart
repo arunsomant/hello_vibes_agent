@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 
 import 'auth_controller.dart';
+
 class AccountSettingsController extends GetxController {
   void onCommunityGuidelinesPressed() {}
 
