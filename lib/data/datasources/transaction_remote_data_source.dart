@@ -8,9 +8,11 @@ class TransactionRemoteDataSource {
 
   final ApiBaseHelper apiHelper;
 
-  Future<TransactionsResponse> transactions() async {
-    final response = await apiHelper.get(ApiEndpoints.transactions);
-    print(response);
+  Future<TransactionsResponse> transactions({required int nextPage}) async {
+    final response = await apiHelper.get(
+      ApiEndpoints.transactions,
+      queryParameters: {'page': '$nextPage'},
+    );
     return TransactionsResponse.fromMap(response);
   }
 

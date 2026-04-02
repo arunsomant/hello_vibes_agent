@@ -32,28 +32,41 @@ class TransactionsTab extends GetView<TransactionsController> {
           }
 
           final busy = controller.busyTransactions.isTrue;
-          return ListView.separated(
-            padding: EdgeInsets.symmetric(
-              vertical: AppSpacings.s16,
-              horizontal: AppSpacings.s8,
-            ),
-            itemCount: controller.transactions.length + (busy ? 5 : 0),
-            itemBuilder: (context, index) {
-              Transaction transaction = const Transaction();
-              if (index < controller.transactions.length) {
-                transaction = controller.transactions[index];
+          return NotificationListener<ScrollNotification>(
+            onNotification: (ScrollNotification scrollInfo) {
+              if (controller.busyTransactions.isFalse &&
+                  scrollInfo.metrics.pixels >=
+                      scrollInfo.metrics.maxScrollExtent - 200) {
+                controller.getNextTransactions();
               }
-              return _buildTransactionsItem(
-                transaction: transaction,
-                busy: busy,
-              );
+              return false;
             },
-            separatorBuilder: (BuildContext context, int index) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacings.s8),
-                child: Divider(color: AppColors.borderDivider, height: 1),
-              );
-            },
+            child: ListView.separated(
+              padding: EdgeInsets.symmetric(
+                vertical: AppSpacings.s16,
+                horizontal: AppSpacings.s8,
+              ),
+              itemCount: controller.transactions.length + (busy ? 10 : 0),
+              itemBuilder: (context, index) {
+                Transaction transaction = const Transaction();
+                if (index < controller.transactions.length) {
+                  transaction = controller.transactions[index];
+                  return _buildTransactionsItem(transaction: transaction);
+                }
+                return _buildTransactionsItem(
+                  transaction: transaction,
+                  busy: busy,
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacings.s8,
+                  ),
+                  child: Divider(color: AppColors.borderDivider, height: 1),
+                );
+              },
+            ),
           );
         }),
       ),

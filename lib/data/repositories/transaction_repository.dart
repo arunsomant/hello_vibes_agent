@@ -7,8 +7,8 @@ class TransactionRepository {
 
   TransactionRepository({required this.remoteDataSource});
 
-  Future<TransactionsResponse> getTransactions() async {
-    return await remoteDataSource.transactions();
+  Future<TransactionsResponse> getTransactions({required int nextPage}) async {
+    return await remoteDataSource.transactions(nextPage: nextPage);
   }
 
   Future<BankDetailResponse> getBankDetails() async {

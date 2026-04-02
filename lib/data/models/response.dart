@@ -61,15 +61,17 @@ class PaginationResponse<T> {
     Map<String, dynamic> json,
     List<dynamic>? jsonX,
     T Function(Map<String, dynamic> json) fromMapT,
-  ) => PaginationResponse<T>(
-    data: jsonX != null
-        ? List<T>.from(jsonX.map((x) => fromMapT(x)))
-        : const [],
-    currentPage: json['current_page'] ?? 0,
-    lastPage: json['last_page'] ?? 0,
-    perPage: json['per_page'] ?? 0,
-    total: json['total'] ?? 0,
-  );
+  ) {
+      return  PaginationResponse<T>(
+          data: jsonX != null
+              ? List<T>.from(jsonX.map((x) => fromMapT(x)))
+              : const [],
+          currentPage: json['pagination']['current_page'] ?? 0,
+          lastPage: json['pagination']['last_page'] ?? 0,
+          perPage: json['pagination']['per_page'] ?? 0,
+          total: json['pagination']['total'] ?? 0,
+        );
+  }
 
   Map<String, dynamic> toMap(Map<String, dynamic> Function(T value) toMapT) => {
     'current_page': currentPage,

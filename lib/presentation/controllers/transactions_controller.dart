@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+
 import '../../core/utils/app_extensions.dart';
 import '../../data/models/transaction.dart';
 import '../../data/repositories/transaction_repository.dart';
@@ -18,6 +19,10 @@ class TransactionsController extends GetxController {
 
   final busyTransactions = false.obs;
 
+  int currentPage = 0;
+
+  int lastPage = 0;
+
   @override
   void onInit() {
     _getTransactions();
@@ -32,6 +37,19 @@ class TransactionsController extends GetxController {
     AppDialog.showBottomSheet(child: TransactionsFilter());
   }
 
+  void onRefreshPressed() {
+    currentPage = 0;
+    lastPage = 0;
+    transactions([]);
+    _getTransactions();
+  }
+
+  void getNextTransactions() {
+    if (currentPage < lastPage && busyTransactions.isFalse) {
+      _getTransactions();
+    }
+  }
+
   void filterTransactions({
     required String transactionType,
     required String fromDate,
@@ -41,19 +59,21 @@ class TransactionsController extends GetxController {
   void _getTransactions() async {
     busyTransactions(true);
     try {
-      final response = await transactionRepository.getTransactions();
+      final response = await transactionRepository.getTransactions(
+        nextPage: currentPage + 1,
+      );
       if (response.success) {
-        transactions(response.paginationResponse.data);
+        currentPage = response.paginationResponse.currentPage;
+        lastPage = response.paginationResponse.lastPage;
+        if (currentPage == 1) {
+          transactions(response.paginationResponse.data);
+        } else {
+          transactions.addAll(response.paginationResponse.data);
+        }
       }
-    } catch (e) {
-      print(e);
+    } catch (_) {
     } finally {
       busyTransactions(false);
     }
-  }
-
-  void onRefreshPressed() {
-    transactions(const []);
-    _getTransactions();
   }
 }
