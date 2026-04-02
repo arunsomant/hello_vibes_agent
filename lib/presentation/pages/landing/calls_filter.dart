@@ -52,7 +52,7 @@ class CallsFilter extends GetView<CallsFilterController> {
                   final selected =
                       callType == controller.selectedCallType.value;
                   return AppPill(
-                    text: callType,
+                    text: callType.capitalizeFirst ?? '',
                     onTap: () {
                       controller.onCallTypeSelected(callType);
                     },
@@ -68,6 +68,7 @@ class CallsFilter extends GetView<CallsFilterController> {
               children: [
                 Expanded(
                   child: AppInputText(
+                    keyboardType: TextInputType.none,
                     controller: controller.fromDateController,
                     onTap: controller.onFromDateTap,
                     label: 'From',
@@ -76,6 +77,7 @@ class CallsFilter extends GetView<CallsFilterController> {
                 ),
                 Expanded(
                   child: AppInputText(
+                    keyboardType: TextInputType.none,
                     controller: controller.toDateController,
                     onTap: controller.onToDateTap,
                     label: 'To',

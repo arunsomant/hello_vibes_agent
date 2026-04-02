@@ -8,10 +8,20 @@ class CallRemoteDataSource {
 
   final ApiBaseHelper apiHelper;
 
-  Future<CallsResponse> calls({required int nextPage}) async {
+  Future<CallsResponse> calls({
+    required int nextPage,
+    String callType = '',
+    String fromDate = '',
+    String toDate = '',
+  }) async {
     final response = await apiHelper.get(
       ApiEndpoints.callHistory,
-      queryParameters: {'page': '$nextPage'},
+      queryParameters: {
+        'page': '$nextPage',
+        'type': callType,
+        'from': fromDate,
+        'to': toDate,
+      },
     );
     return CallsResponse.fromMap(response);
   }
@@ -41,7 +51,6 @@ class CallRemoteDataSource {
     final response = await apiHelper.post(
       '${ApiEndpoints.calls}/${call.uuid}${ApiEndpoints.callReject}',
     );
-    print(response);
     return AppResponse.fromMap(response);
   }
 }

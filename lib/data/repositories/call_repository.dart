@@ -25,8 +25,18 @@ class CallRepository {
     );
   }
 
-  Future<CallsResponse> getCalls({required int nextPage}) async {
-    return await remoteDataSource.calls(nextPage:nextPage);
+  Future<CallsResponse> getCalls({
+    required int nextPage,
+    String callType = '',
+    String fromDate = '',
+    String toDate = '',
+  }) async {
+    return await remoteDataSource.calls(
+      nextPage: nextPage,
+      callType: callType,
+      fromDate: fromDate,
+      toDate: toDate,
+    );
   }
 
   Future<CallResponse> acceptCall({required String uuid}) async {

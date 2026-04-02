@@ -27,6 +27,8 @@ class CallsController extends GetxController {
 
   int lastPage = 0;
 
+  String callType = '', fromDate = '', toDate = '';
+
   @override
   void onInit() {
     _getCalls();
@@ -41,12 +43,21 @@ class CallsController extends GetxController {
     required String callType,
     required String fromDate,
     required String toDate,
-  }) {}
+  }) {
+    this.callType = callType;
+    this.fromDate = fromDate;
+    this.toDate = toDate;
+    _refresh();
+  }
 
   void onRefresh() {
+    _refresh();
+  }
+
+  void _refresh() {
+    calls.clear();
     currentPage = 0;
     lastPage = 0;
-    calls([]);
     _getCalls();
   }
 
@@ -59,7 +70,12 @@ class CallsController extends GetxController {
   void _getCalls() async {
     try {
       busyCalls(true);
-      final response = await callRepository.getCalls(nextPage: currentPage + 1);
+      final response = await callRepository.getCalls(
+        nextPage: currentPage + 1,
+        callType: callType,
+        fromDate: fromDate,
+        toDate: toDate,
+      );
       if (response.success) {
         currentPage = response.paginationResponse.currentPage;
         lastPage = response.paginationResponse.lastPage;

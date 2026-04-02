@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mingle_talk_agent/data/models/call.dart';
+
 import '../../core/utils/app_formatter.dart';
 import '../widgets/index.dart';
 import 'calls_controller.dart';
 
 class CallsFilterController extends GetxController {
-  final callTypes = <String>['Voice', 'Video'];
+  final callTypes = <String>[CallType.audio.value, CallType.video.value];
 
   final selectedCallType = ''.obs;
 
@@ -29,7 +31,7 @@ class CallsFilterController extends GetxController {
   void onClearAllPressed() {
     isFilterApplied(false);
     _clearFilters();
-    Get.back();
+    _updateList();
   }
 
   void _clearFilters() {
@@ -40,6 +42,10 @@ class CallsFilterController extends GetxController {
 
   void onApplyPressed() {
     isFilterApplied(true);
+    _updateList();
+  }
+
+  void _updateList() {
     Get.find<CallsController>().filterTransactions(
       callType: selectedCallType.value,
       fromDate: fromDateController.text,
@@ -60,7 +66,7 @@ class CallsFilterController extends GetxController {
       firstDate: DateTime(2026, 02, 01),
       lastDate: selectedToDate ?? DateTime.now(),
       onDateSelected: (picked) {
-        fromDateController.text = AppFormatter.formatDDMMYYYY(picked);
+        fromDateController.text = AppFormatter.formatDDMMYYYY2(picked);
       },
     );
   }
@@ -77,7 +83,7 @@ class CallsFilterController extends GetxController {
       firstDate: selectedFromDate ?? DateTime(2026, 02, 01),
       lastDate: DateTime.now(),
       onDateSelected: (picked) {
-        toDateController.text = AppFormatter.formatDDMMYYYY(picked);
+        toDateController.text = AppFormatter.formatDDMMYYYY2(picked);
       },
     );
   }

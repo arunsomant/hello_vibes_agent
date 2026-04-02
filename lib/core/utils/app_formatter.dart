@@ -57,6 +57,12 @@ class AppFormatter {
     return dateFormat.format(dateTime);
   }
 
+  static String formatDDMMYYYY2(DateTime? dateTime) {
+    if (dateTime == null) return '';
+    final dateFormat = DateFormat('dd-MM-yyyy');
+    return dateFormat.format(dateTime);
+  }
+
   static DateTime? parseDDMMYYYY(String dateStr) {
     final dateFormat = DateFormat('dd/MM/yyyy');
     return dateFormat.tryParse(dateStr);
