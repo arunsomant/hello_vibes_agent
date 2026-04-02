@@ -46,7 +46,7 @@ class CallsFilterController extends GetxController {
   }
 
   void _updateList() {
-    Get.find<CallsController>().filterTransactions(
+    Get.find<CallsController>().filterCalls(
       callType: selectedCallType.value,
       fromDate: fromDateController.text,
       toDate: toDateController.text,

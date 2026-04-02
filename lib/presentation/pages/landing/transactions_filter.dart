@@ -54,7 +54,7 @@ class TransactionsFilter extends GetView<TransactionsFilterController> {
                   final selected =
                       callType == controller.selectedTransactionType.value;
                   return AppPill(
-                    text: callType,
+                    text: callType.capitalizeFirst ?? '',
                     onTap: () {
                       controller.onTransactionTypeSelected(callType);
                     },
@@ -73,7 +73,7 @@ class TransactionsFilter extends GetView<TransactionsFilterController> {
                     controller: controller.fromDateController,
                     onTap: controller.onFromDateTap,
                     label: 'From',
-                    hintText: 'dd/mm/yyyy',
+                    hintText: 'dd-mm-yyyy',
                   ),
                 ),
                 Expanded(
@@ -81,7 +81,7 @@ class TransactionsFilter extends GetView<TransactionsFilterController> {
                     controller: controller.toDateController,
                     onTap: controller.onToDateTap,
                     label: 'To',
-                    hintText: 'dd/mm/yyyy',
+                    hintText: 'dd-mm-yyyy',
                   ),
                 ),
               ],

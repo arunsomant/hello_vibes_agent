@@ -23,6 +23,8 @@ class TransactionsController extends GetxController {
 
   int lastPage = 0;
 
+  String transactionType = '', fromDate = '', toDate = '';
+
   @override
   void onInit() {
     _getTransactions();
@@ -38,6 +40,10 @@ class TransactionsController extends GetxController {
   }
 
   void onRefreshPressed() {
+    _refresh();
+  }
+
+  void _refresh() {
     currentPage = 0;
     lastPage = 0;
     transactions([]);
@@ -54,13 +60,21 @@ class TransactionsController extends GetxController {
     required String transactionType,
     required String fromDate,
     required String toDate,
-  }) {}
+  }) {
+    this.transactionType = transactionType;
+    this.fromDate = fromDate;
+    this.toDate = toDate;
+    _refresh();
+  }
 
   void _getTransactions() async {
     busyTransactions(true);
     try {
       final response = await transactionRepository.getTransactions(
         nextPage: currentPage + 1,
+        transactionType: transactionType,
+        fromDate: fromDate,
+        toDate: toDate,
       );
       if (response.success) {
         currentPage = response.paginationResponse.currentPage;

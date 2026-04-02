@@ -4,8 +4,9 @@ import 'package:get/get.dart';
 import '../../core/utils/app_formatter.dart';
 import '../widgets/index.dart';
 import 'transactions_controller.dart';
+
 class TransactionsFilterController extends GetxController {
-  final transactionTypes = <String>['Call', 'Purchase'];
+  final transactionTypes = <String>['call', 'withdrawal'];
 
   final selectedTransactionType = ''.obs;
 
@@ -29,7 +30,7 @@ class TransactionsFilterController extends GetxController {
   void onClearAllPressed() {
     isFilterApplied(false);
     _clearFilters();
-    Get.back();
+    _updateList();
   }
 
   void _clearFilters() {
@@ -40,6 +41,10 @@ class TransactionsFilterController extends GetxController {
 
   void onApplyPressed() {
     isFilterApplied(true);
+    _updateList();
+  }
+
+  void _updateList() {
     Get.find<TransactionsController>().filterTransactions(
       transactionType: selectedTransactionType.value,
       fromDate: fromDateController.text,
@@ -60,7 +65,7 @@ class TransactionsFilterController extends GetxController {
       firstDate: DateTime(2026, 02, 01),
       lastDate: selectedToDate ?? DateTime.now(),
       onDateSelected: (picked) {
-        fromDateController.text = AppFormatter.formatDDMMYYYY(picked);
+        fromDateController.text = AppFormatter.formatDDMMYYYY2(picked);
       },
     );
   }
@@ -77,7 +82,7 @@ class TransactionsFilterController extends GetxController {
       firstDate: selectedFromDate ?? DateTime(2026, 02, 01),
       lastDate: DateTime.now(),
       onDateSelected: (picked) {
-        toDateController.text = AppFormatter.formatDDMMYYYY(picked);
+        toDateController.text = AppFormatter.formatDDMMYYYY2(picked);
       },
     );
   }

@@ -39,7 +39,7 @@ class CallsController extends GetxController {
     AppDialog.showBottomSheet(child: CallsFilter());
   }
 
-  void filterTransactions({
+  void filterCalls({
     required String callType,
     required String fromDate,
     required String toDate,
