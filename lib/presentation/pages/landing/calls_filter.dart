@@ -72,7 +72,7 @@ class CallsFilter extends GetView<CallsFilterController> {
                     controller: controller.fromDateController,
                     onTap: controller.onFromDateTap,
                     label: 'From',
-                    hintText: 'dd/mm/yyyy',
+                    hintText: 'dd-mm-yyyy',
                   ),
                 ),
                 Expanded(
@@ -81,7 +81,7 @@ class CallsFilter extends GetView<CallsFilterController> {
                     controller: controller.toDateController,
                     onTap: controller.onToDateTap,
                     label: 'To',
-                    hintText: 'dd/mm/yyyy',
+                    hintText: 'dd-mm-yyyy',
                   ),
                 ),
               ],
