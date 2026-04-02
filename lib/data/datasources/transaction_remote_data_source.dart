@@ -23,7 +23,6 @@ class TransactionRemoteDataSource {
         'to': toDate,
       },
     );
-    print(response);
     return TransactionsResponse.fromMap(response);
   }
 

@@ -1,3 +1,5 @@
+import 'package:mingle_talk_agent/data/models/call.dart';
+
 import '../../core/utils/app_extensions.dart';
 import 'response.dart';
 
@@ -71,6 +73,7 @@ class Transaction {
   final TransactionType type;
   final TransactionRawType rawType;
   final TransactionDirection direction;
+  final CallType callType;
   final int coins;
   final int callId;
   final int callDurationSeconds;
@@ -87,6 +90,7 @@ class Transaction {
     this.type = TransactionType.none,
     this.rawType = TransactionRawType.none,
     this.direction = TransactionDirection.none,
+    this.callType = CallType.none,
     this.coins = 0,
     this.callId = 0,
     this.callDurationSeconds = 0,
@@ -99,22 +103,25 @@ class Transaction {
     this.createdAt,
   });
 
-  factory Transaction.fromMap(Map<String, dynamic> json) => Transaction(
-    id: json['id'] ?? 0,
-    type: TransactionType.values.fromJson(json['type']),
-    rawType: TransactionRawType.values.fromJson(json['raw_type']),
-    direction: TransactionDirection.values.fromJson(json['direction']),
-    coins: json['coins'] ?? 0,
-    callId: json['call_id'] ?? 0,
-    callDurationSeconds: json['call_duration_seconds'] ?? 0,
-    callDuration: json['call_duration'] ?? '',
-    amountInr: double.tryParse((json['amount_inr'] ?? '').toString()) ?? 0,
-    balanceBefore: json['balance_before'] ?? 0,
-    balanceAfter: json['balance_after'] ?? 0,
-    status: TransactionStatus.values.fromJson(json['status']),
-    description: json['description'] ?? '',
-    createdAt: DateTime.tryParse(json['created_at'] ?? '')?.toLocal(),
-  );
+  factory Transaction.fromMap(Map<String, dynamic> json) {
+    return Transaction(
+      id: json['id'] ?? 0,
+      type: TransactionType.values.fromJson(json['type']),
+      rawType: TransactionRawType.values.fromJson(json['raw_type']),
+      direction: TransactionDirection.values.fromJson(json['direction']),
+      callType: CallType.values.fromJson(json['call_type']),
+      coins: json['coins'] ?? 0,
+      callId: json['call_id'] ?? 0,
+      callDurationSeconds: json['call_duration_seconds'] ?? 0,
+      callDuration: json['call_duration'] ?? '',
+      amountInr: double.tryParse((json['amount_inr'] ?? '').toString()) ?? 0,
+      balanceBefore: json['balance_before'] ?? 0,
+      balanceAfter: json['balance_after'] ?? 0,
+      status: TransactionStatus.values.fromJson(json['status']),
+      description: json['description'] ?? '',
+      createdAt: DateTime.tryParse(json['created_at'] ?? '')?.toLocal(),
+    );
+  }
 
   Map<String, dynamic> toMap() => {
     'id': id,
@@ -164,8 +171,7 @@ enum TransactionDirection implements JsonEnum {
 
 enum TransactionType implements JsonEnum {
   none('none'),
-  voiceCall('call'),
-  videoCall('videoCall'),
+  call('call'),
   withdrawal('withdrawal'),
   credit('credit'),
   refund('refund'),

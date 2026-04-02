@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mingle_talk_agent/data/models/call.dart';
 
 import '../../../core/config/app_assets_mapper.dart';
 import '../../../core/config/app_config.dart';
@@ -94,13 +95,15 @@ class TransactionsTab extends GetView<TransactionsController> {
     );
   }
 
-  Widget _buildTransactionTypeIcon(TransactionType method) {
+  Widget _buildTransactionTypeIcon(TransactionType type, CallType callType) {
     String iconAsset;
-    switch (method) {
-      case TransactionType.voiceCall:
-        iconAsset = AppAssetsMapper.icCall;
-      case TransactionType.videoCall:
-        iconAsset = AppAssetsMapper.icVideoCall;
+    switch (type) {
+      case TransactionType.call:
+        if (callType == CallType.audio) {
+          iconAsset = AppAssetsMapper.icCall;
+        } else {
+          iconAsset = AppAssetsMapper.icVideoCall;
+        }
       case TransactionType.adjustment:
       case TransactionType.refund:
       case TransactionType.withdrawal:
@@ -133,6 +136,7 @@ class TransactionsTab extends GetView<TransactionsController> {
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: AppSpacings.s2,
                 children: [
                   Row(
                     spacing: AppSpacings.s4,
@@ -149,7 +153,10 @@ class TransactionsTab extends GetView<TransactionsController> {
                         child: Row(
                           spacing: AppSpacings.s4,
                           children: [
-                            _buildTransactionTypeIcon(transaction.type),
+                            _buildTransactionTypeIcon(
+                              transaction.type,
+                              transaction.callType,
+                            ),
                             AppText(
                               transaction.type.name.capitalizeFirst ?? '',
                               type: AppTextType.t14sb,
