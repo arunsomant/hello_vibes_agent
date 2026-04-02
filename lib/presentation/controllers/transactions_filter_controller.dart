@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mingle_talk_agent/data/models/transaction.dart';
 
 import '../../core/utils/app_formatter.dart';
 import '../widgets/index.dart';
 import 'transactions_controller.dart';
 
 class TransactionsFilterController extends GetxController {
-  final transactionTypes = <String>['call', 'withdrawal'];
+  final transactionTypes = <String>[
+    TransactionType.call.value,
+    TransactionType.withdrawal.value,
+  ];
 
   final selectedTransactionType = ''.obs;
 
