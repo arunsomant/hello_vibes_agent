@@ -25,7 +25,6 @@ class AuthRemoteDataSource {
       'provider_type': null,
     };
     final response = await apiHelper.post(ApiEndpoints.otpSend, body: body);
-    print(response);
     return OtpSendResponse.fromMap(response);
   }
 
