@@ -8,8 +8,11 @@ class CallRemoteDataSource {
 
   final ApiBaseHelper apiHelper;
 
-  Future<CallsResponse> calls() async {
-    final response = await apiHelper.get(ApiEndpoints.callHistory);
+  Future<CallsResponse> calls({required int nextPage}) async {
+    final response = await apiHelper.get(
+      ApiEndpoints.callHistory,
+      queryParameters: {'page': '$nextPage'},
+    );
     return CallsResponse.fromMap(response);
   }
 

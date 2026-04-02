@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../../core/config/app_assets_mapper.dart';
 import '../../../core/config/app_config.dart';
 import '../../../core/theme/app_colors.dart';
@@ -20,48 +21,63 @@ class CallsTab extends GetView<CallsController> {
         onRefresh: () async {
           controller.onRefresh();
         },
-        child: CustomScrollView(
-          slivers: [
-            SliverFloatingHeader(
-              snapMode: FloatingHeaderSnapMode.scroll,
-              child: Center(
-                child: ColoredBox(
-                  color: AppColors.backgroundPage,
-                  child: _buildWallerBanner(),
+        child: NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification scrollInfo) {
+            if (scrollInfo.depth == 0) {
+              if (controller.busyCalls.isFalse &&
+                  scrollInfo.metrics.pixels >=
+                      scrollInfo.metrics.maxScrollExtent - 200) {
+                controller.getNextCalls();
+              }
+            }
+            return false;
+          },
+          child: CustomScrollView(
+            slivers: [
+              SliverFloatingHeader(
+                snapMode: FloatingHeaderSnapMode.scroll,
+                child: Center(
+                  child: ColoredBox(
+                    color: AppColors.backgroundPage,
+                    child: _buildWallerBanner(),
+                  ),
                 ),
               ),
-            ),
-            Obx(() {
-              if (controller.busyCalls.isFalse && controller.calls.isEmpty) {
-                return SliverFillRemaining(
-                  child: AppErrorWidget(
-                    asset: AppAssetsMapper.icDocumentText,
-                    onPressed: controller.onRefresh,
-                    message: 'Empty list',
+              Obx(() {
+                if (controller.busyCalls.isFalse && controller.calls.isEmpty) {
+                  return SliverFillRemaining(
+                    child: AppErrorWidget(
+                      asset: AppAssetsMapper.icDocumentText,
+                      onPressed: controller.onRefresh,
+                      message: 'Empty list',
+                    ),
+                  );
+                }
+                final busy = controller.busyCalls.isTrue;
+
+                return SliverPadding(
+                  padding: EdgeInsets.symmetric(horizontal: AppSpacings.s16),
+                  sliver: SliverList.separated(
+                    itemCount: controller.calls.length + (busy ? 10 : 0),
+                    itemBuilder: (context, index) {
+                      Call call = const Call();
+                      if (index < controller.calls.length) {
+                        call = controller.calls[index];
+                        return _buildCallItem(call: call);
+                      }
+                      return _buildCallItem(call: call, busy: busy);
+                    },
+                    separatorBuilder: (context, index) {
+                      return _buildCallDivider();
+                    },
                   ),
                 );
-              }
-              final busy = controller.busyCalls.isTrue;
-
-              return SliverPadding(
-                padding: EdgeInsets.symmetric(horizontal: AppSpacings.s16),
-                sliver: SliverList.separated(
-                  itemCount: controller.calls.length + (busy ? 5 : 0),
-                  itemBuilder: (context, index) {
-                    Call call = const Call();
-                    if (index < controller.calls.length) {
-                      call = controller.calls[index];
-                    }
-                    return _buildCallItem(call: call, busy: busy);
-                  },
-                  separatorBuilder: (context, index) {
-                    return _buildCallDivider();
-                  },
-                ),
-              );
-            }),
-            SliverToBoxAdapter(child: const SizedBox(height: AppSpacings.s160)),
-          ],
+              }),
+              SliverToBoxAdapter(
+                child: const SizedBox(height: AppSpacings.s160),
+              ),
+            ],
+          ),
         ),
       ),
       floatingActionButton: Obx(() {

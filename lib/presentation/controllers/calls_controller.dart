@@ -23,6 +23,10 @@ class CallsController extends GetxController {
   bool get isFilterApplied =>
       Get.find<CallsFilterController>().isFilterApplied.value;
 
+  int currentPage = 0;
+
+  int lastPage = 0;
+
   @override
   void onInit() {
     _getCalls();
@@ -40,28 +44,35 @@ class CallsController extends GetxController {
   }) {}
 
   void onRefresh() {
+    currentPage = 0;
+    lastPage = 0;
     calls([]);
     _getCalls();
-    _getUserProfile();
+  }
+
+  void getNextCalls() {
+    if (currentPage < lastPage && busyCalls.isFalse) {
+      _getCalls();
+    }
   }
 
   void _getCalls() async {
     try {
       busyCalls(true);
-      final response = await callRepository.getCalls();
+      final response = await callRepository.getCalls(nextPage: currentPage + 1);
       if (response.success) {
-        calls(response.paginationResponse.data);
+        currentPage = response.paginationResponse.currentPage;
+        lastPage = response.paginationResponse.lastPage;
+        if (currentPage == 1) {
+          calls(response.paginationResponse.data);
+        } else {
+          calls.addAll(response.paginationResponse.data);
+        }
       }
     } catch (_) {
       _showToast('Failed to load calls');
     } finally {
       busyCalls(false);
-    }
-  }
-
-  void _getUserProfile() {
-    if (Get.isRegistered<AuthController>()) {
-      Get.find<AuthController>().getUserProfile();
     }
   }
 
