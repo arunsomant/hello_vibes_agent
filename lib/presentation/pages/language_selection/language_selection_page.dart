@@ -14,6 +14,9 @@ class LanguageSelectionPage extends GetView<LanguageSelectionController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: controller.fromProfile
+          ? AppBar(title: AppText('Language Preference'))
+          : null,
       body: Stack(
         children: [
           AppBackground(),

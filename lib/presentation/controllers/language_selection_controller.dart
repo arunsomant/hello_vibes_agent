@@ -21,6 +21,8 @@ class LanguageSelectionController extends GetxController {
   bool isLanguageSelected(Language language) =>
       selectedLanguages.contains(language);
 
+  final fromProfile = Get.isRegistered<ProfileController>();
+
   @override
   void onInit() {
     _getLanguages();
@@ -80,7 +82,7 @@ class LanguageSelectionController extends GetxController {
   }
 
   void _gotoNextPage() {
-    if (Get.isRegistered<ProfileController>()) {
+    if (fromProfile) {
       Get.back();
     } else {
       _gotoLanding();
