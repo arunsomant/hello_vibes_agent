@@ -22,7 +22,10 @@ class AuthController extends GetxController {
       final token = await authRepository.getAccessToken();
       if (token.isNotEmpty) {
         await _fetchUserProfile();
-        if (user.value.name.isEmpty) {
+        if (user.value.name.isEmpty ||
+            user.value.avatar.url.isEmpty ||
+            user.value.gender.isEmpty ||
+            user.value.dob == null) {
           _gotoProfileSetupPage();
         } else if (user.value.languages.isEmpty) {
           _gotoLanguageSelectionPage();
