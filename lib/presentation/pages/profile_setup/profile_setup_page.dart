@@ -120,6 +120,7 @@ class ProfileSetupPage extends GetView<ProfileSetupController> {
                               ShakeView(
                                 controller: controller.shakeControllerDOB,
                                 child: AppInputText(
+                                  keyboardType: TextInputType.none,
                                   onTap: controller.onDateOfBirthFieldTapped,
                                   controller:
                                       controller.textEditingControllerDOB,
