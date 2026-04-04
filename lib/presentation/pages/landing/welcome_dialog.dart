@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mingle_talk_agent/core/config/app_assets_mapper.dart';
-import 'package:mingle_talk_agent/core/theme/app_spacings.dart';
-import 'package:mingle_talk_agent/presentation/widgets/index.dart';
-
+import '../../../core/config/app_assets_mapper.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_sizes.dart';
+import '../../../core/theme/app_spacings.dart';
+import '../../widgets/index.dart';
 
 class WelcomeDialog extends StatelessWidget {
   const WelcomeDialog({super.key, this.onIAgreePressed});

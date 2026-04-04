@@ -49,7 +49,7 @@ class LoginPage extends GetView<LoginController> {
                           ),
                           Obx(() {
                             return AppButton(
-                              text: 'Login',
+                              text: 'Get OTP',
                               onPressed: controller.onMobileLoginPressed,
                               height: 52,
                               color: AppColors.primary,
