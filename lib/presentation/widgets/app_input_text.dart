@@ -34,7 +34,7 @@ class AppInputText extends StatefulWidget {
     this.error,
     this.onSubmitted,
     this.height,
-    this.filled = true,
+    this.filled = false,
     this.hintTextColor,
     this.onChanged,
     this.showCursor,
