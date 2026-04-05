@@ -18,26 +18,27 @@ class WalletPage extends GetView<WalletController> {
     return Stack(
       children: [
         Positioned.fill(
-          child: AppBackground(backgroundColor: AppColors.macaroni),
+          bottom: 500,
+          child: AppBackground(backgroundColor: AppColors.macaroniDark),
         ),
         Scaffold(
           backgroundColor: AppColors.transparent,
           appBar: AppBar(
             backgroundColor: AppColors.transparent,
-            title: AppText('Wallet'),
+            title: AppText('Wallet', color: AppColors.textSecondary),
             centerTitle: false,
             leading: Center(
               child: AppButtonIcon(
                 svgAsset: AppAssetsMapper.icLeftArrow,
                 onTap: Get.back,
-                color: AppColors.iconPrimary,
+                color: AppColors.iconSecondary,
               ),
             ),
             actions: [
               AppButtonIcon(
                 svgAsset: AppAssetsMapper.icFAQ,
                 onTap: Get.back,
-                color: AppColors.iconPrimary,
+                color: AppColors.iconSecondary,
               ),
             ],
           ),
@@ -53,7 +54,12 @@ class WalletPage extends GetView<WalletController> {
                   child: Row(
                     spacing: AppSpacings.s8,
                     children: [
-                      AppText('₹', type: AppTextType.t64b, shadow: true),
+                      AppText(
+                        '₹',
+                        type: AppTextType.t64b,
+                        shadow: true,
+                        color: AppColors.textSecondary,
+                      ),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,11 +68,13 @@ class WalletPage extends GetView<WalletController> {
                               controller.walletBalanceInInr.toStringAsFixed(2),
                               type: AppTextType.t40b,
                               shadow: true,
+                              color: AppColors.textSecondary,
                             ),
                             AppText(
                               'Wallet Balance',
                               type: AppTextType.t14sb,
                               shadow: true,
+                              color: AppColors.textSecondary,
                             ),
                           ],
                         ),
@@ -80,6 +88,8 @@ class WalletPage extends GetView<WalletController> {
                             'Transaction History',
                             type: AppTextType.t12sb,
                             decoration: TextDecoration.underline,
+                              color: AppColors.textSecondary,
+                            shadow: true,
                           ),
                         ),
                       ),

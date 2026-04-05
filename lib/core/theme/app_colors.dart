@@ -18,6 +18,7 @@ class AppColors {
   static const Color teal = Color(0xFF4ECDC4);
   static const Color richBlack = Color(0xFF0E1417);
   static const Color macaroni = Color(0xFFF8BE98);
+  static const Color macaroniDark = Color(0xFFE88849);
   static const Color macaroni20 = Color(0x33F8BE98);
   static const Color tradeWind = Color(0xFF5AABA7);
   static const Color grey = Color(0xFFBEBEBE);
