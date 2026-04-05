@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -87,6 +88,40 @@ class OtpVerificationPage extends GetView<OtpVerificationController> {
                           const SizedBox(height: AppSpacings.s24),
                           Obx(() {
                             if (controller.resendRemaining.value == 0) {
+                              if (controller.isIndianNumber) {
+                                return RichText(
+                                  textAlign: TextAlign.center,
+                                  text: TextSpan(
+                                    style: AppText.t14r.copyWith(
+                                      color: AppColors.textPrimary,
+                                    ),
+                                    children: [
+                                      TextSpan(text: 'Resend Code via '),
+                                      TextSpan(
+                                        text: 'SMS',
+                                        style: TextStyle(
+                                          color: AppColors.primary,
+                                          decoration: TextDecoration.underline,
+                                        ),
+                                        recognizer: TapGestureRecognizer()
+                                          ..onTap =
+                                              controller.onResendSMSPressed,
+                                      ),
+                                      const TextSpan(text: ' or '),
+                                      TextSpan(
+                                        text: 'Whatsapp',
+                                        style: TextStyle(
+                                          color: AppColors.primary,
+                                          decoration: TextDecoration.underline,
+                                        ),
+                                        recognizer: TapGestureRecognizer()
+                                          ..onTap = controller
+                                              .onResendWhatsappPressed,
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
                               return AppButton(
                                 text: 'Resend Code',
                                 textType: AppTextType.t14r,

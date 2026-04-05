@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../data/models/otp.dart';
 import '../../data/repositories/auth_repository.dart';
 import '../widgets/index.dart';
 import 'auth_controller.dart';
@@ -31,6 +32,8 @@ class OtpVerificationController extends GetxController
 
   final int timerDuration1 = 60;
 
+  bool get isIndianNumber => dialCode.value == 'IN' || dialCode.value == '+91';
+
   @override
   void onInit() {
     final arguments = Get.arguments;
@@ -39,6 +42,11 @@ class OtpVerificationController extends GetxController
       dialCode(arguments['countryCode']);
     }
     startTimer(timerDuration1);
+    otpController.addListener(() {
+      if (otpController.text.trim().length == 4) {
+        onVerifyPressed();
+      }
+    });
     super.onInit();
   }
 
@@ -75,16 +83,37 @@ class OtpVerificationController extends GetxController
     );
   }
 
+  void onResendSMSPressed() {
+    _resendOtp(
+      mobile: phoneNumber.value,
+      countryCode: dialCode.value,
+      providerType: OtpProviderType.sms,
+    );
+  }
+
+  void onResendWhatsappPressed() {
+    _resendOtp(
+      mobile: phoneNumber.value,
+      countryCode: dialCode.value,
+      providerType: OtpProviderType.whatsapp,
+    );
+  }
+
   void onResendCodeClicked() {
     _resendOtp(mobile: phoneNumber.value, countryCode: dialCode.value);
   }
 
-  void _resendOtp({required String mobile, required String countryCode}) async {
+  void _resendOtp({
+    required String mobile,
+    required String countryCode,
+    OtpProviderType? providerType,
+  }) async {
     try {
       otpBusy(true);
       final response = await authRepository.sendOtp(
         mobile: mobile,
         countryCode: countryCode,
+        providerType: providerType,
       );
       if (response.success) {
         startTimer(timerDuration2);

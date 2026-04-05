@@ -31,10 +31,12 @@ class AuthRepository {
   Future<OtpSendResponse> sendOtp({
     required String mobile,
     required String countryCode,
+    OtpProviderType? providerType,
   }) async {
     return await remoteDataSource.sendOtp(
       mobile: mobile,
       countryCode: countryCode,
+      providerType: providerType,
     );
   }
 

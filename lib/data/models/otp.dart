@@ -1,3 +1,4 @@
+import '../../core/utils/app_extensions.dart';
 import 'response.dart';
 
 class OtpSendResponse {
@@ -18,4 +19,17 @@ class OtpSendResponse {
   }
 
   Map<String, dynamic> toMap() => {'success': success, 'message': message};
+}
+
+enum OtpProviderType implements JsonEnum {
+  sms('sms'),
+  whatsapp('whatsapp');
+
+  @override
+  final String value;
+
+  @override
+  OtpProviderType get defaultValue => OtpProviderType.whatsapp;
+
+  const OtpProviderType(this.value);
 }
