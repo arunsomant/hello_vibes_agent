@@ -1,7 +1,7 @@
 class WebEndpoints {
   WebEndpoints._();
 
-  static const String policy = '/policy';
+  static const String policy = '/privacy';
 
   static const String terms = '/terms';
 
