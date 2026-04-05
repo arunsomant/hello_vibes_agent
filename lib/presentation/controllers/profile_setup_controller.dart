@@ -120,7 +120,14 @@ class ProfileSetupController extends GetxController
     textEditingControllerName.text = user.name;
     textEditingControllerDOB.text = AppFormatter.formatDDMMYYYY(user.dob);
     selectedGender(user.gender);
+    _initializeSelectedAvatar();
+  }
+
+  void _initializeSelectedAvatar() {
     selectedAvatar(user.avatar);
+    if (selectedAvatar.value.id == 0) {
+      selectedAvatar(avatarList.first);
+    }
   }
 
   void _gotoLanguageSelectionPage() {
@@ -147,6 +154,7 @@ class ProfileSetupController extends GetxController
       final response = await userRepository.getAvatarList();
       if (response.success) {
         avatarList(response.avatars);
+        _initializeSelectedAvatar();
       } else {
         _showToast(response.message);
       }
