@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mingle_talk_agent/core/config/app_config.dart';
 
 import '../../../core/config/app_assets_mapper.dart';
+import '../../../core/config/app_config.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_sizes.dart';
@@ -17,7 +17,9 @@ class WalletPage extends GetView<WalletController> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Positioned.fill(child: AppBackground()),
+        Positioned.fill(
+          child: AppBackground(backgroundColor: AppColors.macaroni),
+        ),
         Scaffold(
           backgroundColor: AppColors.transparent,
           appBar: AppBar(
@@ -67,6 +69,18 @@ class WalletPage extends GetView<WalletController> {
                               shadow: true,
                             ),
                           ],
+                        ),
+                      ),
+                      AppInkWell(
+                        borderRadius: AppRadii.r8,
+                        onTap: controller.onTransactionHistoryPressed,
+                        child: Padding(
+                          padding: const EdgeInsets.all(AppSpacings.s4),
+                          child: AppText(
+                            'Transaction History',
+                            type: AppTextType.t12sb,
+                            decoration: TextDecoration.underline,
+                          ),
                         ),
                       ),
                     ],
@@ -123,7 +137,8 @@ class WalletPage extends GetView<WalletController> {
                                   Divider(),
                                   _buildInfoRow(
                                     label: 'Lifetime Earnings',
-                                    value: '₹${controller.lifetimeEarningsInInr}',
+                                    value:
+                                        '₹${controller.lifetimeEarningsInInr}',
                                   ),
                                 ],
                               ),

@@ -10,17 +10,19 @@ class AppBackground extends StatelessWidget {
     super.key,
     this.height = double.maxFinite,
     this.width = double.maxFinite,
+    this.backgroundColor = AppColors.backgroundPage,
   });
 
   final double height;
   final double width;
+  final Color backgroundColor;
 
   @override
   Widget build(BuildContext context) {
     return OverflowBox(
       maxHeight: Get.size.height,
       child: ColoredBox(
-        color: AppColors.backgroundPage,
+        color: backgroundColor,
         child: Container(
           height: height,
           width: width,
