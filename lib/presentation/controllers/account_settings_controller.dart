@@ -13,7 +13,11 @@ class AccountSettingsController extends GetxController {
 
   void onTermsConditionsPressed() {}
 
-  void onDeleteAccountPressed() {}
+  void onDeleteAccountPressed() {
+    if (Get.isRegistered<AuthController>()) {
+      Get.find<AuthController>().deleteAccount();
+    }
+  }
 
   void onLogoutPressed() {
     if (Get.isRegistered<AuthController>()) {

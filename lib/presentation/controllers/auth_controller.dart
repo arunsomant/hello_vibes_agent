@@ -114,6 +114,22 @@ class AuthController extends GetxController {
     }
   }
 
+  Future<void> deleteAccount() async {
+    try {
+      final response = await authRepository.deleteAccount();
+      if (response.success) {
+        await authRepository.clearAllLocalData();
+      } else {
+        _showToast(response.message);
+      }
+    } catch (_) {
+      _showToast('An error occurred while deleting account.');
+    } finally {
+      await authRepository.clearAllLocalData();
+      _gotoLoginPage();
+    }
+  }
+
   void _gotoLoginPage() {
     Get.offAllNamed(AppRoutes.login);
   }

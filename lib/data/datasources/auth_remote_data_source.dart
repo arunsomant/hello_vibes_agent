@@ -25,6 +25,7 @@ class AuthRemoteDataSource {
       'provider_type': null,
     };
     final response = await apiHelper.post(ApiEndpoints.otpSend, body: body);
+    print(response);
     return OtpSendResponse.fromMap(response);
   }
 
@@ -49,6 +50,11 @@ class AuthRemoteDataSource {
 
   Future<AppResponse> logout() async {
     final response = await apiHelper.post(ApiEndpoints.logout);
+    return AppResponse.fromMap(response);
+  }
+
+  Future<AppResponse> deleteAccount() async {
+    final response = await apiHelper.post(ApiEndpoints.deleteAccount);
     return AppResponse.fromMap(response);
   }
 }

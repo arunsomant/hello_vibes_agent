@@ -25,6 +25,8 @@ class ApiEndpoints {
 
   static const String logout = '/logout';
 
+  static const String deleteAccount = '/delete-account';
+
   static const String transactions = '/wallet/transactions';
 
   static const String calls = '/calls';

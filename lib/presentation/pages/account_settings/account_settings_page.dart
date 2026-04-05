@@ -61,7 +61,7 @@ class AccountSettingsPage extends GetView<AccountSettingsController> {
             _buildDivider(),
             AppProfileTile(
               isDestructive: true,
-              onPressed: controller.onDeleteAccountPressed,
+              onPressed: onDeleteAccountPressed,
               assetIcon: AppAssetsMapper.icDelete,
               title: 'Delete Account',
             ),
@@ -85,6 +85,20 @@ class AccountSettingsPage extends GetView<AccountSettingsController> {
         horizontal: AppSpacings.s32,
       ),
       child: Divider(height: 0, color: AppColors.borderDivider),
+    );
+  }
+
+
+  void onDeleteAccountPressed() {
+    AppDialog.showAlertDialog(
+      negativeText: 'Yes, Delete',
+      positiveText: 'Cancel',
+      title: 'Are you sure you want to delete your account ?',
+      textHeight: 50,
+      positiveOnPressed: () {
+        Get.back();
+      },
+      negativeOnPressed: controller.onDeleteAccountPressed,
     );
   }
 

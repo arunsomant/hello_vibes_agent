@@ -55,6 +55,11 @@ class AuthRepository {
     return response;
   }
 
+  Future<AppResponse> deleteAccount() async {
+    final response = await remoteDataSource.deleteAccount();
+    return response;
+  }
+
   Future<void> clearAllLocalData() async {
     await localDataSource.clearAll();
   }
