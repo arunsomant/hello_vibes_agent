@@ -88,7 +88,7 @@ class WalletPage extends GetView<WalletController> {
                             'Transaction History',
                             type: AppTextType.t12sb,
                             decoration: TextDecoration.underline,
-                              color: AppColors.textSecondary,
+                            color: AppColors.textSecondary,
                             shadow: true,
                           ),
                         ),
@@ -132,38 +132,52 @@ class WalletPage extends GetView<WalletController> {
                                   AppRadii.r10,
                                 ),
                               ),
-                              child: Column(
-                                spacing: AppSpacings.s8,
-                                children: [
-                                  _buildInfoRow(
-                                    label: 'Redeemable Coins:',
-                                    value: '${controller.walletBalance}',
-                                  ),
-                                  Divider(),
-                                  _buildInfoRow(
-                                    label: 'Redeemable Amount:',
-                                    value: '₹${controller.walletBalanceInInr}',
-                                  ),
-                                  Divider(),
-                                  _buildInfoRow(
-                                    label: 'Lifetime Earnings',
-                                    value:
-                                        '₹${controller.lifetimeEarningsInInr}',
-                                  ),
-                                ],
+                              child: Obx( () {
+                                  return Column(
+                                    spacing: AppSpacings.s8,
+                                    children: [
+                                      _buildInfoRow(
+                                        label: 'Redeemable Coins:',
+                                        value: '${controller.walletBalance}',
+                                      ),
+                                      Divider(),
+                                      _buildInfoRow(
+                                        label: 'Redeemable Amount:',
+                                        value: '₹${controller.walletBalanceInInr}',
+                                      ),
+                                      Divider(),
+                                      _buildInfoRow(
+                                        label: 'Lifetime Earnings',
+                                        value:
+                                            '₹${controller.lifetimeEarningsInInr}',
+                                      ),
+                                    ],
+                                  );
+                                }
                               ),
                             ),
                           ],
                         ),
+                        Obx(() {
+                          if (controller.bankDetailsAdded) {
+                            return _buildBankDetailsSection();
+                          }
+                          return SizedBox();
+                        }),
                         Spacer(),
-                        AppButton(
-                          prefixIconAsset: AppAssetsMapper.icCard,
-                          prefixIconColor: AppColors.iconSecondary,
-                          text:
-                              'Request to Redeem ₹${controller.walletBalanceInInr.toStringAsFixed(2)}',
-                          onPressed: controller.onRequestRedeemPressed,
-                          height: AppSizes.appButtonHeightLarge,
-                        ),
+                        Obx(() {
+                          return AppButton(
+                            busy: controller.busyRequest.isTrue,
+                            prefixIconAsset: AppAssetsMapper.icCard,
+                            prefixIconColor: AppColors.iconSecondary,
+                            text:
+                                'Request to Redeem ₹${controller.walletBalanceInInr.toStringAsFixed(2)}',
+                            onPressed: controller.walletBalance > 0
+                                ? onRequestRedeemPressed
+                                : null,
+                            height: AppSizes.appButtonHeightLarge,
+                          );
+                        }),
                       ],
                     ),
                   ),
@@ -182,6 +196,93 @@ class WalletPage extends GetView<WalletController> {
       children: [
         Expanded(child: AppText(label, type: AppTextType.t14r)),
         AppText(value, type: AppTextType.t14sb),
+      ],
+    );
+  }
+
+  void onRequestRedeemPressed() {
+    if (controller.bankDetailsAdded) {
+      AppDialog.showAlertDialog(
+        positiveText: 'Redeem Now',
+        negativeText: 'Cancel',
+        title: 'Are you sure you want to redeem your wallet?',
+        textHeight: 50,
+        negativeOnPressed: () {
+          Get.back();
+        },
+        positiveOnPressed: () {
+          Get.back();
+          controller.onRequestRedeemPressed();
+        },
+      );
+    } else {
+      AppDialog.showAlertDialog(
+        positiveText: 'Add Bank Details',
+        negativeText: 'Cancel',
+        title: 'Please add your bank details to redeem your wallet balance.',
+        textHeight: 50,
+        negativeOnPressed: () {
+          Get.back();
+        },
+        positiveOnPressed: () {
+          Get.back();
+          controller.onEditBankDetailsPressed();
+        },
+      );
+    }
+  }
+
+  Widget _buildBankDetailsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: AppSpacings.s8,
+      children: [
+        SizedBox(height: AppSpacings.s8),
+        Row(
+          children: [
+            AppText('Bank Details', type: AppTextType.t16b),
+            Spacer(),
+            AppInkWell(
+              borderRadius: AppRadii.r8,
+              onTap: controller.onEditBankDetailsPressed,
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacings.s4),
+                child: AppText(
+                  'Edit',
+                  type: AppTextType.t14r,
+                  decoration: TextDecoration.underline,
+                  color: AppColors.primary,
+                ),
+              ),
+            ),
+          ],
+        ),
+        Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: AppSpacings.s16,
+            vertical: AppSpacings.s24,
+          ),
+          decoration: BoxDecoration(
+            color: AppColors.backgroundRaised,
+            boxShadow: [AppConfig.shadow],
+            borderRadius: BorderRadius.circular(AppRadii.r10),
+          ),
+          child: Column(
+            spacing: AppSpacings.s8,
+            children: [
+              _buildInfoRow(label: 'Name:', value: controller.name),
+              Divider(),
+              _buildInfoRow(label: 'Bank Name:', value: controller.bankName),
+              Divider(),
+              _buildInfoRow(
+                label: 'Account Number:',
+                value: controller.accountNumber,
+              ),
+              Divider(),
+              _buildInfoRow(label: 'IFSC Code:', value: controller.ifscCode),
+            ],
+          ),
+        ),
       ],
     );
   }

@@ -23,10 +23,14 @@ class BankDetailsController extends GetxController
     vsync: this,
   );
   TextEditingController textEditingControllerName = TextEditingController();
+  final name = ''.obs;
   TextEditingController textEditingControllerBankName = TextEditingController();
+  final bankName = ''.obs;
   TextEditingController textEditingControllerAccountNumber =
       TextEditingController();
+  final accountNumber = ''.obs;
   TextEditingController textEditingControllerIFSCCode = TextEditingController();
+  final ifscCode = ''.obs;
 
   double get walletBalanceInInr =>
       Get.find<AuthController>().user.value.walletBalanceInInr;
@@ -80,6 +84,8 @@ class BankDetailsController extends GetxController
       );
       if (response.success) {
         bankDetailsAdded(true);
+        _getBankDetails();
+        Get.back();
       }
       _showToast(response.message);
     } catch (_) {
@@ -96,10 +102,14 @@ class BankDetailsController extends GetxController
       if (response.success) {
         bankDetailsAdded(true);
         textEditingControllerName.text = response.bankDetail.accountHolderName;
+        name(response.bankDetail.accountHolderName);
         textEditingControllerBankName.text = response.bankDetail.bankName;
+        bankName(response.bankDetail.bankName);
         textEditingControllerAccountNumber.text =
             response.bankDetail.accountNumber;
+        accountNumber(response.bankDetail.accountNumber);
         textEditingControllerIFSCCode.text = response.bankDetail.ifscCode;
+        ifscCode(response.bankDetail.ifscCode);
       } else {
         _showToast(response.message);
       }
@@ -107,22 +117,6 @@ class BankDetailsController extends GetxController
       _showToast('Bank details update failed. Please try again.');
     } finally {
       busyBankDetails(false);
-    }
-  }
-
-  void onRequestRedeemPressed() async {
-    try {
-      busyRequest(true);
-      final coins = Get.find<AuthController>().user.value.walletBalance;
-      final response = await transactionRepository.requestWithdrawal(coins: coins);
-      if (response.success) {
-        Get.back();
-      }
-      _showToast(response.message);
-    } catch (_) {
-      _showToast('Request failed. Please try again.');
-    } finally {
-      busyRequest(false);
     }
   }
 
