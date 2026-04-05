@@ -23,6 +23,7 @@ class AppDropDownButton<T> extends StatefulWidget {
     this.enableIcon = true,
     this.underline = true,
     this.mandatory = false,
+    this.filled = false,
   });
 
   final DropdownButtonBuilder? selectedItemBuilder;
@@ -48,6 +49,8 @@ class AppDropDownButton<T> extends StatefulWidget {
   final bool underline;
 
   final bool mandatory;
+
+  final bool filled;
 
   @override
   State<AppDropDownButton<T>> createState() => _AppDropDownButtonState<T>();
@@ -82,7 +85,7 @@ class _AppDropDownButtonState<T> extends State<AppDropDownButton<T>> {
         InputDecorator(
           decoration: InputDecoration(
             fillColor: AppColors.backgroundInputField,
-            filled: true,
+            filled: widget.filled,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: AppSpacings.s16,
             ),
