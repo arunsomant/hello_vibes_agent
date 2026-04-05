@@ -67,6 +67,7 @@ class User {
   final String role;
   final bool isOnline;
   final ApprovalStatus approvalStatus;
+  final String reason;
   final int status;
   final List<Language> languages;
   final int walletBalance;
@@ -88,6 +89,7 @@ class User {
     this.role = '',
     this.isOnline = false,
     this.approvalStatus = ApprovalStatus.pending,
+    this.reason = '',
     this.status = 0,
     this.languages = const [],
     this.walletBalance = 0,
@@ -116,6 +118,7 @@ class User {
       approvalStatus: ApprovalStatus.values.fromJson(
         json['approval_status'] ?? '',
       ),
+      reason: json['reason'] ?? '',
       status: json['status'] ?? 0,
       languages: json['languages'] != null
           ? List<Language>.from(

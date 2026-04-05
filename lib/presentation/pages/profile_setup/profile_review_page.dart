@@ -98,7 +98,7 @@ class ProfileReviewPage extends GetView<ProfileReviewController> {
                                   AppText(
                                     pending
                                         ? controller.pendingContent
-                                        : controller.rejectedContent,
+                                        : controller.rejectedContent.value,
                                     type: AppTextType.t16m,
                                     textAlign: TextAlign.center,
                                   ),
@@ -131,6 +131,7 @@ class ProfileReviewPage extends GetView<ProfileReviewController> {
                     ),
                   ),
                 ),
+                const SizedBox(height: AppSpacings.s16),
               ],
             ),
           ),

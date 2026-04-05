@@ -19,13 +19,13 @@ class AuthRemoteDataSource {
     required String mobile,
     required String countryCode,
     OtpProviderType? providerType,
-
   }) async {
     final body = {
       'mobile': mobile,
       'dial_code': countryCode,
       'provider_type': null,
-    };if (providerType != null) {
+    };
+    if (providerType != null) {
       body.addAll({'provider_type': providerType.value});
     }
     final response = await apiHelper.post(ApiEndpoints.otpSend, body: body);
