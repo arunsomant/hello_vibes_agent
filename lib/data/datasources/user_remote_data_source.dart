@@ -12,7 +12,6 @@ class UserRemoteDataSource {
 
   Future<UserResponse> getUser() async {
     final response = await apiHelper.get(ApiEndpoints.profile);
-    print(response);
     return UserResponse.fromMap(response);
   }
 
