@@ -125,7 +125,7 @@ class ProfileSetupController extends GetxController
 
   void _initializeSelectedAvatar() {
     selectedAvatar(user.avatar);
-    if (selectedAvatar.value.id == 0) {
+    if (selectedAvatar.value.id == 0 && avatarList.isNotEmpty) {
       selectedAvatar(avatarList.first);
     }
   }
