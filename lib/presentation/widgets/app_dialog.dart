@@ -153,6 +153,7 @@ class AppDialog {
                     ),
                 ],
               ),
+              const SizedBox(height: AppSpacings.s16),
             ],
           ),
         ),
