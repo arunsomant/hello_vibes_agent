@@ -267,9 +267,7 @@ class CallingController extends GetxController {
       if (response.success) {
         Get.back();
         if (Get.isRegistered<LandingController>() && duration.value > 0) {
-          Get.find<LandingController>().askForCallingExperience(
-            call.participant,
-          );
+          Get.find<LandingController>().checkForPendingReview();
         }
       } else {
         _showToast(response.message);
@@ -398,8 +396,12 @@ class CallingController extends GetxController {
 
   void _saveCallDetails() async {
     try {
+      print('EEEEEEE1');
       await callRepository.saveCallDetails(call);
-    } catch (_) {}
+    } catch (e) {
+      print('EEEEEEE');
+      print(e);
+    }
   }
 
   void _showToast(String message) {

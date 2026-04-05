@@ -6,6 +6,7 @@ import '../../core/services/callkit_service.dart';
 import '../../core/services/firebase_message_service.dart';
 import '../../data/models/call.dart';
 import '../../data/models/user.dart';
+import '../../data/repositories/call_repository.dart';
 import '../../data/repositories/firebase_repository.dart';
 import '../../data/repositories/user_repository.dart';
 import '../pages/landing/welcome_dialog.dart';
@@ -18,10 +19,12 @@ class LandingController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final UserRepository userRepository;
   final FirebaseRepository firebaseRepository;
+  final CallRepository callRepository;
 
   LandingController({
     required this.userRepository,
     required this.firebaseRepository,
+    required this.callRepository,
   });
 
   User get user => Get.find<AuthController>().user.value;
@@ -40,6 +43,7 @@ class LandingController extends GetxController
       activeTabIndex(tabController.index);
     });
     _updateFirebaseToken();
+    checkForPendingReview();
     super.onInit();
   }
 
@@ -153,10 +157,20 @@ class LandingController extends GetxController
     tabController.animateTo(index);
   }
 
-  void askForCallingExperience(User user) {
+  void checkForPendingReview() async {
+    try {
+      final call = await callRepository.getCallDetails();
+      if (call.uuid.isNotEmpty) {
+        askForCallingExperience(call);
+      }
+    } catch (_) {}
+  }
+
+  void askForCallingExperience(Call call) {
     AppDialog.showBottomSheet(
       isDismissible: false,
-      child: RatingDialog(user: user),
+      child: RatingDialog(),
+      arguments: RatingDialogArguments(call: call),
     );
   }
 

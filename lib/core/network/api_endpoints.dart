@@ -31,6 +31,8 @@ class ApiEndpoints {
 
   static const String calls = '/calls';
 
+  static const String customer = '/customer';
+
   static const String callHistory = '$calls/history';
 
   static const String callInitiate = '$calls/initiate';
@@ -42,4 +44,6 @@ class ApiEndpoints {
   static const String callAccept = '/accept';
 
   static const String callStart = '/start';
+
+  static const String report = '/report';
 }

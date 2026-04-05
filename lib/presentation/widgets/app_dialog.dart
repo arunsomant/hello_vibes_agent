@@ -35,10 +35,12 @@ class AppDialog {
   static Future<T?> showBottomSheet<T>({
     required Widget child,
     bool isDismissible = true,
+    Object? arguments,
   }) {
     return Get.bottomSheet(
       child,
       enableDrag: false,
+      settings: RouteSettings(arguments: arguments),
       isScrollControlled: true,
       isDismissible: isDismissible,
       backgroundColor: AppColors.backgroundRaised,

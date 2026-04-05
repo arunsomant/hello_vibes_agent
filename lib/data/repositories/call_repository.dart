@@ -58,6 +58,10 @@ class CallRepository {
         : const Call();
   }
 
+  Future<bool> clearCallDetails() async {
+    return await localDataSource.saveCallDetails('');
+  }
+
   Future<AppResponse> startCall({required Call call}) async {
     return await remoteDataSource.startCall(call: call);
   }

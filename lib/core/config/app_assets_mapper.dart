@@ -67,4 +67,5 @@ class AppAssetsMapper {
   static const icTime = 'assets/images/ic_time.svg';
   static const icAlert = 'assets/images/ic_alert.svg';
   static const icBank = 'assets/images/ic_bank.svg';
+  static const icHorn = 'assets/images/ic_horn.svg';
 }

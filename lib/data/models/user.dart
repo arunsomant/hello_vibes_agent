@@ -149,12 +149,14 @@ class User {
     'age': age,
     'role': role,
     'is_online': isOnline,
-    'approval_status': approvalStatus,
+    'approval_status': approvalStatus.value,
     'status': status,
     'languages': List<Language>.from(languages.map((x) => x)),
     'wallet_balance': walletBalance,
     'wallet_balance_in_inr': walletBalanceInInr,
     'lifetime_earnings_in_inr': lifetimeEarningsInInr,
+    'avatar_url': avatar.url,
+    'avatar_id': avatar.id,
   };
 
   static List<String> avatars = [
