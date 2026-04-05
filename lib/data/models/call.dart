@@ -205,12 +205,14 @@ enum CallAlertType implements JsonEnum {
 class CallAlertNotification {
   final String uuid;
   final String customerName;
+  final String customerAvatar;
   final CallType callType;
   final CallAlertType callAlertType;
 
   CallAlertNotification({
     this.uuid = '',
     this.customerName = '',
+    this.customerAvatar = '',
     this.callType = CallType.none,
     this.callAlertType = CallAlertType.incomingCall,
   });
@@ -219,6 +221,7 @@ class CallAlertNotification {
     return CallAlertNotification(
       uuid: json['call_uuid'] ?? '',
       customerName: json['customer_name'] ?? 'Unknown Caller',
+      customerAvatar: json['customer_avatar'] ?? '',
       callType: CallType.values.fromJson(json['call_type']),
       callAlertType: CallAlertType.values.fromJson(json['type']),
     );
@@ -227,6 +230,7 @@ class CallAlertNotification {
   Map<String, dynamic> toMap() => {
     'call_uuid': uuid,
     'customer_name': customerName,
+    'customer_avatar': customerAvatar,
     'call_type': callType.value,
     'type': callAlertType.value,
   };

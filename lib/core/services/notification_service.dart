@@ -29,8 +29,6 @@ void _handleMessage(RemoteMessage message) async {
   initCallkitListeners();
   final call = CallAlertNotification.fromMap(data);
   if (call.callAlertType == CallAlertType.incomingCall) {
-    print(message.sentTime?.toLocal().toString());
-    print(DateTime.now().toString());
     if (message.sentTime == null ||
         DateTime.now().difference(message.sentTime!.toLocal()) >
             const Duration(minutes: 1)) {

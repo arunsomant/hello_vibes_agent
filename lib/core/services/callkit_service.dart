@@ -11,12 +11,13 @@ class CallkitService {
   Future<void> showCallNotification(CallAlertNotification data) async {
     final callUuid = data.uuid;
     final customerName = data.customerName;
+    final customerAvatar = data.customerAvatar;
 
     CallKitParams callKitParams = CallKitParams(
       id: callUuid,
       nameCaller: customerName,
       appName: 'Mingle Talk',
-      //avatar: 'https://i.pravatar.cc/100',
+      avatar: customerAvatar,
       //Fallback or retrieve from payloads
       handle: '',
       // Number or handle
@@ -66,7 +67,7 @@ class CallkitService {
   }
 
   Future<void> dismissAllCallNotification() {
-    return  FlutterCallkitIncoming.endAllCalls();
+    return FlutterCallkitIncoming.endAllCalls();
   }
 
   void initCallkitListeners({
