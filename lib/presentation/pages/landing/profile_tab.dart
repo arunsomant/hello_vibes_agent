@@ -43,6 +43,7 @@ class ProfileTab extends GetView<ProfileController> {
                             user: user,
                             size: 150,
                             showOnlineStatus: false,
+                            shadow: true,
                           ),
                           const SizedBox(height: AppSpacings.s16),
                           AppText(user.name, type: AppTextType.t18sb),
@@ -78,6 +79,12 @@ class ProfileTab extends GetView<ProfileController> {
                     onPressed: controller.onWalletPressed,
                     assetIcon: AppAssetsMapper.icCard,
                     title: 'Wallet',
+                  ),
+                  _buildDivider(),
+                  AppProfileTile(
+                    onPressed: controller.onBankDetailsPressed,
+                    assetIcon: AppAssetsMapper.icBank,
+                    title: 'Bank Details',
                   ),
                   _buildDivider(),
                   AppProfileTile(

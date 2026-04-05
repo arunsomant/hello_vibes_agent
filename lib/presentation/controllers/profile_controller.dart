@@ -26,12 +26,20 @@ class ProfileController extends GetxController {
     _gotoWallet();
   }
 
+  void onBankDetailsPressed() {
+    _gotoBankDetails();
+  }
+
   void onAccountSettingsPressed() {
     _gotoAccountSettings();
   }
 
   void _gotoWallet() {
     Get.toNamed(AppRoutes.wallet);
+  }
+
+  void _gotoBankDetails() {
+    Get.toNamed(AppRoutes.bankDetails);
   }
 
   void _gotoAccountSettings() {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mingle_talk_agent/core/config/app_config.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
@@ -12,6 +13,7 @@ class MTProfileImage extends StatelessWidget {
     required this.user,
     this.size = 100,
     this.showOnlineStatus = true,
+    this.shadow = false,
   });
 
   final User user;
@@ -19,6 +21,8 @@ class MTProfileImage extends StatelessWidget {
   final double size;
 
   final bool showOnlineStatus;
+
+  final bool shadow;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +33,7 @@ class MTProfileImage extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.backgroundRaised,
         borderRadius: BorderRadius.circular(AppRadii.r32),
+        boxShadow: shadow? [AppConfig.shadow]: null,
       ),
       child: ProfileImage.network(user.avatar.url,size:size,radius:  AppRadii.r32 - AppSpacings.s8,),
     );
