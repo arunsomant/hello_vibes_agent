@@ -111,7 +111,7 @@ class OtpVerificationController extends GetxController
     try {
       otpBusy(true);
       final response = await authRepository.sendOtp(
-        mobile: mobile,
+        mobile: mobile.removeAllWhitespace,
         countryCode: countryCode,
         providerType: providerType,
       );
@@ -140,7 +140,7 @@ class OtpVerificationController extends GetxController
       otpBusy(true);
       final response = await authRepository.verifyOtp(
         otp: otp,
-        mobile: mobile,
+        mobile: mobile.removeAllWhitespace,
         countryCode: countryCode,
       );
       if (response.success) {

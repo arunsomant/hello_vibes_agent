@@ -32,10 +32,10 @@ class LoginController extends GetxController
   }
 
   void onMobileLoginPressed() {
-    final mobile = textEditingControllerMobile.text.trim();
+    final mobile = textEditingControllerMobile.text.trim().removeAllWhitespace;
 
     if (!CountryCodePicker.validateMobile(
-      '${selectedCountryCode.value}${textEditingControllerMobile.text.trim()}',
+      '${selectedCountryCode.value}$mobile',
     )) {
       shakeControllerMobile.shake();
       _showToast('Enter a valid phone number');
@@ -64,7 +64,7 @@ class LoginController extends GetxController
     try {
       loginBusy(true);
       final response = await authRepository.sendOtp(
-        mobile: mobile,
+        mobile: mobile.removeAllWhitespace,
         countryCode: countryCode,
       );
       if (response.success) {
