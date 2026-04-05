@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../core/config/app_assets_mapper.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_sizes.dart';
@@ -26,6 +27,7 @@ class WelcomeDialog extends StatelessWidget {
                 vertical: AppSpacings.s40,
               ),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 spacing: AppSpacings.s8,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -43,8 +45,9 @@ class WelcomeDialog extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Expanded(
+                  Flexible(
                     child: ListView(
+                      shrinkWrap: true,
                       children: [
                         _buildBulletPoint(
                           'Let’s keep it positive',
