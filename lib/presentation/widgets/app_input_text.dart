@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../core/config/app_assets_mapper.dart';
 import '../../core/theme/app_colors.dart';
@@ -40,6 +41,7 @@ class AppInputText extends StatefulWidget {
     this.showCursor,
     this.enableInteractiveSelection,
     this.textCapitalization,
+    this.inputFormatters = const [],
   });
 
   final String? hintText;
@@ -72,6 +74,7 @@ class AppInputText extends StatefulWidget {
   final bool? showCursor;
   final bool? enableInteractiveSelection;
   final TextCapitalization? textCapitalization;
+  final List<TextInputFormatter> inputFormatters;
 
   @override
   State<AppInputText> createState() => _AppInputTextState();
@@ -109,6 +112,7 @@ class _AppInputTextState extends State<AppInputText> {
             maxLines: !_obscure ? widget.maxLines : 1,
             onTap: widget.onTap,
             style: AppText.t16sb.copyWith(color: AppColors.textPrimary),
+            inputFormatters: widget.inputFormatters,
             textCapitalization:
                 widget.textCapitalization ?? TextCapitalization.none,
             decoration: InputDecoration(

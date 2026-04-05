@@ -1,5 +1,6 @@
 import 'package:deep_country_code_picker/deep_country_code_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_multi_formatter/formatters/phone_input_formatter.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radii.dart';
@@ -61,6 +62,13 @@ class _PhoneInputTextState extends State<PhoneInputText> {
                   keyboardType: TextInputType.phone,
                   maxLines: 1,
                   border: false,
+                  inputFormatters: [
+                    PhoneInputFormatter(
+                      allowEndlessPhone: false,
+                      shouldCorrectNumber: false,
+                      defaultCountryCode: _selectedCountryCode.countryCode,
+                    ),
+                  ],
                   filled: false,
                 ),
               ),
