@@ -120,7 +120,9 @@ class LoginPage extends GetView<LoginController> {
                         ],
                       ),
                       const SizedBox(height: AppSpacings.s24),
-                      TermsAndPrivacy(),
+                      TermsAndPrivacy(
+                        onTermsPressed: controller.onTermsPressed,
+                        onPolicyPressed: controller.onPolicyPressed,),
                     ],
                   ),
                 ),

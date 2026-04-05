@@ -6,6 +6,7 @@ import '../../core/utils/app_validator.dart';
 import '../../data/models/avatar.dart';
 import '../../data/models/user.dart';
 import '../../data/repositories/user_repository.dart';
+import '../pages/policy/policy_page.dart';
 import '../routes/app_routes.dart';
 import '../widgets/app_dialog.dart';
 import '../widgets/shake_view.dart';
@@ -194,6 +195,25 @@ class ProfileSetupController extends GetxController
       return false;
     }
     return true;
+  }
+
+  void onTermsPressed() {
+    _gotoTermsPage();
+  }
+
+  void onPolicyPressed() {
+    _gotoPolicyPage();
+  }
+
+  void _gotoTermsPage() {
+    Get.toNamed(
+      AppRoutes.policy,
+      arguments: PolicyArguments.termsAndConditions(),
+    );
+  }
+
+  void _gotoPolicyPage() {
+    Get.toNamed(AppRoutes.policy, arguments: PolicyArguments.privacyPolicy());
   }
 
   void _showToast(String message) {

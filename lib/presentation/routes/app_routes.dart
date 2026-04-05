@@ -26,4 +26,6 @@ abstract class AppRoutes {
   static const String videoCalling = '/video-calling';
 
   static const String voiceCalling = '/audio-calling';
+
+  static const String policy = '/policy';
 }

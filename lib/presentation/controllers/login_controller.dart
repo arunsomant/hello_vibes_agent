@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:deep_country_code_picker/deep_country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../data/repositories/auth_repository.dart';
+import '../pages/policy/policy_page.dart';
 import '../routes/app_routes.dart';
 import '../widgets/index.dart';
 import 'auth_controller.dart';
@@ -89,11 +91,26 @@ class LoginController extends GetxController
   }) {
     Get.toNamed(
       AppRoutes.otpVerification,
-      arguments: {
-        'mobile': mobile,
-        'countryCode': countryCode,
-      },
+      arguments: {'mobile': mobile, 'countryCode': countryCode},
     );
+  }
 
+  void onTermsPressed() {
+    _gotoTermsPage();
+  }
+
+  void onPolicyPressed() {
+    _gotoPolicyPage();
+  }
+
+  void _gotoTermsPage() {
+    Get.toNamed(
+      AppRoutes.policy,
+      arguments: PolicyArguments.termsAndConditions(),
+    );
+  }
+
+  void _gotoPolicyPage() {
+    Get.toNamed(AppRoutes.policy, arguments: PolicyArguments.privacyPolicy());
   }
 }

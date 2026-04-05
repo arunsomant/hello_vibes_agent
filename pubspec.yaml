@@ -54,6 +54,8 @@ dependencies:
   livekit_client: ^2.6.5
   flutter_callkit_incoming: ^3.0.0
   flutter_multi_formatter: ^2.13.10
+  flutter_inappwebview: ^6.1.5
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   flutter_test:

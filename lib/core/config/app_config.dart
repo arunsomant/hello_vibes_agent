@@ -3,7 +3,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 
 class AppConfig {
-  static String appName = 'HelloVibess';
+  static String appName = 'MingleTalk';
 
   static ThemeData theme = AppTheme.theme();
 

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../core/config/app_assets_mapper.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacings.dart';
+import '../../routes/app_routes.dart';
 import '../../widgets/index.dart';
+import '../policy/policy_page.dart';
 
 class WelcomeDialog extends StatelessWidget {
   const WelcomeDialog({super.key, this.onIAgreePressed});
@@ -65,7 +68,20 @@ class WelcomeDialog extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: AppSpacings.s8),
-                  TermsAndPrivacy(),
+                  TermsAndPrivacy(
+                    onTermsPressed: () {
+                      Get.toNamed(
+                        AppRoutes.policy,
+                        arguments: PolicyArguments.termsAndConditions(),
+                      );
+                    },
+                    onPolicyPressed: () {
+                      Get.toNamed(
+                        AppRoutes.policy,
+                        arguments: PolicyArguments.privacyPolicy(),
+                      );
+                    },
+                  ),
                   const SizedBox(height: AppSpacings.s8),
                   AppButton(
                     text: 'I Agree',

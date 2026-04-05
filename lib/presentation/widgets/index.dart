@@ -32,3 +32,4 @@ export 'phone_input_text.dart';
 export 'shake_view.dart';
 export 'otp_widget.dart';
 export 'online_status_button.dart';
+export 'app_web_view.dart';

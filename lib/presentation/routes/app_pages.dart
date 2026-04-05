@@ -21,6 +21,7 @@ import '../pages/language_selection/language_selection_page.dart';
 import '../pages/login/login_page.dart';
 import '../pages/login/otp_verification_page.dart';
 import '../pages/onboarding/onboarding_page.dart';
+import '../pages/policy/policy_page.dart';
 import '../pages/profile_edit/profile_edit_page.dart';
 import '../pages/profile_setup/profile_review_page.dart';
 import '../pages/profile_setup/profile_setup_page.dart';
@@ -100,6 +101,16 @@ class AppPages {
       name: AppRoutes.videoCalling,
       page: () => VideoCallingPage(),
       binding: CallingBinding(),
+    ),GetPage(
+      name: AppRoutes.policy,
+      page: () {
+        final args = Get.arguments;
+        if (args is PolicyArguments) {
+          return PolicyPage( url: args.url, title: args.title);
+        } else {
+          throw ArgumentError('Invalid arguments for PolicyPage');
+        }
+      },
     ),
   ];
 }

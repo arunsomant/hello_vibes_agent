@@ -146,6 +146,8 @@ class ProfileSetupPage extends GetView<ProfileSetupController> {
                                         controller.termsAccepted.isTrue,
                                     onTermsChecked:
                                         controller.onTermsCheckedPressed,
+                                    onTermsPressed: controller.onTermsPressed,
+                                    onPolicyPressed: controller.onPolicyPressed,
                                   );
                                 }),
                               ),
