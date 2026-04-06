@@ -47,6 +47,10 @@ class ProfileTab extends GetView<ProfileController> {
                           ),
                           const SizedBox(height: AppSpacings.s16),
                           AppText(user.name, type: AppTextType.t18sb),
+                          AppText(
+                            '${user.dialCode}${user.mobile}',
+                            type: AppTextType.t14r,
+                          ),
                         ],
                       );
                     }),
