@@ -23,6 +23,7 @@ class LandingBinding extends Bindings {
   void dependencies() {
     Get.lazyPut<UsersRemoteDataSource>(
       () => UsersRemoteDataSource(apiHelper: Get.find<ApiBaseHelper>()),
+      fenix: true,
     );
     Get.lazyPut<CallRemoteDataSource>(
       () => CallRemoteDataSource(apiHelper: Get.find<ApiBaseHelper>()),
@@ -38,6 +39,7 @@ class LandingBinding extends Bindings {
     Get.lazyPut<UsersRepository>(
       () =>
           UsersRepository(remoteDataSource: Get.find<UsersRemoteDataSource>()),
+      fenix: true,
     );
 
     Get.lazyPut<FirebaseRepository>(
