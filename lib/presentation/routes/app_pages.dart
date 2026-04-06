@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../bindings/account_settings_binding.dart';
 import '../bindings/bank_details_binding.dart';
 import '../bindings/calling_binding.dart';
+import '../bindings/help_binding.dart';
 import '../bindings/landing_binding.dart';
 import '../bindings/language_selection_binding.dart';
 import '../bindings/login_binding.dart';
@@ -16,6 +17,7 @@ import '../bindings/wallet_binding.dart';
 import '../pages/account_settings/account_settings_page.dart';
 import '../pages/calling/video_calling_page.dart';
 import '../pages/calling/voice_calling_page.dart';
+import '../pages/help/help_page.dart';
 import '../pages/landing/landing_page.dart';
 import '../pages/language_selection/language_selection_page.dart';
 import '../pages/login/login_page.dart';
@@ -101,16 +103,22 @@ class AppPages {
       name: AppRoutes.videoCalling,
       page: () => VideoCallingPage(),
       binding: CallingBinding(),
-    ),GetPage(
+    ),
+    GetPage(
       name: AppRoutes.policy,
       page: () {
         final args = Get.arguments;
         if (args is PolicyArguments) {
-          return PolicyPage( url: args.url, title: args.title);
+          return PolicyPage(url: args.url, title: args.title);
         } else {
           throw ArgumentError('Invalid arguments for PolicyPage');
         }
       },
+    ),
+    GetPage(
+      name: AppRoutes.help,
+      page: () => HelpPage(),
+      binding: HelpBinding(),
     ),
   ];
 }

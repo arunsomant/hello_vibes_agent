@@ -28,4 +28,6 @@ abstract class AppRoutes {
   static const String voiceCalling = '/audio-calling';
 
   static const String policy = '/policy';
+
+  static const String help = '/help';
 }

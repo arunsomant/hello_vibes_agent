@@ -17,7 +17,9 @@ class AccountSettingsController extends GetxController {
     _gotoCoinPolicyPage();
   }
 
-  void onHelpSupportPressed() {}
+  void onHelpSupportPressed() {
+    _gotoHelpPage();
+  }
 
   void onPrivacyPolicyPressed() {
     _gotoPrivacyPage();
@@ -63,5 +65,9 @@ class AccountSettingsController extends GetxController {
     if (Get.isRegistered<AuthController>()) {
       Get.find<AuthController>().logout();
     }
+  }
+
+  void _gotoHelpPage() {
+    Get.toNamed(AppRoutes.help);
   }
 }

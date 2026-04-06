@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 
@@ -30,4 +31,8 @@ class AppConfig {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   };
+
+  static String supportMail = 'support-agent@mingletalk.com';
+
+  static String supportNumber = '+919876543211';
 }

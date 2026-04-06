@@ -40,6 +40,7 @@ class AppDialog {
     return Get.bottomSheet(
       child,
       enableDrag: false,
+      clipBehavior: Clip.hardEdge,
       settings: RouteSettings(arguments: arguments),
       isScrollControlled: true,
       isDismissible: isDismissible,
