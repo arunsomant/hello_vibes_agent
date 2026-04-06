@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../core/config/app_assets_mapper.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radii.dart';
@@ -34,6 +35,8 @@ class AppProfileTile extends StatelessWidget {
           children: [
             AppSvgAsset(
               assetIcon,
+              height: 22,
+              width: 22,
               color: isDestructive
                   ? AppColors.textError
                   : AppColors.iconPrimary,
@@ -41,7 +44,7 @@ class AppProfileTile extends StatelessWidget {
             Expanded(
               child: AppText(
                 title,
-                type: AppTextType.t16b,
+                type: AppTextType.t14sb,
                 color: isDestructive ? AppColors.textError : null,
               ),
             ),
