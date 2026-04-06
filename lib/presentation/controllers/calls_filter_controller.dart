@@ -25,7 +25,11 @@ class CallsFilterController extends GetxController {
   }
 
   void onCallTypeSelected(String callType) {
-    selectedCallType(callType);
+    if (selectedCallType.value == callType) {
+      selectedCallType('');
+    } else {
+      selectedCallType(callType);
+    }
   }
 
   void onClearAllPressed() {

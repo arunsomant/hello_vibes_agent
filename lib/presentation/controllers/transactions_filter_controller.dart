@@ -27,8 +27,12 @@ class TransactionsFilterController extends GetxController {
     Get.back();
   }
 
-  void onTransactionTypeSelected(String callType) {
-    selectedTransactionType(callType);
+  void onTransactionTypeSelected(String transactionType) {
+    if (selectedTransactionType.value == transactionType) {
+      selectedTransactionType('');
+    } else {
+      selectedTransactionType(transactionType);
+    }
   }
 
   void onClearAllPressed() {
