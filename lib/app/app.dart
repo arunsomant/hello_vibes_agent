@@ -35,7 +35,7 @@ class App extends StatelessWidget {
         return GetMaterialApp(
           title: 'Hello Vibess Agen',
           theme: AppTheme.theme(),
-          defaultTransition: Transition.native,
+          defaultTransition: Transition.fadeIn,
           debugShowCheckedModeBanner: false,
           initialRoute: AppRoutes.splash,
           initialBinding: InitialBinding(),
