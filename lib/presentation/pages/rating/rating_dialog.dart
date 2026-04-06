@@ -93,36 +93,39 @@ class RatingDialog extends GetView<RatingController> {
   }
 
   Widget _buildReport() {
-    return Column(
-      spacing: AppSpacings.s8,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Center(
-          child: AppText('More About Your Experience', type: AppTextType.t14m),
-        ),
-        ...List.generate(controller.reportOptions.length, (index) {
-          return _buildReportTile(
-            title: controller.reportOptions[index],
-            selected: controller.selectedReportOption.value == index,
-            onPressed: () {
-              controller.onReportItemPressed(index);
-            },
-          );
-        }),
-        AnimatedSize(
-          duration: Duration(milliseconds: 200),
-          child: controller.showReportCommentInput
-              ? AppInputText(
-                  height: 110,
-                  textAlign: TextAlign.start,
-                  maxLines: 5,
-                  hintText: 'Enter Here',
-                )
-              : SizedBox.shrink(),
-        ),
+    return Align(
+      alignment: Alignment.centerLeft,
+      child:  Column(
+        spacing: AppSpacings.s8,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: AppText('More About Your Experience', type: AppTextType.t14m),
+          ),
+          ...List.generate(controller.reportOptions.length, (index) {
+            return _buildReportTile(
+              title: controller.reportOptions[index],
+              selected: controller.selectedReportOption.value == index,
+              onPressed: () {
+                controller.onReportItemPressed(index);
+              },
+            );
+          }),
+          AnimatedSize(
+            duration: Duration(milliseconds: 200),
+            child: controller.showReportCommentInput
+                ? AppInputText(
+                    height: 110,
+                    textAlign: TextAlign.start,
+                    maxLines: 5,
+                    hintText: 'Enter Here',
+                  )
+                : SizedBox.shrink(),
+          ),
 
-        const SizedBox(height: AppSpacings.s16),
-      ],
+          const SizedBox(height: AppSpacings.s16),
+        ],
+      ),
     );
   }
 
@@ -131,12 +134,10 @@ class RatingDialog extends GetView<RatingController> {
     required bool selected,
     VoidCallback? onPressed,
   }) {
-    return Row(
-      spacing: AppSpacings.s8,
-      children: [
-        AppRadioButton(selected: selected, onPressed: onPressed),
-        AppText(title, type: AppTextType.t14r),
-      ],
+    return AppRadioButton(
+      selected: selected,
+      onPressed: onPressed,
+      label: title,
     );
   }
 }
