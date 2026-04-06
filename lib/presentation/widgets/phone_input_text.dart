@@ -90,7 +90,7 @@ class _PhoneInputTextState extends State<PhoneInputText> {
           children: [
             AppText(_selectedCountryCode.flag, type: AppTextType.t24b),
             const SizedBox(width: AppSpacings.s4),
-            AppText(_selectedCountryCode.dialCode),
+            AppText(_selectedCountryCode.dialCode, type: AppTextType.t16sb),
           ],
         ),
       ),
