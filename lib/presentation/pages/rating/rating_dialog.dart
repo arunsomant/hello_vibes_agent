@@ -29,57 +29,63 @@ class RatingDialog extends GetView<RatingController> {
         ),
         child: Obx(() {
           final user = controller.call.value.participant;
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              controller.selectedReport.isTrue
-                  ? _buildReport()
-                  : Column(
-                      spacing: AppSpacings.s4,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        AppText(
-                          'How Was Your Experience With',
-                          type: AppTextType.t16m,
-                        ),
-                        HVProfileImage(
-                          user: user,
-                          size: 100,
-                          showOnlineStatus: false,
-                        ),
-                        AppText(user.name, type: AppTextType.t20sb, maxLine: 2),
-                      ],
-                    ),
-              const SizedBox(height: AppSpacings.s16),
-              AnimatedSize(
-                duration: Duration(milliseconds: 200),
-                child: Column(
-                  children: [
-                    AppButton(
-                      fillColor: false,
-                      border: true,
-                      busy: controller.busy.isTrue,
-                      textColor: AppColors.buttonPrimary,
-                      prefixIconAsset: AppAssetsMapper.icHorn,
-                      height: AppSizes.appButtonHeightLarge,
-                      text: controller.selectedReport.isTrue
-                          ? 'Submit Report'
-                          : 'Report',
-                      onPressed: controller.selectedReport.isTrue
-                          ? controller.onSubmitReportPressed
-                          : controller.onReportPressed,
-                    ),
-                    const SizedBox(height: AppSpacings.s16),
-                  ],
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                controller.selectedReport.isTrue
+                    ? _buildReport()
+                    : Column(
+                        spacing: AppSpacings.s4,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          AppText(
+                            'How Was Your Experience With',
+                            type: AppTextType.t16m,
+                          ),
+                          HVProfileImage(
+                            user: user,
+                            size: 100,
+                            showOnlineStatus: false,
+                          ),
+                          AppText(
+                            user.name,
+                            type: AppTextType.t20sb,
+                            maxLine: 2,
+                          ),
+                        ],
+                      ),
+                const SizedBox(height: AppSpacings.s16),
+                AnimatedSize(
+                  duration: Duration(milliseconds: 200),
+                  child: Column(
+                    children: [
+                      AppButton(
+                        fillColor: false,
+                        border: true,
+                        busy: controller.busy.isTrue,
+                        textColor: AppColors.buttonPrimary,
+                        prefixIconAsset: AppAssetsMapper.icHorn,
+                        height: AppSizes.appButtonHeightLarge,
+                        text: controller.selectedReport.isTrue
+                            ? 'Submit Report'
+                            : 'Report',
+                        onPressed: controller.selectedReport.isTrue
+                            ? controller.onSubmitReportPressed
+                            : controller.onReportPressed,
+                      ),
+                      const SizedBox(height: AppSpacings.s16),
+                    ],
+                  ),
                 ),
-              ),
-              AppButton(
-                height: AppSizes.appButtonHeightLarge,
-                text: 'Feeling Good',
-                onPressed: controller.onFeelingGoodPressed,
-              ),
-              const SizedBox(height: AppSpacings.s24),
-            ],
+                AppButton(
+                  height: AppSizes.appButtonHeightLarge,
+                  text: 'Feeling Good',
+                  onPressed: controller.onFeelingGoodPressed,
+                ),
+                const SizedBox(height: AppSpacings.s24),
+              ],
+            ),
           );
         }),
       ),
@@ -91,7 +97,9 @@ class RatingDialog extends GetView<RatingController> {
       spacing: AppSpacings.s8,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Center(child: AppText('More About Your Experience', type: AppTextType.t14m)),
+        Center(
+          child: AppText('More About Your Experience', type: AppTextType.t14m),
+        ),
         ...List.generate(controller.reportOptions.length, (index) {
           return _buildReportTile(
             title: controller.reportOptions[index],
