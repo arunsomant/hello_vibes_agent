@@ -38,7 +38,7 @@ class ProfileTab extends GetView<ProfileController> {
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const SizedBox(height: AppSpacings.s60),
+                          const SizedBox(height: AppSpacings.s40),
                           MTProfileImage(
                             user: user,
                             size: 150,
