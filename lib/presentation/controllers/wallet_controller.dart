@@ -1,10 +1,11 @@
 import 'package:get/get.dart';
-import 'package:mingle_talk_agent/presentation/controllers/bank_details_controller.dart';
 
 import '../../data/repositories/transaction_repository.dart';
+import '../pages/policy/policy_page.dart';
 import '../routes/app_routes.dart';
 import '../widgets/index.dart';
 import 'auth_controller.dart';
+import 'bank_details_controller.dart';
 import 'landing_controller.dart';
 
 class WalletController extends GetxController {
@@ -42,6 +43,10 @@ class WalletController extends GetxController {
     _gotoTransactionHistoryPage();
   }
 
+  void onFAQPressed() {
+    _gotoPolicyPage();
+  }
+
   void _gotoTransactionHistoryPage() {
     if (Get.isRegistered<LandingController>()) {
       Get.offNamedUntil(AppRoutes.landing, (route) => true);
@@ -56,6 +61,10 @@ class WalletController extends GetxController {
 
   void _gotoBankDetailsPage() {
     Get.toNamed(AppRoutes.bankDetails);
+  }
+
+  void _gotoPolicyPage() {
+    Get.toNamed(AppRoutes.policy, arguments: PolicyArguments.coinPolicy());
   }
 
   void _requestRedeem() async {

@@ -37,7 +37,7 @@ class WalletPage extends GetView<WalletController> {
             actions: [
               AppButtonIcon(
                 svgAsset: AppAssetsMapper.icFAQ,
-                onTap: Get.back,
+                onTap: controller.onFAQPressed,
                 color: AppColors.iconSecondary,
               ),
             ],
