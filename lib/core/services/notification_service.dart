@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
+import 'package:mingle_talk_agent/data/models/avatar.dart';
 
 import '../../data/models/call.dart';
 import '../../data/models/user.dart';
@@ -48,10 +49,15 @@ void initCallkitListeners() {
         final call = CallAlertNotification.fromMap(callData);
         final uuid = call.uuid;
         final customerName = call.customerName;
+        final avatar = call.customerAvatar;
+        final user = User(
+          name: customerName,
+          avatar: Avatar(url: avatar),
+        );
         if (call.callType == CallType.video) {
-          _navigateToVideoCalling(uuid, customerName);
+          _navigateToVideoCalling(uuid, user);
         } else {
-          _navigateToVoiceCalling(uuid, customerName);
+          _navigateToVoiceCalling(uuid, user);
         }
       }
     },
@@ -67,23 +73,23 @@ void initCallkitListeners() {
   );
 }
 
-void _navigateToVoiceCalling(dynamic uuid, dynamic customerName) {
+void _navigateToVoiceCalling(String uuid, User user) {
   Get.toNamed(
     AppRoutes.voiceCalling,
     arguments: CallingArguments(
       uuid: uuid,
-      user: User(name: customerName ?? 'Unknown Caller'),
+      user: user,
       callType: CallType.audio,
     ),
   );
 }
 
-void _navigateToVideoCalling(dynamic uuid, dynamic customerName) {
+void _navigateToVideoCalling(String uuid, User user) {
   Get.toNamed(
     AppRoutes.videoCalling,
     arguments: CallingArguments(
       uuid: uuid,
-      user: User(name: customerName ?? 'Unknown Caller'),
+      user: user,
       callType: CallType.video,
     ),
   );
