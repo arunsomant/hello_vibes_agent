@@ -188,7 +188,7 @@ enum CallStatus implements JsonEnum {
   const CallStatus(this.value);
 }
 
-enum CallAlertType implements JsonEnum {
+enum NotificationType implements JsonEnum {
   incomingCall('incoming_call'),
   callEnded('call_ended'),
   callRejected('call_rejected');
@@ -197,33 +197,36 @@ enum CallAlertType implements JsonEnum {
   final String value;
 
   @override
-  CallAlertType get defaultValue => CallAlertType.incomingCall;
+  NotificationType get defaultValue => NotificationType.incomingCall;
 
-  const CallAlertType(this.value);
+  const NotificationType(this.value);
 }
 
-class CallAlertNotification {
+class AlertNotification {
   final String uuid;
   final String customerName;
   final String customerAvatar;
   final CallType callType;
-  final CallAlertType callAlertType;
+  final NotificationType notificationType;
+  final AlertReason reason;
 
-  CallAlertNotification({
+  AlertNotification({
     this.uuid = '',
     this.customerName = '',
     this.customerAvatar = '',
     this.callType = CallType.none,
-    this.callAlertType = CallAlertType.incomingCall,
+    this.notificationType = NotificationType.incomingCall,
+    this.reason = AlertReason.none,
   });
 
-  factory CallAlertNotification.fromMap(Map<dynamic, dynamic> json) {
-    return CallAlertNotification(
+  factory AlertNotification.fromMap(Map<String, dynamic> json) {
+    return AlertNotification(
       uuid: json['call_uuid'] ?? '',
       customerName: json['customer_name'] ?? 'Unknown Caller',
       customerAvatar: json['customer_avatar'] ?? '',
       callType: CallType.values.fromJson(json['call_type']),
-      callAlertType: CallAlertType.values.fromJson(json['type']),
+      notificationType: NotificationType.values.fromJson(json['type']),
+      reason: AlertReason.values.fromJson(json['reason']),
     );
   }
 
@@ -232,6 +235,25 @@ class CallAlertNotification {
     'customer_name': customerName,
     'customer_avatar': customerAvatar,
     'call_type': callType.value,
-    'type': callAlertType.value,
+    'type': notificationType.value,
+    'reason': reason.value,
   };
+}
+
+enum AlertReason implements JsonEnum {
+  none('none'),
+  insufficientBalance('insufficient_balance'),
+  adminForceEnd('admin_force_end'),
+  customerEnded('customer_ended'),
+  agentEnded('agent_ended'),
+  stuckCallRecovered('stuck_call_recovered'),
+  ringTimeout('ring_timeout');
+
+  @override
+  final String value;
+
+  @override
+  AlertReason get defaultValue => AlertReason.none;
+
+  const AlertReason(this.value);
 }

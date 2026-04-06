@@ -7,6 +7,7 @@ import '../../data/models/call.dart';
 import '../../data/models/user.dart';
 import '../../data/repositories/call_repository.dart';
 import '../../presentation/routes/app_routes.dart';
+import '../../presentation/widgets/index.dart';
 import '../config/firebase_options.dart';
 import 'callkit_service.dart';
 
@@ -28,8 +29,8 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 void _handleMessage(RemoteMessage message) async {
   Map<String, dynamic> data = message.data;
   initCallkitListeners();
-  final call = CallAlertNotification.fromMap(data);
-  if (call.callAlertType == CallAlertType.incomingCall) {
+  final call = AlertNotification.fromMap(data);
+  if (call.notificationType == NotificationType.incomingCall) {
     if (message.sentTime == null ||
         DateTime.now().difference(message.sentTime!.toLocal()) >
             const Duration(minutes: 1)) {
@@ -37,7 +38,12 @@ void _handleMessage(RemoteMessage message) async {
     }
     await CallkitService().showCallNotification(call);
   }
-  if (call.callAlertType == CallAlertType.callEnded) {
+  if (call.notificationType == NotificationType.callEnded) {
+    if (call.reason == AlertReason.insufficientBalance) {
+      _showToast('Call ended due to insufficient balance in customer account');
+    } else if (call.reason == AlertReason.customerEnded) {
+      _showToast('Call ended by customer');
+    }
     await CallkitService().dismissCallNotification(call);
   }
 }
@@ -46,7 +52,7 @@ void initCallkitListeners() {
   CallkitService().initCallkitListeners(
     onCallAccept: (callData) {
       if (callData != null) {
-        final call = CallAlertNotification.fromMap(callData);
+        final call = AlertNotification.fromMap(callData);
         final uuid = call.uuid;
         final customerName = call.customerName;
         final avatar = call.customerAvatar;
@@ -63,7 +69,7 @@ void initCallkitListeners() {
     },
     onCallDecline: (callData) async {
       if (callData != null) {
-        final call = CallAlertNotification.fromMap(callData);
+        final call = AlertNotification.fromMap(callData);
         final uuid = call.uuid;
         try {
           await CallRepository.instance().rejectCall(call: Call(uuid: uuid));
@@ -169,4 +175,8 @@ class NotificationService {
     print('Message also contained a notification: ${message.notification}');
     // Handle the message based on its type or content
   }
+}
+
+void _showToast(String message) {
+  AppDialog.showToast(message);
 }

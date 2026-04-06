@@ -63,7 +63,7 @@ class LandingController extends GetxController
               currentCall['isAccepted'] == true ||
               currentCall['isCallConnected'] == true)) {
         if (currentCall != null) {
-          final call = CallAlertNotification.fromMap(currentCall['extra']);
+          final call = AlertNotification.fromMap(currentCall['extra']);
           final uuid = call.uuid;
           final customerName = call.customerName;
           if (call.callType == CallType.video) {

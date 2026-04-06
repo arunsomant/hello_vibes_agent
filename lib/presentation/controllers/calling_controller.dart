@@ -258,7 +258,7 @@ class CallingController extends GetxController {
   void _endCall() async {
     try {
       await CallkitService().dismissCallNotification(
-        CallAlertNotification(
+        AlertNotification(
           uuid: call.uuid,
           customerName: call.participant.name,
         ),

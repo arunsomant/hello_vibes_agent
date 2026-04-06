@@ -8,7 +8,7 @@ import '../utils/app_extensions.dart';
 class CallkitService {
   Future getVoIPToken() => FlutterCallkitIncoming.getDevicePushTokenVoIP();
 
-  Future<void> showCallNotification(CallAlertNotification data) async {
+  Future<void> showCallNotification(AlertNotification data) async {
     final callUuid = data.uuid;
     final customerName = data.customerName;
     final customerAvatar = data.customerAvatar;
@@ -61,7 +61,7 @@ class CallkitService {
     await FlutterCallkitIncoming.showCallkitIncoming(callKitParams);
   }
 
-  Future<void> dismissCallNotification(CallAlertNotification data) {
+  Future<void> dismissCallNotification(AlertNotification data) {
     final callUuid = data.uuid;
     return FlutterCallkitIncoming.endCall(callUuid);
   }
