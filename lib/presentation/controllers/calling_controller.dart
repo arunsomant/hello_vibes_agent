@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
+import 'package:mingle_talk_agent/presentation/controllers/calls_controller.dart';
+import 'package:mingle_talk_agent/presentation/controllers/transactions_controller.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../core/services/callkit_service.dart';
@@ -258,17 +260,12 @@ class CallingController extends GetxController {
   void _endCall() async {
     try {
       await CallkitService().dismissCallNotification(
-        AlertNotification(
-          uuid: call.uuid,
-          customerName: call.participant.name,
-        ),
+        AlertNotification(uuid: call.uuid, customerName: call.participant.name),
       );
       final response = await callRepository.endCall(call: call);
       if (response.success) {
         Get.back();
-        if (Get.isRegistered<LandingController>() && duration.value > 0) {
-          Get.find<LandingController>().checkForPendingReview();
-        }
+        _afterCallEnded();
       } else {
         _showToast(response.message);
       }
@@ -314,7 +311,7 @@ class CallingController extends GetxController {
     _roomListener?.on<RoomConnectedEvent>((event) {
       callStatus(CallStatus.agentJoined);
       _startIncrementingDuration();
-      print('LIVEKIT_EVENT - RoomConnectedEvent: ${event.room.name}');
+      debugPrint('LIVEKIT_EVENT - RoomConnectedEvent: ${event.room.name}');
       localParticipant(event.room.localParticipant);
       if (event.room.remoteParticipants.isNotEmpty) {
         participant(event.room.remoteParticipants[0]);
@@ -353,7 +350,7 @@ class CallingController extends GetxController {
 
     _roomListener?.on<ParticipantDisconnectedEvent>((event) {
       participant(null);
-      print(
+      debugPrint(
         'LIVEKIT_EVENT - ParticipantDisconnectedEvent: ${event.participant.identity}',
       );
       callStatus(CallStatus.ended);
@@ -396,15 +393,23 @@ class CallingController extends GetxController {
 
   void _saveCallDetails() async {
     try {
-      print('EEEEEEE1');
       await callRepository.saveCallDetails(call);
-    } catch (e) {
-      print('EEEEEEE');
-      print(e);
-    }
+    } catch (_) {}
   }
 
   void _showToast(String message) {
     AppDialog.showToast(message);
+  }
+
+  void _afterCallEnded() {
+    if (Get.isRegistered<LandingController>() && duration.value > 0) {
+      Get.find<LandingController>().checkForPendingReview();
+    }
+    if (Get.isRegistered<CallsController>()) {
+      Get.find<CallsController>().onRefresh();
+    }
+    if (Get.isRegistered<TransactionsController>()) {
+      Get.find<TransactionsController>().onRefreshPressed();
+    }
   }
 }
