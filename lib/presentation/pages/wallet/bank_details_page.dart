@@ -102,7 +102,7 @@ class BankDetailsPage extends GetView<BankDetailsController> {
                 horizontal: AppSpacings.s16,
               ),
               child: AppButton(
-                text: 'Submit Bank Details',
+                text: 'Save Bank Details',
                 onPressed: controller.onSubmitBankDetailsPressed,
                 height: AppSizes.appButtonHeightLarge,
               ),
