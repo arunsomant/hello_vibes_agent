@@ -52,6 +52,7 @@ class CallsController extends GetxController {
 
   void onRefresh() {
     _refresh();
+    _refreshWalletBalance();
   }
 
   void _refresh() {
@@ -102,5 +103,11 @@ class CallsController extends GetxController {
 
   void _showToast(String message) {
     AppDialog.showToast(message);
+  }
+
+  void _refreshWalletBalance() {
+    if (Get.isRegistered<AuthController>()) {
+      Get.find<AuthController>().getUserProfile();
+    }
   }
 }
