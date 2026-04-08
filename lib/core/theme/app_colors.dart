@@ -16,6 +16,7 @@ class AppColors {
         900: Color(0xFF451D3C),
       });
   static const Color teal = Color(0xFF4ECDC4);
+  static const Color finn20 = Color(0x33913D7D);
   static const Color richBlack = Color(0xFF0E1417);
   static const Color macaroni = Color(0xFFF8BE98);
   static const Color macaroniDark = Color(0xFFE88849);
@@ -76,6 +77,10 @@ class AppColors {
   static const Color iconCredit = green;
 
   static const Color iconDebit = red;
+
+  static const Color indicatorActive = finn;
+
+  static const Color indicatorInactive = finn20;
 
   static const Color shimmerBase = Color(0xFFEEEEEE);
 

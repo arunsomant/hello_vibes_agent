@@ -34,8 +34,8 @@ class AppCarouselIndicator extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(AppRadii.r8),
                 color: activeIndex == index
-                    ? AppColors.finn
-                    : AppColors.finn.withValues(alpha: 0.5),
+                    ? AppColors.indicatorActive
+                    : AppColors.indicatorInactive,
               ),
               duration: const Duration(milliseconds: 200),
             );
