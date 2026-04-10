@@ -73,7 +73,7 @@ class LoginController extends GetxController
       if (response.success) {
         _gotoOtpVerificationPage(mobile: mobile, countryCode: countryCode);
         if (kDebugMode) {
-          _showToast(response.message);
+          _showToast(response.otp);
         }
       } else {
         _showToast(response.message);
