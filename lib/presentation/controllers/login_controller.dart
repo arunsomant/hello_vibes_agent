@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:deep_country_code_picker/deep_country_code_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -71,6 +72,9 @@ class LoginController extends GetxController
       );
       if (response.success) {
         _gotoOtpVerificationPage(mobile: mobile, countryCode: countryCode);
+        if (kDebugMode) {
+          _showToast(response.message);
+        }
       } else {
         _showToast(response.message);
       }
