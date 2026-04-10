@@ -248,8 +248,9 @@ class CallingController extends GetxController {
           livekitToken,
           enableVideo: videoCall,
         );
-        loudSpeakerOn(videoCall);
-        liveKitService.setSpeakerphoneOn(videoCall);
+        liveKitService.setSpeakerphoneOn(loudSpeakerOn.value);
+        liveKitService.setMicEnabled(micOn.value);
+        liveKitService.setVideoEnabled(videoOn.value);
         _startCall();
       }
     } catch (e) {
@@ -264,6 +265,9 @@ class CallingController extends GetxController {
       );
       final response = await callRepository.endCall(call: call);
       if (response.success) {
+        if (Get.isBottomSheetOpen == true) {
+          Get.back();
+        }
         Get.back();
         _afterCallEnded();
       } else {
@@ -295,6 +299,9 @@ class CallingController extends GetxController {
 
   void _delayedBack() {
     Future.delayed(Duration(seconds: 2)).then((value) {
+      if (Get.isBottomSheetOpen == true) {
+        Get.back();
+      }
       Get.back();
     });
   }
@@ -353,8 +360,10 @@ class CallingController extends GetxController {
       debugPrint(
         'LIVEKIT_EVENT - ParticipantDisconnectedEvent: ${event.participant.identity}',
       );
-      callStatus(CallStatus.ended);
-      _disconnectLiveKit();
+      if (event.participant is! LocalParticipant) {
+        callStatus(CallStatus.ended);
+        _disconnectLiveKit();
+      }
     });
     _roomListener?.on<TrackMutedEvent>((event) {
       if (event.participant is RemoteParticipant) {
