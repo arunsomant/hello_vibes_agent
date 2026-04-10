@@ -38,7 +38,7 @@ class AppDialog {
     Object? arguments,
   }) {
     return Get.bottomSheet(
-      child,
+      SafeArea(bottom: true, top: false, child: child),
       enableDrag: false,
       clipBehavior: Clip.hardEdge,
       settings: RouteSettings(arguments: arguments),
