@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
-import 'package:mingle_talk_agent/presentation/controllers/calls_controller.dart';
-import 'package:mingle_talk_agent/presentation/controllers/transactions_controller.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../core/services/callkit_service.dart';
@@ -13,7 +11,9 @@ import '../../data/models/call.dart';
 import '../../data/models/user.dart';
 import '../../data/repositories/call_repository.dart';
 import '../widgets/index.dart';
+import 'calls_controller.dart';
 import 'landing_controller.dart';
+import 'transactions_controller.dart';
 
 class CallingController extends GetxController {
   final CallRepository callRepository;
@@ -69,6 +69,7 @@ class CallingController extends GetxController {
       user(args.user);
       uuid = args.uuid;
       callType = args.callType;
+      loudSpeakerOn(callType == CallType.video);
       _checkConfigurations();
     } else {
       throw ArgumentError(
@@ -117,9 +118,11 @@ class CallingController extends GetxController {
 
   void _startHideTimer() {
     _cancelHideTimer();
-    _hideTimer = Timer(const Duration(seconds: 3), () {
-      _toggleControls();
-    });
+    if (callType == CallType.video) {
+      _hideTimer = Timer(const Duration(seconds: 3), () {
+        _toggleControls();
+      });
+    }
   }
 
   void _toggleControls() {
@@ -250,7 +253,9 @@ class CallingController extends GetxController {
         );
         liveKitService.setSpeakerphoneOn(loudSpeakerOn.value);
         liveKitService.setMicEnabled(micOn.value);
-        liveKitService.setVideoEnabled(videoOn.value);
+        if (videoCall) {
+          liveKitService.setVideoEnabled(videoOn.value);
+        }
         _startCall();
       }
     } catch (e) {
@@ -326,11 +331,11 @@ class CallingController extends GetxController {
       _saveCallDetails();
     });
     _roomListener?.on<LocalTrackPublishedEvent>((event) {
-      if (event.publication.kind == TrackType.AUDIO) {
+      /*if (event.publication.kind == TrackType.AUDIO) {
         micOn(true);
       } else if (event.publication.kind == TrackType.VIDEO) {
         videoOn(true);
-      }
+      }*/
       localParticipant(event.participant);
       localParticipant.refresh();
     });
@@ -415,10 +420,14 @@ class CallingController extends GetxController {
       Get.find<LandingController>().checkForPendingReview();
     }
     if (Get.isRegistered<CallsController>()) {
-      Get.find<CallsController>().onRefresh();
+      Future.delayed(const Duration(seconds: 4)).then((_) {
+        Get.find<CallsController>().onRefresh();
+      });
     }
     if (Get.isRegistered<TransactionsController>()) {
-      Get.find<TransactionsController>().onRefreshPressed();
+      Future.delayed(const Duration(seconds: 4)).then((_) {
+        Get.find<TransactionsController>().onRefreshPressed();
+      });
     }
   }
 }
