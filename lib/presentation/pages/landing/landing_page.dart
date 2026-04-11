@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../controllers/landing_controller.dart';
 import '../../widgets/index.dart';
 import 'calls_tab.dart';
@@ -16,21 +17,19 @@ class LandingPage extends GetView<LandingController> {
         automaticallyImplyLeading: false,
         flexibleSpace: Align(
           alignment: Alignment.bottomCenter,
-          child: Obx( () {
-              return MTAppBar(
-                user: controller.user,
-                onOnlineStatusChanged: (value){
-
-                  controller.onOnlineStatusChanged.call(value);
-                },
-              );
-            }
-          ),
+          child: Obx(() {
+            return MTAppBar(
+              user: controller.user,
+              onOnlineStatusChanged: (value) {
+                controller.onOnlineStatusChanged.call(value);
+              },
+            );
+          }),
         ),
       ),
       body: TabBarView(
         controller: controller.tabController,
-        children: [CallsTab(), TransactionsTab(),ProfileTab()],
+        children: [CallsTab(), TransactionsTab(), ProfileTab()],
       ),
       bottomNavigationBar: Obx(() {
         return MTAppBottomBar(

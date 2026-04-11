@@ -14,6 +14,7 @@ import '../pages/rating/rating_dialog.dart';
 import '../routes/app_routes.dart';
 import '../widgets/index.dart';
 import 'auth_controller.dart';
+import 'configuration_controller.dart';
 
 class LandingController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -177,14 +178,28 @@ class LandingController extends GetxController
   void onOnlineStatusChanged(bool isOnline) async {
     final onlineStatus = user.isOnline;
     _onlineStatusChange(isOnline, user);
-    try {
-      final response = await userRepository.onlineStatusUpdate(user);
-      if (!response.success) {
-        _onlineStatusChange(onlineStatus, user);
-        _showToast(response.message);
+    bool permissionsGranted = true;
+    if (isOnline) {
+      final configurationController = Get.find<ConfigurationController>();
+      permissionsGranted = await configurationController
+          .checkDeviceConfigurations();
+      if (!permissionsGranted) {
+        configurationController.openSettings();
       }
-    } catch (_) {
-    } finally {}
+    }
+    if (permissionsGranted) {
+      try {
+        final response = await userRepository.onlineStatusUpdate(user);
+        if (!response.success) {
+          _onlineStatusChange(onlineStatus, user);
+          _showToast(response.message);
+        }
+      } catch (_) {
+        _onlineStatusChange(onlineStatus, user);
+      }
+    } else {
+      _onlineStatusChange(onlineStatus, user);
+    }
   }
 
   void _onlineStatusChange(bool isOnline, User user) {
