@@ -1,4 +1,4 @@
-import'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../core/config/app_assets_mapper.dart';
@@ -62,50 +62,63 @@ class CallControlButtonsBottomSheet extends StatelessWidget {
             physics: ClampingScrollPhysics(),
             child: SizedBox(
               height: 140,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
                 children: [
-                  if(!isVideoCall)AppButtonIcon(
-                    size: 44,
-                    svgAsset: loudSpeakerOn
-                        ? AppAssetsMapper.icVolume
-                        : AppAssetsMapper.icVolumeSlash,
-                    color: AppColors.iconSecondary,
-                    backgroundColor: loudSpeakerOn
-                        ? AppColors.buttonPrimary
-                        : AppColors.backgroundOverlay,
-                    onTap: onVolumeTap,
+                  SizedBox(height: AppSpacings.s12),
+                  AppSvgAsset(
+                    AppAssetsMapper.bottomSheetArrow,
+                    color: AppColors.iconHint,
                   ),
-                  if(isVideoCall)AppButtonIcon(
-                    size: 44,
-                    svgAsset: videoOn
-                        ? AppAssetsMapper.icVideoCall
-                        : AppAssetsMapper.icVideSlash,
-                    color: AppColors.iconSecondary,
-                    backgroundColor: videoOn
-                        ? AppColors.buttonPrimary
-                        : AppColors.backgroundOverlay,
-                    onTap: onVideoTap,
-                  ),
-                  AppButtonIcon(
-                    size: 56,
-                    svgAsset: AppAssetsMapper.icCallDown,
-                    color: AppColors.iconSecondary,
-                    backgroundColor: AppColors.red,
-                    sizeIcon: 36,
-                    onTap: onCallEndTap,
-                  ),
-                  AppButtonIcon(
-                    size: 44,
-                    svgAsset: micOn
-                        ? AppAssetsMapper.icMic
-                        : AppAssetsMapper.icMicOff,
-                    color: AppColors.iconSecondary,
-                    backgroundColor: micOn
-                        ? AppColors.buttonPrimary
-                        : AppColors.backgroundOverlay,
-                    onTap: onMicTap,
+                  Expanded(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        if (!isVideoCall)
+                          AppButtonIcon(
+                            size: 44,
+                            svgAsset: loudSpeakerOn
+                                ? AppAssetsMapper.icVolume
+                                : AppAssetsMapper.icVolumeSlash,
+                            color: AppColors.iconSecondary,
+                            backgroundColor: loudSpeakerOn
+                                ? AppColors.buttonPrimary
+                                : AppColors.backgroundOverlay,
+                            onTap: onVolumeTap,
+                          ),
+                        if (isVideoCall)
+                          AppButtonIcon(
+                            size: 44,
+                            svgAsset: videoOn
+                                ? AppAssetsMapper.icVideoCall
+                                : AppAssetsMapper.icVideSlash,
+                            color: AppColors.iconSecondary,
+                            backgroundColor: videoOn
+                                ? AppColors.buttonPrimary
+                                : AppColors.backgroundOverlay,
+                            onTap: onVideoTap,
+                          ),
+                        AppButtonIcon(
+                          size: 56,
+                          svgAsset: AppAssetsMapper.icCallDown,
+                          color: AppColors.iconSecondary,
+                          backgroundColor: AppColors.red,
+                          sizeIcon: 36,
+                          onTap: onCallEndTap,
+                        ),
+                        AppButtonIcon(
+                          size: 44,
+                          svgAsset: micOn
+                              ? AppAssetsMapper.icMic
+                              : AppAssetsMapper.icMicOff,
+                          color: AppColors.iconSecondary,
+                          backgroundColor: micOn
+                              ? AppColors.buttonPrimary
+                              : AppColors.backgroundOverlay,
+                          onTap: onMicTap,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
