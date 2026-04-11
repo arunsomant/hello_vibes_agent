@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -117,6 +118,9 @@ class OtpVerificationController extends GetxController
       );
       if (response.success) {
         startTimer(timerDuration2);
+        if (kDebugMode) {
+          _showToast(response.otp);
+        }
       } else {
         _showToast(response.message);
       }
