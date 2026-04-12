@@ -46,7 +46,7 @@ class LandingBinding extends Bindings {
     Get.lazyPut<FirebaseRepository>(
       () => FirebaseRepository(apiHelper: Get.find<ApiBaseHelper>()),
     );
-    Get.lazyPut<ConfigurationController>(() => ConfigurationController());
+    Get.lazyPut<ConfigurationController>(() => ConfigurationController(),fenix: true);
     Get.lazyPut<LandingController>(
       () => LandingController(
         userRepository: Get.find<UserRepository>(),
