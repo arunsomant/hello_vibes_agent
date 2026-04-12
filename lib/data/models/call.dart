@@ -189,15 +189,17 @@ enum CallStatus implements JsonEnum {
 }
 
 enum NotificationType implements JsonEnum {
+  none('none'),
   incomingCall('incoming_call'),
   callEnded('call_ended'),
-  callRejected('call_rejected');
+  callRejected('call_rejected'),
+  agentOnlineStatusChange('agent_online_status_change');
 
   @override
   final String value;
 
   @override
-  NotificationType get defaultValue => NotificationType.incomingCall;
+  NotificationType get defaultValue => NotificationType.none;
 
   const NotificationType(this.value);
 }

@@ -43,8 +43,8 @@ class CallRepository {
     return await remoteDataSource.acceptCall(uuid: uuid);
   }
 
-  Future<AppResponse> endCall({required Call call}) async {
-    return await remoteDataSource.endCall(call: call);
+  Future<AppResponse> endCall({required Call call, bool isClientInitiateEndCall = false}) async {
+    return await remoteDataSource.endCall(call: call, isClientInitiateEndCall: isClientInitiateEndCall);
   }
 
   Future<bool> saveCallDetails(Call call) async {

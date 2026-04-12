@@ -1,7 +1,12 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:mingle_talk_agent/data/models/avatar.dart';
+import 'package:mingle_talk_agent/presentation/controllers/auth_controller.dart';
 
 import '../../data/models/call.dart';
 import '../../data/models/user.dart';
@@ -45,6 +50,18 @@ void _handleMessage(RemoteMessage message) async {
       _showToast('Call ended by customer');
     }
     await CallkitService().dismissCallNotification(call);
+  }
+
+  if(call.notificationType == NotificationType.agentOnlineStatusChange){
+    if(Get.isRegistered<AuthController>()){
+      Get.find<AuthController>().getUserProfile();
+    }
+  }
+
+  if(message.notification != null){
+    showNotification(message.notification!.hashCode,
+        message.notification!.title!, message.notification!.body!,
+        payload: message.data);
   }
 }
 
@@ -101,6 +118,42 @@ void _navigateToVideoCalling(String uuid, User user) {
   );
 }
 
+void showNotification(int hashCode, String title, String body,
+    {Map<String, dynamic>? payload}) {
+  flutterLocalNotificationsPlugin.show(
+      id: hashCode,
+      title: title,
+      body: body,
+      notificationDetails: NotificationDetails(
+        android: AndroidNotificationDetails(channel.id, channel.name,
+            enableLights: channel.enableLights,
+            channelDescription: channel.description,
+            sound: channel.sound,
+            playSound: channel.playSound,
+            enableVibration: channel.enableVibration,
+            importance: channel.importance,
+            //icon: "ic_notification",  // todo add notification icon
+            largeIcon:
+            const DrawableResourceAndroidBitmap("@mipmap/launcher_icon"),
+            styleInformation: const MediaStyleInformation(
+                htmlFormatContent: true, htmlFormatTitle: true)),
+      ),
+      payload: payload != null ? json.encode(payload) : null);
+}
+
+const AndroidNotificationChannel channel = AndroidNotificationChannel(
+  'main_channel', // id
+  'All MTA Notifications', // title
+  description: 'MTA Default Notifications',
+  enableLights: true,
+  playSound: true,
+  enableVibration: true,
+  importance: Importance.max,
+  showBadge: true,
+);
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+FlutterLocalNotificationsPlugin();
+
 class NotificationService {
   Future<void> initialize() async {
     await FirebaseMessaging.instance.requestPermission(
@@ -110,6 +163,12 @@ class NotificationService {
     );
 
     initCallkitListeners();
+
+    _requestPermissions();
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
 
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
@@ -121,6 +180,22 @@ class NotificationService {
 
     // handle when app completely closed by the user
     terminateNotification();
+
+    var initializationSettingsAndroid =
+    const AndroidInitializationSettings('@mipmap/launcher_icon');
+    var initializationSettingsIOS = const DarwinInitializationSettings();
+    var initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    flutterLocalNotificationsPlugin.initialize(
+      settings: initializationSettings,
+      onDidReceiveNotificationResponse: (details) {
+        print('on click called');
+        if (details.payload != null) {
+          try {
+          } catch (_) {}
+        }
+      },
+    );
   }
 
   Future<void> foregroundNotification() async {
@@ -174,6 +249,34 @@ class NotificationService {
     print("Message data: ${message.data}");
     print('Message also contained a notification: ${message.notification}');
     // Handle the message based on its type or content
+  }
+
+  Future<void> _requestPermissions() async {
+    if (Platform.isIOS || Platform.isMacOS) {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+          MacOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+    } else if (Platform.isAndroid) {
+      final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+      flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>();
+
+      final bool? grantedNotificationPermission =
+      await androidImplementation?.requestNotificationsPermission();
+    }
   }
 }
 

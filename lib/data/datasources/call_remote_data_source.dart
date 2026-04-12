@@ -40,9 +40,10 @@ class CallRemoteDataSource {
     return AppResponse.fromMap(response);
   }
 
-  Future<AppResponse> endCall({required Call call}) async {
+  Future<AppResponse> endCall({required Call call,bool isClientInitiateEndCall = false}) async {
     final response = await apiHelper.post(
       '${ApiEndpoints.calls}/${call.uuid}${ApiEndpoints.callEnd}',
+      body: {'client_initiated': isClientInitiateEndCall},
     );
     return AppResponse.fromMap(response);
   }

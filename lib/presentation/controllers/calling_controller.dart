@@ -62,6 +62,8 @@ class CallingController extends GetxController {
 
   final participantAudioEnabled = false.obs;
 
+  bool isClientInitiateEndCall = false;
+
   @override
   void onInit() {
     final args = Get.arguments;
@@ -159,7 +161,7 @@ class CallingController extends GetxController {
   }
 
   void onCallEndTap() {
-    _endCall();
+    isClientInitiateEndCall = true;
     _disconnectLiveKit();
   }
 
@@ -244,7 +246,7 @@ class CallingController extends GetxController {
       await CallkitService().dismissCallNotification(
         AlertNotification(uuid: call.uuid, customerName: call.participant.name),
       );
-      final response = await callRepository.endCall(call: call);
+      final response = await callRepository.endCall(call: call, isClientInitiateEndCall: isClientInitiateEndCall);
       if (response.success) {
         if (Get.isBottomSheetOpen == true) {
           Get.back();
