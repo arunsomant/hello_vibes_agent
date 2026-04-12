@@ -21,7 +21,7 @@ class CallkitService {
       //Fallback or retrieve from payloads
       handle: '',
       // Number or handle
-      type: 0,
+      type: data.callType == CallType.audio ? 0 : 1,
       // 0 for Audio, 1 for Video
       duration: 30000,
       textAccept: 'Accept',
