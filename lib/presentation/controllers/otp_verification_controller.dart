@@ -118,9 +118,7 @@ class OtpVerificationController extends GetxController
       );
       if (response.success) {
         startTimer(timerDuration2);
-        if (kDebugMode) {
-          _showToast(response.otp);
-        }
+        _showToast(response.otp);
       } else {
         _showToast(response.message);
       }

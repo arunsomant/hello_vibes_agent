@@ -57,6 +57,7 @@ dependencies:
   flutter_inappwebview: ^6.1.5
   url_launcher: ^6.3.2
   flutter_local_notifications: ^21.0.0
+  wakelock_plus: ^1.5.1
 
 dev_dependencies:
   flutter_test:

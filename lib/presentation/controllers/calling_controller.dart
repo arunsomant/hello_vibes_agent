@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../core/services/callkit_service.dart';
 import '../../core/services/livekit_service.dart';
@@ -72,6 +73,9 @@ class CallingController extends GetxController {
       uuid = args.uuid;
       callType = args.callType;
       loudSpeakerOn(callType == CallType.video);
+      if(callType == CallType.video) {
+        WakelockPlus.enable();
+      }
       _checkConfigurations();
     } else {
       throw ArgumentError(
@@ -98,6 +102,7 @@ class CallingController extends GetxController {
     _roomListener?.dispose();
     liveKitService.dispose();
     CallkitService().dismissAllCallNotification();
+    WakelockPlus.disable();
     super.onClose();
   }
 
