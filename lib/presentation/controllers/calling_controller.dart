@@ -159,6 +159,7 @@ class CallingController extends GetxController {
   }
 
   void onCallEndTap() {
+    _endCall();
     _disconnectLiveKit();
   }
 
