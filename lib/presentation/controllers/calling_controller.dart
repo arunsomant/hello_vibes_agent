@@ -310,6 +310,11 @@ class CallingController extends GetxController {
       localParticipant(event.room.localParticipant);
       if (event.room.remoteParticipants.isNotEmpty) {
         participant(event.room.remoteParticipants[0]);
+
+        // 🔥 FIX: sync initial track states
+        if (participant.value != null) {
+          _syncParticipantTracks(participant.value!);
+        }
       }
       _saveCallDetails();
     });
@@ -371,6 +376,9 @@ class CallingController extends GetxController {
       );
       if (event.publication.kind == TrackType.VIDEO) {
         participant(event.participant);
+        if (participant.value != null) {
+          _syncParticipantTracks(participant.value!);
+        }
         update();
       }
     });
@@ -412,5 +420,24 @@ class CallingController extends GetxController {
         Get.find<TransactionsController>().onRefreshPressed();
       });
     }
+  }
+
+  void _syncParticipantTracks(RemoteParticipant p) {
+    final videoPub = p.videoTrackPublications.firstOrNull;
+    final audioPub = p.audioTrackPublications.firstOrNull;
+
+    if(callType == CallType.video) {
+      participantVideoEnabled(
+        videoPub != null &&
+            videoPub.subscribed &&
+            videoPub.muted != true,
+      );
+    }
+
+    participantAudioEnabled(
+      audioPub != null &&
+          audioPub.subscribed &&
+          audioPub.muted != true,
+    );
   }
 }
