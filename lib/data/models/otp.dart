@@ -11,8 +11,8 @@ class OtpSendResponse {
   factory OtpSendResponse.fromMap(Map<String, dynamic> json) {
     bool success = json['success'] ?? false;
     String message = json['message'] ?? '';
-    String otp = json['data']['otp_debug'] ?? '';
-    if (!success) {
+    String otp = json.containsKey('data') ? json['data']['otp_debug'] ?? '' : '';
+    if (!success && json.containsKey('data')) {
       message =
           '$message ${AppResponse.parseErrorResponse(json['data']).join(',')}';
     }
