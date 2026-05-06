@@ -35,4 +35,10 @@ class AppConfig {
   static String supportMail = 'support-agent@mingletalk.com';
 
   static String supportNumber = '+919876543211';
+
+  // WebSocket (Reverb) Config - placeholder values, update later
+  static String websocketHost = 'your-domain.com';
+  static int websocketPort = 6001;
+  static String websocketKey = 'your-app-key';
+  static String websocketAuthEndpoint = '/broadcasting/auth';
 }

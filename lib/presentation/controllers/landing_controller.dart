@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../core/services/callkit_service.dart';
 import '../../core/services/firebase_message_service.dart';
+import '../../core/services/websocket_service.dart';
 import '../../data/models/call.dart';
 import '../../data/models/user.dart';
 import '../../data/repositories/call_repository.dart';
@@ -52,7 +53,14 @@ class LandingController extends GetxController
   void onReady() {
     _showWelcomeDialog();
     _checkForActiveCalls();
+    Get.find<WebSocketService>().init();
     super.onReady();
+  }
+
+  @override
+  void dispose() {
+    Get.find<WebSocketService>().dispose();
+    super.dispose();
   }
 
   void _checkForActiveCalls() async {

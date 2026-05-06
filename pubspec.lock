@@ -25,6 +25,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.7.0"
+  asn1lib:
+    dependency: transitive
+    description:
+      name: asn1lib
+      sha256: "9a8f69025044eb466b9b60ef3bc3ac99b4dc6c158ae9c56d25eeccf5bc56d024"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.6.5"
   async:
     dependency: transitive
     description:
@@ -138,7 +146,7 @@ packages:
     source: hosted
     version: "1.19.1"
   connectivity_plus:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: connectivity_plus
       sha256: "33bae12a398f841c6cda09d1064212957265869104c478e5ad51e2fb26c3973c"
@@ -225,6 +233,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.3"
+  encrypt:
+    dependency: transitive
+    description:
+      name: encrypt
+      sha256: "62d9aa4670cc2a8798bab89b39fc71b6dfbacf615de6cf5001fb39f7e4a996a2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.3"
   fake_async:
     dependency: transitive
     description:
@@ -921,7 +937,7 @@ packages:
     source: hosted
     version: "2.1.8"
   pointycastle:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
       name: pointycastle
       sha256: "92aa3841d083cc4b0f4709b5c74fd6409a3e6ba833ffc7dc6a8fee096366acf5"
@@ -952,6 +968,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
+  pusher_reverb_flutter:
+    dependency: "direct main"
+    description:
+      name: pusher_reverb_flutter
+      sha256: "8538a7853a26a1c29a8647b24a3db378ef10794934774e2b02698965474a3c5d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.6"
   rxdart:
     dependency: transitive
     description:
@@ -1277,6 +1301,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
+  web_socket:
+    dependency: transitive
+    description:
+      name: web_socket
+      sha256: "34d64019aa8e36bf9842ac014bb5d2f5586ca73df5e4d9bf5c936975cae6982c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
+  web_socket_channel:
+    dependency: transitive
+    description:
+      name: web_socket_channel
+      sha256: d645757fb0f4773d602444000a8131ff5d48c9e47adfe9772652dd1a4f2d45c8
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.3"
   webrtc_interface:
     dependency: transitive
     description:
