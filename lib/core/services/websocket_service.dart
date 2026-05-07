@@ -1,6 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ConnectionState;
 import 'package:get/get.dart';
 import 'package:mingle_talk_agent/data/repositories/auth_repository.dart';
 import 'package:mingle_talk_agent/presentation/controllers/auth_controller.dart';
@@ -16,6 +17,9 @@ class WebSocketService {
 
   ReverbClient? _client;
   int? _agentId;
+  bool _isConnected = false;
+  Channel? _agentChannel;
+  StreamSubscription<ConnectionState>? _connectionStateSubscription;
 
   final StreamController<AlertNotification> _alertNotificationController =
       StreamController<AlertNotification>.broadcast();
@@ -52,7 +56,10 @@ class WebSocketService {
         host: AppConfig.websocketHost,
         port: AppConfig.websocketPort,
         appKey: AppConfig.websocketKey,
-        authEndpoint: '${AppConfig.baseUrl}${AppConfig.websocketAuthEndpoint}',
+        useTLS: true,
+        pingInterval: Duration(seconds: 20),
+        authEndpoint:
+            '${AppConfig.apiBaseUrl}${AppConfig.websocketAuthEndpoint}',
         authorizer: (channelName, socketId) async {
           final t = await Get.find<AuthRepository>().getAccessToken();
           if (t.isEmpty) {
@@ -64,14 +71,33 @@ class WebSocketService {
             'Accept': 'application/json',
           };
         },
+        onConnecting: () {
+          debugPrint('WebSocket: Connecting...');
+          _isConnected = false;
+        },
+        onConnected: (socketId) {
+          debugPrint('WebSocket: Connected successfully (socket: $socketId)');
+          _isConnected = true;
+          _reconnectAttempts = 0;
+          _subscribeToAgentChannel();
+        },
+        onReconnecting: () {
+          debugPrint('WebSocket: Reconnecting...');
+          _isConnected = false;
+        },
+        onDisconnected: () {
+          debugPrint('WebSocket: Disconnected');
+          _isConnected = false;
+          _agentChannel = null;
+        },
+        onError: (error) {
+          debugPrint('WebSocket: Error - $error');
+        },
       );
 
-      await _subscribeToAgentChannel();
       await _client!.connect();
-      _reconnectAttempts = 0;
-      debugPrint('WebSocket: Connected successfully');
     } catch (e) {
-      debugPrint('WebSocket: Connection failed: $e');
+      debugPrint('WebSocket: Initial connection failed - $e');
       if (e.toString().contains('403') ||
           e.toString().contains('unauthorized')) {
         debugPrint('WebSocket: Auth failed, token may be expired');
@@ -82,22 +108,38 @@ class WebSocketService {
   }
 
   Future<void> _subscribeToAgentChannel() async {
-    if (_client == null || _agentId == null) return;
-
-    final channel =
-        _client!.subscribeToPrivateChannel('private-agent.$_agentId');
-
-    channel.bind('call.notification', (eventName, data) {
-      debugPrint('WebSocket: data: $data');
-      if (data != null) {
-        try {
-          final alert = AlertNotification.fromMap(data);
-          _alertNotificationController.add(alert);
-        } catch (e) {
-          debugPrint('WebSocket: Failed to parse notification: $e');
+    if (_client == null || _agentId == null || !_isConnected) {
+      debugPrint('WebSocket: Cannot subscribe - not connected');
+      return;
+    }
+    try {
+      _agentChannel =
+          _client!.subscribeToPrivateChannel('private-agent.$_agentId');
+      _agentChannel!.bind('call.notification', (eventName, data) {
+        debugPrint('WebSocket: data: $data');
+        if (data != null) {
+          try {
+            Map<String, dynamic> jsonData;
+            if (data is String) {
+              jsonData = jsonDecode(data);
+            } else if (data is Map<String, dynamic>) {
+              jsonData = data;
+            } else {
+              debugPrint(
+                  'WebSocket: Unexpected data type: ${data.runtimeType}');
+              return;
+            }
+            final alert = AlertNotification.fromMap(jsonData);
+            _alertNotificationController.add(alert);
+          } catch (e) {
+            debugPrint('WebSocket: Failed to parse notification: $e');
+          }
         }
-      }
-    });
+      });
+      debugPrint('WebSocket: Connected successfully and subscribed');
+    } catch (e) {
+      debugPrint('WebSocket: Subscription failed - $e');
+    }
   }
 
   void _handleDisconnect() {
@@ -129,7 +171,8 @@ class WebSocketService {
   Future<void> _setupConnectivityListener() async {
     _connectivitySubscription =
         Connectivity().onConnectivityChanged.listen((result) {
-      if (!result.contains(ConnectivityResult.none)) {
+      if (!result.contains(ConnectivityResult.none) && !_isConnected) {
+        debugPrint('WebSocket: Network recovered, reconnecting...');
         _reconnect();
       }
     });
@@ -139,10 +182,14 @@ class WebSocketService {
 
   void dispose() {
     _connectivitySubscription?.cancel();
+    _connectionStateSubscription?.cancel();
+    _agentChannel?.unsubscribe();
     _client?.disconnect();
     _client = null;
+    _agentChannel = null;
     _alertNotificationController.close();
     _agentId = null;
+    _isConnected = false;
     _reconnectAttempts = 0;
     _isReconnecting = false;
   }
