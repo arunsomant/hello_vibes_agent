@@ -8,7 +8,7 @@ class AppConfig {
 
   static ThemeData theme = AppTheme.theme();
 
-  static String baseUrl = 'http://65.1.70.29';
+  static String baseUrl = 'https://app.demarrer.in';
 
   static String apiBaseUrl = '$baseUrl/api';
 
@@ -35,4 +35,10 @@ class AppConfig {
   static String supportMail = 'support-agent@mingletalk.com';
 
   static String supportNumber = '+919876543211';
+
+  // WebSocket (Reverb) Config - placeholder values, update later
+  static String websocketHost = 'app.demarrer.in';
+  static int websocketPort = 443;
+  static String websocketKey = 'lqt2kphzfzhgmwhktqi3';
+  static String websocketAuthEndpoint = '/broadcasting/auth';
 }

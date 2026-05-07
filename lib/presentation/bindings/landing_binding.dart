@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 
 import '../../core/network/api_base_helper.dart';
+import '../../core/services/websocket_service.dart';
 import '../../data/datasources/call_remote_data_source.dart';
 import '../../data/datasources/transaction_remote_data_source.dart';
 import '../../data/datasources/users_remote_data_source.dart';
@@ -87,6 +88,12 @@ class LandingBinding extends Bindings {
       () => BankDetailsController(
         transactionRepository: Get.find<TransactionRepository>(),
       ),
+      fenix: true,
+    );
+
+    Get.lazyPut<WebSocketService>(
+          () =>
+              WebSocketService(),
       fenix: true,
     );
   }
