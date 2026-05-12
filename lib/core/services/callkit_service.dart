@@ -6,10 +6,29 @@ import 'package:mingle_talk_agent/data/models/call.dart';
 import '../utils/app_extensions.dart';
 
 class CallkitService {
+  // Singleton pattern for consistent state across NotificationService & WebSocketService
+  static final CallkitService _instance = CallkitService._internal();
+
+  factory CallkitService() => _instance;
+
+  CallkitService._internal();
+
+  // Track active call UUIDs to prevent redundant notifications
+  final Set<String> _activeCallUuids = {};
+
   Future getVoIPToken() => FlutterCallkitIncoming.getDevicePushTokenVoIP();
 
-  Future<void> showCallNotification(AlertNotification data) async {
+  /// Shows call notification if not already shown for this UUID.
+  /// Returns true if notification was shown, false if it was already active.
+  Future<bool> showCallNotification(AlertNotification data) async {
     final callUuid = data.uuid;
+
+    // Prevent duplicate call notifications
+    if (_activeCallUuids.contains(callUuid)) {
+      return false;
+    }
+    _activeCallUuids.add(callUuid);
+
     final customerName = data.customerName;
     final customerAvatar = data.customerAvatar;
 
@@ -59,14 +78,17 @@ class CallkitService {
       ),
     );
     await FlutterCallkitIncoming.showCallkitIncoming(callKitParams);
+    return true;
   }
 
   Future<void> dismissCallNotification(AlertNotification data) {
     final callUuid = data.uuid;
+    _activeCallUuids.remove(callUuid);
     return FlutterCallkitIncoming.endCall(callUuid);
   }
 
   Future<void> dismissAllCallNotification() {
+    _activeCallUuids.clear();
     return FlutterCallkitIncoming.endAllCalls();
   }
 

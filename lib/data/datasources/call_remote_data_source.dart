@@ -40,7 +40,10 @@ class CallRemoteDataSource {
     return AppResponse.fromMap(response);
   }
 
-  Future<AppResponse> endCall({required Call call,bool isClientInitiateEndCall = false}) async {
+  Future<AppResponse> endCall({
+    required Call call,
+    bool isClientInitiateEndCall = false,
+  }) async {
     final response = await apiHelper.post(
       '${ApiEndpoints.calls}/${call.uuid}${ApiEndpoints.callEnd}',
       body: {'client_initiated': isClientInitiateEndCall},
@@ -51,6 +54,13 @@ class CallRemoteDataSource {
   Future<AppResponse> rejectCall({required Call call}) async {
     final response = await apiHelper.post(
       '${ApiEndpoints.calls}/${call.uuid}${ApiEndpoints.callReject}',
+    );
+    return AppResponse.fromMap(response);
+  }
+
+  Future<AppResponse> markCallRinging({required Call call}) async {
+    final response = await apiHelper.post(
+      '${ApiEndpoints.calls}/${call.uuid}${ApiEndpoints.callRinging}',
     );
     return AppResponse.fromMap(response);
   }
