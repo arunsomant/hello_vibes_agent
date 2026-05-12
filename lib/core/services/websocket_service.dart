@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart' hide ConnectionState;
 import 'package:get/get.dart';
@@ -9,10 +10,13 @@ import 'package:pusher_reverb_flutter/pusher_reverb_flutter.dart';
 
 import '../../data/models/call.dart';
 import '../config/app_config.dart';
+import 'alert_notification_service.dart';
 
-class WebSocketService extends GetxService{
+class WebSocketService extends GetxService {
   static final WebSocketService _instance = WebSocketService._internal();
+
   factory WebSocketService() => _instance;
+
   WebSocketService._internal();
 
   ReverbClient? _client;
@@ -20,11 +24,6 @@ class WebSocketService extends GetxService{
   bool _isConnected = false;
   Channel? _agentChannel;
   StreamSubscription<ConnectionState>? _connectionStateSubscription;
-
-  final StreamController<AlertNotification> _alertNotificationController =
-      StreamController<AlertNotification>.broadcast();
-  Stream<AlertNotification> get alertNotificationStream =>
-      _alertNotificationController.stream;
 
   bool _isReconnecting = false;
   int _reconnectAttempts = 0;
@@ -66,10 +65,7 @@ class WebSocketService extends GetxService{
             debugPrint('WebSocket: Auth token empty for auth request');
             debugPrint('TODO: Add token refresh logic here');
           }
-          return {
-            'Authorization': 'Bearer $t',
-            'Accept': 'application/json',
-          };
+          return {'Authorization': 'Bearer $t', 'Accept': 'application/json'};
         },
         onConnecting: () {
           debugPrint('WebSocket: Connecting...');
@@ -113,8 +109,9 @@ class WebSocketService extends GetxService{
       return;
     }
     try {
-      _agentChannel =
-          _client!.subscribeToPrivateChannel('private-agent.$_agentId');
+      _agentChannel = _client!.subscribeToPrivateChannel(
+        'private-agent.$_agentId',
+      );
       _agentChannel!.bind('call.notification', (eventName, data) {
         debugPrint('WebSocket: data: $data');
         if (data != null) {
@@ -126,11 +123,13 @@ class WebSocketService extends GetxService{
               jsonData = data;
             } else {
               debugPrint(
-                  'WebSocket: Unexpected data type: ${data.runtimeType}');
+                'WebSocket: Unexpected data type: ${data.runtimeType}',
+              );
               return;
             }
             final alert = AlertNotification.fromMap(jsonData);
-            _alertNotificationController.add(alert);
+            // Use centralized handler in AlertNotificationService
+            AlertNotificationService().handleAlertNotification(alert);
           } catch (e) {
             debugPrint('WebSocket: Failed to parse notification: $e');
           }
@@ -148,7 +147,8 @@ class WebSocketService extends GetxService{
     _isReconnecting = true;
     _reconnectAttempts++;
     debugPrint(
-        'WebSocket: Reconnecting ($_reconnectAttempts/$_maxReconnectAttempts)');
+      'WebSocket: Reconnecting ($_reconnectAttempts/$_maxReconnectAttempts)',
+    );
     Future.delayed(Duration(seconds: _reconnectDelaySeconds), () {
       _isReconnecting = false;
       _reconnect();
@@ -169,8 +169,9 @@ class WebSocketService extends GetxService{
   }
 
   Future<void> _setupConnectivityListener() async {
-    _connectivitySubscription =
-        Connectivity().onConnectivityChanged.listen((result) {
+    _connectivitySubscription = Connectivity().onConnectivityChanged.listen((
+      result,
+    ) {
       if (!result.contains(ConnectivityResult.none) && !_isConnected) {
         debugPrint('WebSocket: Network recovered, reconnecting...');
         _reconnect();
@@ -187,7 +188,6 @@ class WebSocketService extends GetxService{
     _client?.disconnect();
     _client = null;
     _agentChannel = null;
-    _alertNotificationController.close();
     _agentId = null;
     _isConnected = false;
     _reconnectAttempts = 0;

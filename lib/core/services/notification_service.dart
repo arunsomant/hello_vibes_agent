@@ -7,14 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:mingle_talk_agent/data/models/avatar.dart';
-import 'package:mingle_talk_agent/presentation/controllers/auth_controller.dart';
 
 import '../../data/models/call.dart';
 import '../../data/models/user.dart';
 import '../../data/repositories/call_repository.dart';
 import '../../presentation/routes/app_routes.dart';
-import '../../presentation/widgets/index.dart';
 import '../config/firebase_options.dart';
+import 'alert_notification_service.dart';
 import 'callkit_service.dart';
 
 @pragma('vm:entry-point')
@@ -35,31 +34,10 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 void _handleMessage(RemoteMessage message) async {
   Map<String, dynamic> data = message.data;
   initCallkitListeners();
-  final call = AlertNotification.fromMap(data);
-  if (call.notificationType == NotificationType.incomingCall) {
-    try {
-      await CallRepository.instance().markCallRinging(
-        call: Call(uuid: call.uuid),
-      );
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-    await CallkitService().showCallNotification(call);
-  }
-  if (call.notificationType == NotificationType.callEnded) {
-    if (call.reason == AlertReason.insufficientBalance) {
-      _showToast('Call ended due to insufficient balance in customer account');
-    } else if (call.reason == AlertReason.customerEnded) {
-      _showToast('Call ended by customer');
-    }
-    await CallkitService().dismissCallNotification(call);
-  }
+  final alert = AlertNotification.fromMap(data);
 
-  if (call.notificationType == NotificationType.agentOnlineStatusChange) {
-    if (Get.isRegistered<AuthController>()) {
-      Get.find<AuthController>().getUserProfile();
-    }
-  }
+  // Use centralized handler in AlertNotificationService
+  await AlertNotificationService().handleAlertNotification(alert);
 
   if (message.notification != null) {
     showNotification(
@@ -293,8 +271,4 @@ class NotificationService {
       await androidImplementation?.requestNotificationsPermission();
     }
   }
-}
-
-void _showToast(String message) {
-  AppDialog.showToast(message);
 }
