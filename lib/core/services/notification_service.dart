@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:mingle_talk_agent/data/models/avatar.dart';
@@ -19,13 +20,13 @@ import 'callkit_service.dart';
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  print("Handling a background message: ${message.messageId}");
+  debugPrint("Handling a background message: ${message.messageId}");
 
-  print("Message data: ${message.data}");
+  debugPrint("Message data: ${message.data}");
 
   _handleMessage(message);
 
-  print('Message also contained a notification: ${message.notification}');
+  debugPrint('Message also contained a notification: ${message.notification}');
   if (message.notification == null) {
     return;
   }
@@ -36,10 +37,12 @@ void _handleMessage(RemoteMessage message) async {
   initCallkitListeners();
   final call = AlertNotification.fromMap(data);
   if (call.notificationType == NotificationType.incomingCall) {
-    if (message.sentTime == null ||
-        DateTime.now().difference(message.sentTime!.toLocal()) >
-            const Duration(minutes: 1)) {
-      return;
+    try {
+      await CallRepository.instance().markCallRinging(
+        call: Call(uuid: call.uuid),
+      );
+    } catch (e) {
+      debugPrint(e.toString());
     }
     await CallkitService().showCallNotification(call);
   }
@@ -52,16 +55,19 @@ void _handleMessage(RemoteMessage message) async {
     await CallkitService().dismissCallNotification(call);
   }
 
-  if(call.notificationType == NotificationType.agentOnlineStatusChange){
-    if(Get.isRegistered<AuthController>()){
+  if (call.notificationType == NotificationType.agentOnlineStatusChange) {
+    if (Get.isRegistered<AuthController>()) {
       Get.find<AuthController>().getUserProfile();
     }
   }
 
-  if(message.notification != null){
-    showNotification(message.notification!.hashCode,
-        message.notification!.title!, message.notification!.body!,
-        payload: message.data);
+  if (message.notification != null) {
+    showNotification(
+      message.notification!.hashCode,
+      message.notification!.title!,
+      message.notification!.body!,
+      payload: message.data,
+    );
   }
 }
 
@@ -118,27 +124,36 @@ void _navigateToVideoCalling(String uuid, User user) {
   );
 }
 
-void showNotification(int hashCode, String title, String body,
-    {Map<String, dynamic>? payload}) {
+void showNotification(
+  int hashCode,
+  String title,
+  String body, {
+  Map<String, dynamic>? payload,
+}) {
   flutterLocalNotificationsPlugin.show(
-      id: hashCode,
-      title: title,
-      body: body,
-      notificationDetails: NotificationDetails(
-        android: AndroidNotificationDetails(channel.id, channel.name,
-            enableLights: channel.enableLights,
-            channelDescription: channel.description,
-            sound: channel.sound,
-            playSound: channel.playSound,
-            enableVibration: channel.enableVibration,
-            importance: channel.importance,
-            //icon: "ic_notification",  // todo add notification icon
-            largeIcon:
-            const DrawableResourceAndroidBitmap("@mipmap/launcher_icon"),
-            styleInformation: const MediaStyleInformation(
-                htmlFormatContent: true, htmlFormatTitle: true)),
+    id: hashCode,
+    title: title,
+    body: body,
+    notificationDetails: NotificationDetails(
+      android: AndroidNotificationDetails(
+        channel.id,
+        channel.name,
+        enableLights: channel.enableLights,
+        channelDescription: channel.description,
+        sound: channel.sound,
+        playSound: channel.playSound,
+        enableVibration: channel.enableVibration,
+        importance: channel.importance,
+        //icon: "ic_notification",  // todo add notification icon
+        largeIcon: const DrawableResourceAndroidBitmap("@mipmap/launcher_icon"),
+        styleInformation: const MediaStyleInformation(
+          htmlFormatContent: true,
+          htmlFormatTitle: true,
+        ),
       ),
-      payload: payload != null ? json.encode(payload) : null);
+    ),
+    payload: payload != null ? json.encode(payload) : null,
+  );
 }
 
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
@@ -152,7 +167,7 @@ const AndroidNotificationChannel channel = AndroidNotificationChannel(
   showBadge: true,
 );
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin();
 
 class NotificationService {
   Future<void> initialize() async {
@@ -167,7 +182,8 @@ class NotificationService {
     _requestPermissions();
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(channel);
 
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
@@ -181,18 +197,20 @@ class NotificationService {
     // handle when app completely closed by the user
     terminateNotification();
 
-    var initializationSettingsAndroid =
-    const AndroidInitializationSettings('@mipmap/launcher_icon');
+    var initializationSettingsAndroid = const AndroidInitializationSettings(
+      '@mipmap/launcher_icon',
+    );
     var initializationSettingsIOS = const DarwinInitializationSettings();
     var initializationSettings = InitializationSettings(
-        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsIOS,
+    );
     flutterLocalNotificationsPlugin.initialize(
       settings: initializationSettings,
       onDidReceiveNotificationResponse: (details) {
         print('on click called');
         if (details.payload != null) {
-          try {
-          } catch (_) {}
+          try {} catch (_) {}
         }
       },
     );
@@ -245,9 +263,11 @@ class NotificationService {
   }
 
   void msgHandler(RemoteMessage message) {
-    print("Handling a message in msgHandler: ${message.messageId}");
-    print("Message data: ${message.data}");
-    print('Message also contained a notification: ${message.notification}');
+    debugPrint("Handling a message in msgHandler: ${message.messageId}");
+    debugPrint("Message data: ${message.data}");
+    debugPrint(
+      'Message also contained a notification: ${message.notification}',
+    );
     // Handle the message based on its type or content
   }
 
@@ -255,26 +275,21 @@ class NotificationService {
     if (Platform.isIOS || Platform.isMacOS) {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-          IOSFlutterLocalNotificationsPlugin>()
-          ?.requestPermissions(
-        alert: true,
-        badge: true,
-        sound: true,
-      );
+            IOSFlutterLocalNotificationsPlugin
+          >()
+          ?.requestPermissions(alert: true, badge: true, sound: true);
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-          MacOSFlutterLocalNotificationsPlugin>()
-          ?.requestPermissions(
-        alert: true,
-        badge: true,
-        sound: true,
-      );
+            MacOSFlutterLocalNotificationsPlugin
+          >()
+          ?.requestPermissions(alert: true, badge: true, sound: true);
     } else if (Platform.isAndroid) {
       final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
-      flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>();
+          flutterLocalNotificationsPlugin
+              .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin
+              >();
 
-      final bool? grantedNotificationPermission =
       await androidImplementation?.requestNotificationsPermission();
     }
   }

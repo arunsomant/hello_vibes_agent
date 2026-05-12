@@ -10,7 +10,7 @@ import 'package:pusher_reverb_flutter/pusher_reverb_flutter.dart';
 import '../../data/models/call.dart';
 import '../config/app_config.dart';
 
-class WebSocketService {
+class WebSocketService extends GetxService{
   static final WebSocketService _instance = WebSocketService._internal();
   factory WebSocketService() => _instance;
   WebSocketService._internal();
