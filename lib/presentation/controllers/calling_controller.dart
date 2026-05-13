@@ -69,6 +69,7 @@ class CallingController extends GetxController {
   @override
   void onInit() {
     // Enable showing over lock screen for calling
+    debugPrint('CallingController.onInit: Enabling lock screen');
     LockScreenService().enableShowOnLockScreen();
 
     final args = Get.arguments;
@@ -98,6 +99,7 @@ class CallingController extends GetxController {
   @override
   void onClose() {
     // Disable showing over lock screen when leaving calling screen
+    debugPrint('CallingController.onClose: Disabling lock screen');
     LockScreenService().disableShowOnLockScreen();
 
     if (_timer != null) {
