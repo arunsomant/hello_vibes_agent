@@ -15,6 +15,7 @@ import '../../presentation/routes/app_routes.dart';
 import '../config/firebase_options.dart';
 import 'alert_notification_service.dart';
 import 'callkit_service.dart';
+import 'lock_screen_service.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -51,8 +52,15 @@ void _handleMessage(RemoteMessage message) async {
 
 void initCallkitListeners() {
   CallkitService().initCallkitListeners(
-    onCallAccept: (callData) {
+    onCallAccept: (callData) async {
       if (callData != null) {
+        // Enable lock screen display BEFORE navigating to calling screen
+        // This is critical for calls accepted from killed state
+        await LockScreenService().enableShowOnLockScreen();
+
+        // Small delay to ensure native flags are applied
+        await Future.delayed(const Duration(milliseconds: 100));
+
         final call = AlertNotification.fromMap(callData);
         final uuid = call.uuid;
         final customerName = call.customerName;

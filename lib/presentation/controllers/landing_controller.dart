@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../core/services/callkit_service.dart';
 import '../../core/services/firebase_message_service.dart';
+import '../../core/services/lock_screen_service.dart';
 import '../../core/services/websocket_service.dart';
 import '../../data/models/call.dart';
 import '../../data/models/user.dart';
@@ -72,6 +73,9 @@ class LandingController extends GetxController
               currentCall['isAccepted'] == true ||
               currentCall['isCallConnected'] == true)) {
         if (currentCall != null) {
+          // Enable lock screen display before navigating to calling screen
+          await LockScreenService().enableShowOnLockScreen();
+          
           final call = AlertNotification.fromMap(Map<String, dynamic>.from(currentCall['extra']));
           final uuid = call.uuid;
           final customerName = call.customerName;
