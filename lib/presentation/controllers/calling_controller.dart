@@ -7,6 +7,7 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../core/services/callkit_service.dart';
 import '../../core/services/livekit_service.dart';
+import '../../core/services/lock_screen_service.dart';
 import '../../data/models/call.dart';
 import '../../data/models/user.dart';
 import '../../data/repositories/call_repository.dart';
@@ -67,6 +68,9 @@ class CallingController extends GetxController {
 
   @override
   void onInit() {
+    // Enable showing over lock screen for calling
+    LockScreenService().enableShowOnLockScreen();
+
     final args = Get.arguments;
     if (args is CallingArguments) {
       user(args.user);
@@ -93,6 +97,9 @@ class CallingController extends GetxController {
 
   @override
   void onClose() {
+    // Disable showing over lock screen when leaving calling screen
+    LockScreenService().disableShowOnLockScreen();
+
     if (_timer != null) {
       _timer!.cancel();
       _timer = null;
