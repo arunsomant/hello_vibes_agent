@@ -42,6 +42,9 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
+		<string>voip</string>
+		<string>audio</string>
+		<string>fetch</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
@@ -73,5 +76,18 @@
                 </dict>
             </dict>
         </dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Mingle Talk Agent needs camera access for video calls</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Mingle Talk Agent needs microphone access for calls</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Mingle Talk Agent needs Bluetooth access for audio devices during calls</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Mingle Talk Agent needs Bluetooth access for audio devices during calls</string>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.mingletalk.agent.refresh</string>
+		<string>com.mingletalk.agent.processing</string>
+	</array>
 </dict>
 </plist>
