@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart' hide User;
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -168,5 +169,14 @@ class AuthController extends GetxController {
       user(response.user);
       user.refresh();
     }
+  }
+
+  Future<(String, int)> getVersionCode() async {
+    final bundle = DefaultAssetBundle.of(Get.context!);
+    final pubspec = await bundle.loadString('pubspec.yaml');
+    final version = pubspec.split('version: ')[1];
+    final vName = version.split('+')[0];
+    final vCode = int.tryParse(version.split('+')[1].split('\n')[0]) ?? 0;
+    return (vName, vCode);
   }
 }

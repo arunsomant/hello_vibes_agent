@@ -19,6 +19,14 @@ class UserRepository {
     await localDataSource.saveWelcomeDialogShown(completed);
   }
 
+  Future<void> saveSkippedVersionUpdate(int version) async {
+    await localDataSource.saveSkippedVersionUpdate(version);
+  }
+
+  Future<int> getSkippedVersionUpdate() async {
+    return await localDataSource.getSkippedVersionUpdate();
+  }
+
   Future<UserResponse> getUser() async {
     return await remoteDataSource.getUser();
   }
