@@ -73,4 +73,26 @@ import flutter_callkit_incoming
   func pushRegistry(_ registry: PKPushRegistry, didInvalidatePushTokenFor type: PKPushType) {
     print("VoIP Push Token Invalidated for type: \(type)")
   }
+
+
+  // MARK: - Screenshot & Screen Recording Prevention
+  override func applicationDidBecomeActive(_ application: UIApplication) {
+    super.applicationDidBecomeActive(application)
+    preventScreenCapture()
+  }
+
+  private func preventScreenCapture() {
+    guard let window = self.window else { return }
+
+    if !window.subviews.contains(where: { $0.tag == 9999 }) {
+      let field = UITextField()
+      field.isSecureTextEntry = true
+      field.tag = 9999
+      window.addSubview(field)
+      field.centerYAnchor.constraint(equalTo: window.centerYAnchor).isActive = true
+      field.centerXAnchor.constraint(equalTo: window.centerXAnchor).isActive = true
+      window.layer.superlayer?.addSublayer(field.layer)
+      field.layer.sublayers?.first?.addSublayer(window.layer)
+    }
+  }
 }
