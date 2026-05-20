@@ -23,13 +23,11 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   debugPrint("Handling a background message: ${message.messageId}");
 
   debugPrint("Message data: ${message.data}");
-
-  _handleMessage(message);
-
   debugPrint('Message also contained a notification: ${message.notification}');
-  if (message.notification == null) {
+  if (message.notification != null) {
     return;
   }
+  _handleMessage(message);
 }
 
 void _handleMessage(RemoteMessage message) async {
@@ -40,6 +38,8 @@ void _handleMessage(RemoteMessage message) async {
   // Use centralized handler in AlertNotificationService
   await AlertNotificationService().handleAlertNotification(alert);
 
+  // Show local notification for both background and foreground messages
+  // that contain a notification payload
   if (message.notification != null) {
     showNotification(
       message.notification!.hashCode,
@@ -177,12 +177,6 @@ class NotificationService {
     // handle when app in active state
     foregroundNotification();
 
-    // handle when app running in background state
-    backgroundNotification();
-
-    // handle when app completely closed by the user
-    terminateNotification();
-
     var initializationSettingsAndroid = const AndroidInitializationSettings(
       '@mipmap/launcher_icon',
     );
@@ -193,68 +187,22 @@ class NotificationService {
     );
     flutterLocalNotificationsPlugin.initialize(
       settings: initializationSettings,
-      onDidReceiveNotificationResponse: (details) {
-        print('on click called');
-        if (details.payload != null) {
-          try {} catch (_) {}
-        }
-      },
+      onDidReceiveNotificationResponse: (details) {},
     );
   }
 
   Future<void> foregroundNotification() async {
-    await FirebaseMessaging.instance.getToken();
     FirebaseMessaging.onMessage.listen((message) async {
-      print('Handling a foregroundNotification message ${message.messageId}');
+      debugPrint('Handling a foregroundNotification message ${message.messageId}');
       /*if (Get.isRegistered<LandingController>()) {
           Get.find<LandingController>().getNotificationsCount();
         }*/
-      print("Message data: ${message.data}");
+      debugPrint("Message data: ${message.data}");
       //'{reason: , call_uuid: 9824bc11-db24-4d63-9e3d-b8bf6cdd51a1, type: call_ended}'
       //'{call_uuid: 7205dc8a-7fbe-421c-865d-96e5a8dd3e9a, customer_name: Ben Doe, type: incoming_call, call_type: audio, room: call_7205dc8a-7fbe-421c-865d-96e5a8dd3e9a}'
 
       _handleMessage(message);
-
-      print('Message also contained a notification: ${message.notification}');
-      if (message.notification == null) {
-        return;
-      }
     });
-  }
-
-  void backgroundNotification() {
-    FirebaseMessaging.onMessageOpenedApp.listen((message) async {
-      /*if (Get.isRegistered<LandingController>()) {
-          Get.find<LandingController>().getNotificationsCount();
-        }*/
-      print("Message data: ${message.data}");
-      print('Message also contained a notification: ${message.notification}');
-      if (message.data.containsKey('type')) {
-        msgHandler(message);
-      }
-    });
-  }
-
-  Future<void> terminateNotification() async {
-    RemoteMessage? initialMessage = await FirebaseMessaging.instance
-        .getInitialMessage();
-    if (initialMessage != null) {
-      if (initialMessage.data.containsKey('type')) {
-        Future.delayed(
-          const Duration(milliseconds: 1000),
-          () => msgHandler(initialMessage),
-        );
-      }
-    }
-  }
-
-  void msgHandler(RemoteMessage message) {
-    debugPrint("Handling a message in msgHandler: ${message.messageId}");
-    debugPrint("Message data: ${message.data}");
-    debugPrint(
-      'Message also contained a notification: ${message.notification}',
-    );
-    // Handle the message based on its type or content
   }
 
   Future<void> _requestPermissions() async {
