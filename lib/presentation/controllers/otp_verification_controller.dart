@@ -120,7 +120,7 @@ class OtpVerificationController extends GetxController
       if (response.success) {
         availableProviders(response.availableProviders);
         startTimer(timerDuration2);
-        _showToast(response.otp);
+        _showToast(response.message + response.otp);
       } else {
         _showToast(response.message);
       }
