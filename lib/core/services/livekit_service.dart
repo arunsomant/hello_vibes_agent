@@ -105,6 +105,26 @@ class LiveKitService {
     }
   }
 
+  /// Returns true if an external audio output device (Bluetooth, wired headset) is connected.
+  Future<bool> isExternalAudioDeviceConnected() async {
+    try {
+      final devices = await Hardware.instance.enumerateDevices();
+      final audioOutputDevices = devices.where((d) => d.kind == 'audiooutput');
+      // Check if any device is not the built-in earpiece or speaker
+      return audioOutputDevices.any(
+        (d) =>
+            d.deviceId.toLowerCase().contains('bluetooth') ||
+            d.label.toLowerCase().contains('bluetooth') ||
+            d.label.toLowerCase().contains('headset') ||
+            d.label.toLowerCase().contains('headphone') ||
+            d.deviceId.toLowerCase().contains('wired'),
+      );
+    } catch (e) {
+      debugPrint('Could not enumerate audio devices: $e');
+      return false;
+    }
+  }
+
   Future<void> startAudio() async {
     try {
       await room!.startAudio();
