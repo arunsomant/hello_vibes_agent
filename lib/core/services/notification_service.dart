@@ -6,8 +6,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:mingle_talk_agent/data/models/avatar.dart';
 
+import '../../data/models/avatar.dart';
 import '../../data/models/call.dart';
 import '../../data/models/user.dart';
 import '../../data/repositories/call_repository.dart';
@@ -152,6 +152,7 @@ const AndroidNotificationChannel channel = AndroidNotificationChannel(
   importance: Importance.max,
   showBadge: true,
 );
+
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
@@ -193,7 +194,9 @@ class NotificationService {
 
   Future<void> foregroundNotification() async {
     FirebaseMessaging.onMessage.listen((message) async {
-      debugPrint('Handling a foregroundNotification message ${message.messageId}');
+      debugPrint(
+        'Handling a foregroundNotification message ${message.messageId}',
+      );
       /*if (Get.isRegistered<LandingController>()) {
           Get.find<LandingController>().getNotificationsCount();
         }*/

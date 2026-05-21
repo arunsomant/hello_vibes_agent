@@ -1,11 +1,12 @@
 import 'dart:io';
 
 import 'package:deep_country_code_picker/deep_country_code_picker.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../data/models/otp.dart';
 import '../../data/repositories/auth_repository.dart';
+import '../pages/login/otp_verification_page.dart';
 import '../pages/policy/policy_page.dart';
 import '../routes/app_routes.dart';
 import '../widgets/index.dart';
@@ -71,7 +72,11 @@ class LoginController extends GetxController
         countryCode: countryCode,
       );
       if (response.success) {
-        _gotoOtpVerificationPage(mobile: mobile, countryCode: countryCode);
+        _gotoOtpVerificationPage(
+          mobile: mobile,
+          countryCode: countryCode,
+          availableProviders: response.availableProviders,
+        );
         _showToast(response.otp);
       } else {
         _showToast(response.message);
@@ -90,10 +95,15 @@ class LoginController extends GetxController
   void _gotoOtpVerificationPage({
     required String mobile,
     required String countryCode,
+    required List<OtpProviderType> availableProviders,
   }) {
     Get.toNamed(
       AppRoutes.otpVerification,
-      arguments: {'mobile': mobile, 'countryCode': countryCode},
+      arguments: OtpVerificationArgs(
+        mobile: mobile,
+        countryCode: countryCode,
+        availableProviders: availableProviders,
+      ),
     );
   }
 

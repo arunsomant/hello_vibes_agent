@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../data/models/otp.dart';
 import '../../data/repositories/auth_repository.dart';
+import '../pages/login/otp_verification_page.dart';
 import '../widgets/index.dart';
 import 'auth_controller.dart';
 
@@ -33,14 +33,15 @@ class OtpVerificationController extends GetxController
 
   final int timerDuration1 = 60;
 
-  bool get isIndianNumber => dialCode.value == 'IN' || dialCode.value == '+91';
+  final availableProviders = <OtpProviderType>[].obs;
 
   @override
   void onInit() {
     final arguments = Get.arguments;
-    if (arguments != null) {
-      phoneNumber(arguments['mobile']);
-      dialCode(arguments['countryCode']);
+    if (arguments != null && arguments is OtpVerificationArgs) {
+      phoneNumber(arguments.mobile);
+      dialCode(arguments.countryCode);
+      availableProviders(arguments.availableProviders);
     }
     startTimer(timerDuration1);
     otpController.addListener(() {
@@ -117,6 +118,7 @@ class OtpVerificationController extends GetxController
         providerType: providerType,
       );
       if (response.success) {
+        availableProviders(response.availableProviders);
         startTimer(timerDuration2);
         _showToast(response.otp);
       } else {

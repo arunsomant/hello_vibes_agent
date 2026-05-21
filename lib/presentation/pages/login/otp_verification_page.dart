@@ -7,8 +7,23 @@ import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacings.dart';
 import '../../../core/utils/app_formatter.dart';
+import '../../../data/models/otp.dart';
 import '../../controllers/otp_verification_controller.dart';
 import '../../widgets/index.dart';
+
+class OtpVerificationArgs {
+  OtpVerificationArgs({
+    required this.mobile,
+    required this.countryCode,
+    required this.availableProviders,
+  });
+
+  final String mobile;
+
+  final String countryCode;
+
+  final List<OtpProviderType> availableProviders;
+}
 
 class OtpVerificationPage extends GetView<OtpVerificationController> {
   const OtpVerificationPage({super.key});
@@ -88,7 +103,7 @@ class OtpVerificationPage extends GetView<OtpVerificationController> {
                           const SizedBox(height: AppSpacings.s24),
                           Obx(() {
                             if (controller.resendRemaining.value == 0) {
-                              if (controller.isIndianNumber) {
+                              if (controller.availableProviders.isNotEmpty) {
                                 return RichText(
                                   textAlign: TextAlign.center,
                                   text: TextSpan(
@@ -97,27 +112,36 @@ class OtpVerificationPage extends GetView<OtpVerificationController> {
                                     ),
                                     children: [
                                       TextSpan(text: 'Resend Code via '),
-                                      TextSpan(
-                                        text: 'SMS',
-                                        style: TextStyle(
-                                          color: AppColors.primary,
-                                          decoration: TextDecoration.underline,
+                                      if (controller.availableProviders.contains(
+                                        OtpProviderType.sms,
+                                      ))
+                                        TextSpan(
+                                          text: 'SMS',
+                                          style: TextStyle(
+                                            color: AppColors.primary,
+                                            decoration: TextDecoration.underline,
+                                          ),
+                                          recognizer: TapGestureRecognizer()
+                                            ..onTap = controller.onResendSMSPressed,
                                         ),
-                                        recognizer: TapGestureRecognizer()
-                                          ..onTap =
-                                              controller.onResendSMSPressed,
-                                      ),
-                                      const TextSpan(text: ' or '),
-                                      TextSpan(
-                                        text: 'Whatsapp',
-                                        style: TextStyle(
-                                          color: AppColors.primary,
-                                          decoration: TextDecoration.underline,
+                                      if (controller.availableProviders.contains(
+                                        OtpProviderType.whatsapp,
+                                      )) ...[
+                                        if (controller.availableProviders.contains(
+                                          OtpProviderType.sms,
+                                        ))
+                                          const TextSpan(text: ' or '),
+                                        TextSpan(
+                                          text: 'Whatsapp',
+                                          style: TextStyle(
+                                            color: AppColors.primary,
+                                            decoration: TextDecoration.underline,
+                                          ),
+                                          recognizer: TapGestureRecognizer()
+                                            ..onTap =
+                                                controller.onResendWhatsappPressed,
                                         ),
-                                        recognizer: TapGestureRecognizer()
-                                          ..onTap = controller
-                                              .onResendWhatsappPressed,
-                                      ),
+                                      ],
                                     ],
                                   ),
                                 );
