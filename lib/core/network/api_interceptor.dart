@@ -71,6 +71,7 @@ class CustomRetryPolicy extends RetryPolicy {
     debugPrint("Retry Attempt for ${request.url} due to $reason");
     if (reason is SocketException) return true; // retry on SocketException
     if (reason is TimeoutException) return true; // retry on timeout
+    if (reason is ClientException) return true; // retry on timeout
     return false;
   }
 }
