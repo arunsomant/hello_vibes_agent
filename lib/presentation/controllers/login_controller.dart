@@ -77,7 +77,7 @@ class LoginController extends GetxController
           countryCode: countryCode,
           availableProviders: response.availableProviders,
         );
-        _showToast(response.otp);
+        _showToast(response.message + response.otp);
       } else {
         _showToast(response.message);
       }

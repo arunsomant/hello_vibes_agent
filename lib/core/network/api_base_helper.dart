@@ -2,8 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:get/get.dart' hide Response, MultipartFile;
 import 'package:http_interceptor/http_interceptor.dart';
 
+import '../../data/datasources/auth_local_data_source.dart';
+import '../../presentation/routes/app_routes.dart';
 import '../utils/app_exception.dart';
 
 class ApiBaseHelper {
@@ -199,6 +202,7 @@ dynamic _returnResponse(Response response) {
       var responseJson = json.decode(response.body.toString());
       return responseJson;
     case 401:
+      _handleUnauthorised();
       throw UnauthorisedException(response.body.toString());
     case 500:
     default:
@@ -206,4 +210,16 @@ dynamic _returnResponse(Response response) {
         'Error occurred while Communication with Server with StatusCode : ${response.statusCode}',
       );
   }
+}
+
+bool _isLoggingOut = false;
+
+void _handleUnauthorised() async {
+  if (_isLoggingOut) return;
+  if (Get.currentRoute == AppRoutes.login) return;
+  _isLoggingOut = true;
+  final authLocalDataSource = AuthLocalDataSource();
+  await authLocalDataSource.clearAll();
+  Get.offAllNamed(AppRoutes.login);
+  _isLoggingOut = false;
 }
