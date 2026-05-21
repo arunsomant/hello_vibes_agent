@@ -51,5 +51,11 @@ class AlertNotificationService {
         Get.find<AuthController>().getUserProfile();
       }
     }
+
+    if (alert.notificationType == NotificationType.withdrawalStatusChanged || alert.notificationType == NotificationType.agentAccountStatusChanged) {
+      if (Get.isRegistered<AuthController>()) {
+        Get.find<AuthController>().getUserProfile();
+      }
+    }
   }
 }
