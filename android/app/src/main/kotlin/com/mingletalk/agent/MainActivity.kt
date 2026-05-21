@@ -33,7 +33,10 @@ class MainActivity : FlutterActivity() {
         // Check if launched from CallKit before super.onCreate()
         launchedFromCall = isDeviceLockedCheck() || isLaunchedFromCallKit(intent)
 
-        Log.d(TAG, "onCreate: launchedFromCall=$launchedFromCall, deviceLocked=${isDeviceLockedCheck()}")
+        Log.d(
+            TAG,
+            "onCreate: launchedFromCall=$launchedFromCall, deviceLocked=${isDeviceLockedCheck()}"
+        )
 
         if (launchedFromCall) {
             Log.d(TAG, "Enabling lock screen flags at startup for incoming call")
@@ -42,6 +45,10 @@ class MainActivity : FlutterActivity() {
         }
 
         super.onCreate(savedInstanceState)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_SECURE,
+            WindowManager.LayoutParams.FLAG_SECURE
+        )
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -70,6 +77,7 @@ class MainActivity : FlutterActivity() {
                             result.error("INVALID_ARGUMENT", "Intent is required", null)
                         }
                     }
+
                     else -> result.notImplemented()
                 }
             }
@@ -95,12 +103,14 @@ class MainActivity : FlutterActivity() {
                         applyLockScreenFlags(true)
                         result.success(true)
                     }
+
                     "disableShowOnLockScreen" -> {
                         Log.d(TAG, "Flutter requested: disableShowOnLockScreen")
                         showOverLockScreenEnabled = false
                         applyLockScreenFlags(false)
                         result.success(true)
                     }
+
                     else -> result.notImplemented()
                 }
             }
@@ -127,9 +137,9 @@ class MainActivity : FlutterActivity() {
                 @Suppress("DEPRECATION")
                 window.addFlags(
                     WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
-                    WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
-                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
-                    WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                            WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
+                            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+                            WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
                 )
 
                 // Request keyguard dismissal
@@ -148,9 +158,9 @@ class MainActivity : FlutterActivity() {
                 @Suppress("DEPRECATION")
                 window.clearFlags(
                     WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
-                    WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
-                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
-                    WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                            WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
+                            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+                            WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
                 )
             }
         }
@@ -163,8 +173,8 @@ class MainActivity : FlutterActivity() {
                 @Suppress("DEPRECATION")
                 val wakeLock = powerManager.newWakeLock(
                     PowerManager.FULL_WAKE_LOCK or
-                    PowerManager.ACQUIRE_CAUSES_WAKEUP or
-                    PowerManager.ON_AFTER_RELEASE,
+                            PowerManager.ACQUIRE_CAUSES_WAKEUP or
+                            PowerManager.ON_AFTER_RELEASE,
                     "MingleTalk:CallWakeLock"
                 )
                 wakeLock.acquire(3000L) // Hold for 3 seconds
@@ -179,17 +189,21 @@ class MainActivity : FlutterActivity() {
             val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                keyguardManager.requestDismissKeyguard(this, object : KeyguardManager.KeyguardDismissCallback() {
-                    override fun onDismissSucceeded() {
-                        Log.d(TAG, "Keyguard dismissed successfully")
-                    }
-                    override fun onDismissCancelled() {
-                        Log.d(TAG, "Keyguard dismiss cancelled")
-                    }
-                    override fun onDismissError() {
-                        Log.d(TAG, "Keyguard dismiss error")
-                    }
-                })
+                keyguardManager.requestDismissKeyguard(
+                    this,
+                    object : KeyguardManager.KeyguardDismissCallback() {
+                        override fun onDismissSucceeded() {
+                            Log.d(TAG, "Keyguard dismissed successfully")
+                        }
+
+                        override fun onDismissCancelled() {
+                            Log.d(TAG, "Keyguard dismiss cancelled")
+                        }
+
+                        override fun onDismissError() {
+                            Log.d(TAG, "Keyguard dismiss error")
+                        }
+                    })
             } else {
                 @Suppress("DEPRECATION")
                 val keyguardLock = keyguardManager.newKeyguardLock("MingleTalkCall")
@@ -212,7 +226,7 @@ class MainActivity : FlutterActivity() {
 
     private fun isLaunchedFromCallKit(intent: Intent?): Boolean {
         if (intent == null) return false
-        
+
         val extras = intent.extras
         if (extras != null) {
             val callKitKeys = listOf(
@@ -230,11 +244,15 @@ class MainActivity : FlutterActivity() {
 
         val action = intent.action
         if (action != null && (
-            action.contains("callkit", ignoreCase = true) ||
-            action.contains("ACCEPT", ignoreCase = true) ||
-            action.contains("ANSWER", ignoreCase = true) ||
-            action.contains("com.hiennv.flutter_callkit_incoming", ignoreCase = true)
-        )) {
+                    action.contains("callkit", ignoreCase = true) ||
+                            action.contains("ACCEPT", ignoreCase = true) ||
+                            action.contains("ANSWER", ignoreCase = true) ||
+                            action.contains(
+                                "com.hiennv.flutter_callkit_incoming",
+                                ignoreCase = true
+                            )
+                    )
+        ) {
             return true
         }
 
