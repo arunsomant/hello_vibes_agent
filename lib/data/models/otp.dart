@@ -25,7 +25,7 @@ class OtpSendResponse {
           '$message ${AppResponse.parseErrorResponse(json['data']).join(',')}';
     }
     final List<OtpProviderType> availableProviders =
-        json['data']['available_providers'] != null
+    json.containsKey('data') && json['data']['available_providers'] != null
         ? List<OtpProviderType>.from(
             json['data']['available_providers'].map(
               (x) => OtpProviderType.values.fromJson(x),

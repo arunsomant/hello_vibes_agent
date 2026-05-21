@@ -193,7 +193,9 @@ enum NotificationType implements JsonEnum {
   incomingCall('incoming_call'),
   callEnded('call_ended'),
   callRejected('call_rejected'),
-  agentOnlineStatusChange('agent_online_status_change');
+  agentOnlineStatusChange('agent_online_status_change'),
+  withdrawalStatusChanged('withdrawal_status_changed'),
+  agentAccountStatusChanged('agent_account_status_changed');
 
   @override
   final String value;
