@@ -94,7 +94,10 @@ class VideoCallingPage extends GetView<CallingController> {
                                   ),
                                   if (controller.callStatus.value ==
                                       CallStatus.ended)
-                                    AppText('Call Ended', type: AppTextType.t14r),
+                                    AppText(
+                                      'Call Ended',
+                                      type: AppTextType.t14r,
+                                    ),
                                 ],
                               );
                             }),
@@ -107,14 +110,18 @@ class VideoCallingPage extends GetView<CallingController> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   const SizedBox(height: AppSpacings.s20),
-                                  if (controller.participantVideoEnabled.isFalse)
+                                  if (controller
+                                      .participantVideoEnabled
+                                      .isFalse)
                                     AppText(
                                       controller.user.value.name,
                                       type: AppTextType.t20sb,
                                     ),
                                   const SizedBox(height: AppSpacings.s8),
                                   const Spacer(),
-                                  if (controller.participantVideoEnabled.isFalse)
+                                  if (controller
+                                      .participantVideoEnabled
+                                      .isFalse)
                                     HVProfileImage(
                                       user: controller.user.value,
                                       size: 150,
@@ -172,6 +179,21 @@ class VideoCallingPage extends GetView<CallingController> {
                                 onTap: controller.onFlipCameraTap,
                               ),
                             ),
+                            Positioned(
+                              bottom: 8,
+                              right: 8,
+                              child: AppButtonIcon(
+                                size: 44,
+                                svgAsset: controller.videoOn.isTrue
+                                    ? AppAssetsMapper.icVideoCall
+                                    : AppAssetsMapper.icVideSlash,
+                                color: AppColors.iconSecondary,
+                                backgroundColor: controller.videoOn.isTrue
+                                    ? AppColors.backgroundOverlay
+                                    : AppColors.buttonDisabled,
+                                onTap: controller.onVideoTap,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -183,12 +205,12 @@ class VideoCallingPage extends GetView<CallingController> {
                 return CallControlButtonsBottomSheet(
                   controller: controller.bottomSheetController,
                   bottomSheetInitialSize: controller.bottomSheetInitialSize,
-                  bottomSheetMaximumSize: controller.bottomSheetMaximumSize.value,
+                  bottomSheetMaximumSize:
+                      controller.bottomSheetMaximumSize.value,
                   bottomSheetMaximumHeight: controller.bottomSheetMaximumHeight,
                   onVolumeTap: controller.onVolumeTap,
                   onCallEndTap: controller.onCallEndTap,
                   onMicTap: controller.onMicTap,
-                  onVideoTap: controller.onVideoTap,
                   loudSpeakerOn: controller.loudSpeakerOn.value,
                   micOn: controller.micOn.value,
                   videoOn: controller.videoOn.value,

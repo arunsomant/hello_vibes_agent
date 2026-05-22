@@ -77,7 +77,8 @@ class CallingController extends GetxController {
       user(args.user);
       uuid = args.uuid;
       callType = args.callType;
-      loudSpeakerOn(callType == CallType.video);
+      // Default will be set after checking audio devices in _setDefaultAudioOutput
+      loudSpeakerOn(false);
       if(callType == CallType.video) {
         WakelockPlus.enable();
       }
@@ -206,6 +207,30 @@ class CallingController extends GetxController {
     }
   }
 
+  /// Sets the default audio output for the call.
+  /// For video calls: if an external device (Bluetooth/headset) is connected,
+  /// route audio to that device (loudspeaker off). Otherwise, enable loudspeaker.
+  /// For audio calls: always use earpiece unless external device is connected.
+  Future<void> _setDefaultAudioOutput() async {
+    if (callType == CallType.video) {
+      final hasExternalDevice =
+          await liveKitService.isExternalAudioDeviceConnected();
+      if (hasExternalDevice) {
+        // External device connected — don't force loudspeaker
+        loudSpeakerOn(false);
+        liveKitService.setSpeakerphoneOn(false);
+      } else {
+        // No external device — enable loudspeaker for video call
+        loudSpeakerOn(true);
+        liveKitService.setSpeakerphoneOn(true);
+      }
+    } else {
+      // Audio call — use earpiece by default
+      loudSpeakerOn(false);
+      liveKitService.setSpeakerphoneOn(false);
+    }
+  }
+
   void _acceptCall({required String uuid}) async {
     try {
       busyCall(true);
@@ -243,7 +268,7 @@ class CallingController extends GetxController {
           livekitToken,
           enableVideo: videoCall,
         );
-        liveKitService.setSpeakerphoneOn(loudSpeakerOn.value);
+        await _setDefaultAudioOutput();
         liveKitService.setMicEnabled(micOn.value);
         if (videoCall) {
           liveKitService.setVideoEnabled(videoOn.value);
