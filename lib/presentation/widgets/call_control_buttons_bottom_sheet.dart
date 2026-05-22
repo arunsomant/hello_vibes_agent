@@ -17,7 +17,6 @@ class CallControlButtonsBottomSheet extends StatelessWidget {
     this.onVolumeTap,
     this.onCallEndTap,
     this.onMicTap,
-    this.onVideoTap,
     this.loudSpeakerOn = false,
     this.micOn = true,
     this.videoOn = false,
@@ -32,7 +31,7 @@ class CallControlButtonsBottomSheet extends StatelessWidget {
 
   final double bottomSheetMaximumHeight;
 
-  final VoidCallback? onVolumeTap, onCallEndTap, onMicTap, onVideoTap;
+  final VoidCallback? onVolumeTap, onCallEndTap, onMicTap;
 
   final bool loudSpeakerOn, micOn, videoOn;
 
@@ -74,30 +73,17 @@ class CallControlButtonsBottomSheet extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        if (!isVideoCall)
-                          AppButtonIcon(
-                            size: 44,
-                            svgAsset: loudSpeakerOn
-                                ? AppAssetsMapper.icVolume
-                                : AppAssetsMapper.icVolumeSlash,
-                            color: AppColors.iconSecondary,
-                            backgroundColor: loudSpeakerOn
-                                ? AppColors.buttonPrimary
-                                : AppColors.backgroundOverlay,
-                            onTap: onVolumeTap,
-                          ),
-                        if (isVideoCall)
-                          AppButtonIcon(
-                            size: 44,
-                            svgAsset: videoOn
-                                ? AppAssetsMapper.icVideoCall
-                                : AppAssetsMapper.icVideSlash,
-                            color: AppColors.iconSecondary,
-                            backgroundColor: videoOn
-                                ? AppColors.buttonPrimary
-                                : AppColors.backgroundOverlay,
-                            onTap: onVideoTap,
-                          ),
+                        AppButtonIcon(
+                          size: 44,
+                          svgAsset: loudSpeakerOn
+                              ? AppAssetsMapper.icVolume
+                              : AppAssetsMapper.icVolumeSlash,
+                          color: AppColors.iconSecondary,
+                          backgroundColor: loudSpeakerOn
+                              ? AppColors.buttonPrimary
+                              : AppColors.backgroundOverlay,
+                          onTap: onVolumeTap,
+                        ),
                         AppButtonIcon(
                           size: 56,
                           svgAsset: AppAssetsMapper.icCallDown,
