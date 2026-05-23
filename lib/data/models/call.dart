@@ -251,7 +251,8 @@ enum AlertReason implements JsonEnum {
   customerEnded('customer_ended'),
   agentEnded('agent_ended'),
   stuckCallRecovered('stuck_call_recovered'),
-  ringTimeout('ring_timeout');
+  ringTimeout('ring_timeout'),
+  webhookParticipantLeft('webhook_participant_left');
 
   @override
   final String value;

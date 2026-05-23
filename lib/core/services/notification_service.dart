@@ -11,6 +11,7 @@ import '../../data/models/avatar.dart';
 import '../../data/models/call.dart';
 import '../../data/models/user.dart';
 import '../../data/repositories/call_repository.dart';
+import '../../presentation/controllers/calling_controller.dart';
 import '../../presentation/routes/app_routes.dart';
 import '../config/firebase_options.dart';
 import 'alert_notification_service.dart';
@@ -37,6 +38,14 @@ void _handleMessage(RemoteMessage message) async {
 
   // Use centralized handler in AlertNotificationService
   await AlertNotificationService().handleAlertNotification(alert);
+  final call = AlertNotification.fromMap(data);
+  if (call.notificationType == NotificationType.callEnded) {
+    if (call.reason == AlertReason.webhookParticipantLeft) {
+      if (Get.isRegistered<CallingController>()) {
+        Get.find<CallingController>().callForceEnd();
+      }
+    }
+  }
 
   // Show local notification for both background and foreground messages
   // that contain a notification payload

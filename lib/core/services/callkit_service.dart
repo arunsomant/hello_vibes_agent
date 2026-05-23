@@ -93,12 +93,17 @@ class CallkitService {
   }
 
   void initCallkitListeners({
+    Function(Map<String, dynamic>? callData)? onCallEnd,
     Function(Map<String, dynamic>? callData)? onCallAccept,
     Function(Map<String, dynamic>? callData)? onCallDecline,
   }) {
     FlutterCallkitIncoming.onEvent.listen((CallEvent? event) async {
       if (event == null) return;
       switch (event.event) {
+        case Event.actionCallEnded:
+          final callData = (event.body['extra'])?.cast<String, dynamic>();
+          onCallEnd?.call(callData);
+          break;
         case Event.actionCallAccept:
           final callData = (event.body['extra'])?.cast<String, dynamic>();
           onCallAccept?.call(callData);
