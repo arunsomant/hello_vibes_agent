@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ConnectionState;
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -11,6 +11,7 @@ import '../../core/services/lock_screen_service.dart';
 import '../../data/models/call.dart';
 import '../../data/models/user.dart';
 import '../../data/repositories/call_repository.dart';
+import '../routes/app_routes.dart';
 import '../widgets/index.dart';
 import 'calls_controller.dart';
 import 'configuration_controller.dart';
@@ -59,12 +60,15 @@ class CallingController extends GetxController {
 
   String livekitUrl = '';
   String livekitToken = '';
+  final CallkitService _callkitService = CallkitService();
 
   final participantVideoEnabled = false.obs;
 
   final participantAudioEnabled = false.obs;
 
   bool isClientInitiateEndCall = false;
+
+  bool _isDismissingCallkitProgrammatically = false;
 
   @override
   void onInit() {
@@ -79,7 +83,7 @@ class CallingController extends GetxController {
       callType = args.callType;
       // Default will be set after checking audio devices in _setDefaultAudioOutput
       loudSpeakerOn(false);
-      if(callType == CallType.video) {
+      if (callType == CallType.video) {
         WakelockPlus.enable();
       }
       _checkConfigurations();
@@ -88,6 +92,13 @@ class CallingController extends GetxController {
         'Expected argument of type CallingArguments, but got ${args.runtimeType}',
       );
     }
+    LockScreenService().enableShowOnLockScreen();
+    _callkitService.initCallkitListeners(
+      onCallEnd: (callData) {
+        if (_isDismissingCallkitProgrammatically) return;
+        onCallEndTap();
+      },
+    );
     bottomSheetController.addListener(() {
       _isCallControlsVisible =
           bottomSheetController.size > bottomSheetInitialSize;
@@ -102,16 +113,14 @@ class CallingController extends GetxController {
     // Disable showing over lock screen when leaving calling screen
     debugPrint('CallingController.onClose: Disabling lock screen');
     LockScreenService().disableShowOnLockScreen();
-
     if (_timer != null) {
       _timer!.cancel();
       _timer = null;
     }
     _hideTimer?.cancel();
-    _disconnectLiveKit();
+    _dismissCallNotification(isProgrammatically: false);
     _roomListener?.dispose();
     liveKitService.dispose();
-    CallkitService().dismissAllCallNotification();
     WakelockPlus.disable();
     super.onClose();
   }
@@ -177,7 +186,36 @@ class CallingController extends GetxController {
 
   void onCallEndTap() {
     isClientInitiateEndCall = true;
-    _disconnectLiveKit();
+    callEnd();
+  }
+
+  void callEnd({bool fromNotification = false}) {
+    if (_roomListener == null ||
+        _roomListener!.isDisposed ||
+        room == null ||
+        room?.connectionState == ConnectionState.disconnected) {
+      _endCall();
+    } else {
+      _disconnectLiveKit();
+    }
+    _dismissCallNotification(isProgrammatically: fromNotification);
+  }
+
+  void callForceEnd() async {
+    if (room != null &&
+        room?.connectionState == ConnectionState.disconnected &&
+        callStatus.value != CallStatus.ended) {
+      _showToast('Call disconnected');
+      _dismissCallNotification(isProgrammatically: true);
+      if (Get.isBottomSheetOpen == true) {
+        Get.back();
+      }
+      if (Get.currentRoute == AppRoutes.videoCalling ||
+          Get.currentRoute == AppRoutes.voiceCalling) {
+        Get.back();
+      }
+      _afterCallEnded();
+    }
   }
 
   void onMicTap() {
@@ -213,8 +251,8 @@ class CallingController extends GetxController {
   /// For audio calls: always use earpiece unless external device is connected.
   Future<void> _setDefaultAudioOutput() async {
     if (callType == CallType.video) {
-      final hasExternalDevice =
-          await liveKitService.isExternalAudioDeviceConnected();
+      final hasExternalDevice = await liveKitService
+          .isExternalAudioDeviceConnected();
       if (hasExternalDevice) {
         // External device connected — don't force loudspeaker
         loudSpeakerOn(false);
@@ -285,7 +323,10 @@ class CallingController extends GetxController {
       await CallkitService().dismissCallNotification(
         AlertNotification(uuid: call.uuid, customerName: call.participant.name),
       );
-      final response = await callRepository.endCall(call: call, isClientInitiateEndCall: isClientInitiateEndCall);
+      final response = await callRepository.endCall(
+        call: call,
+        isClientInitiateEndCall: isClientInitiateEndCall,
+      );
       if (response.success) {
         if (Get.isBottomSheetOpen == true) {
           Get.back();
@@ -317,6 +358,11 @@ class CallingController extends GetxController {
 
   void _disconnectLiveKit() async {
     await liveKitService.disconnect();
+  }
+
+  void _dismissCallNotification({required bool isProgrammatically}) {
+    _isDismissingCallkitProgrammatically = isProgrammatically;
+    _callkitService.dismissAllCallNotification();
   }
 
   void _delayedBack() {
@@ -390,6 +436,8 @@ class CallingController extends GetxController {
       if (event.participant is! LocalParticipant) {
         callStatus(CallStatus.ended);
         _disconnectLiveKit();
+
+        _dismissCallNotification(isProgrammatically: true);
       }
     });
     _roomListener?.on<TrackMutedEvent>((event) {
@@ -460,18 +508,14 @@ class CallingController extends GetxController {
     final videoPub = p.videoTrackPublications.firstOrNull;
     final audioPub = p.audioTrackPublications.firstOrNull;
 
-    if(callType == CallType.video) {
+    if (callType == CallType.video) {
       participantVideoEnabled(
-        videoPub != null &&
-            videoPub.subscribed &&
-            videoPub.muted != true,
+        videoPub != null && videoPub.subscribed && videoPub.muted != true,
       );
     }
 
     participantAudioEnabled(
-      audioPub != null &&
-          audioPub.subscribed &&
-          audioPub.muted != true,
+      audioPub != null && audioPub.subscribed && audioPub.muted != true,
     );
   }
 }
