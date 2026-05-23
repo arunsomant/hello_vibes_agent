@@ -70,6 +70,8 @@ class CallingController extends GetxController {
 
   bool _isDismissingCallkitProgrammatically = false;
 
+  bool endCallBusy = false;
+
   @override
   void onInit() {
     // Enable showing over lock screen for calling
@@ -319,6 +321,8 @@ class CallingController extends GetxController {
   }
 
   void _endCall() async {
+    if (endCallBusy) return;
+    endCallBusy = true;
     try {
       final response = await callRepository.endCall(
         call: call,
@@ -335,7 +339,9 @@ class CallingController extends GetxController {
       }
     } catch (_) {
       _showToast('Failed to end call');
-    } finally {}
+    } finally {
+      endCallBusy = false;
+    }
   }
 
   void _startCall() async {
