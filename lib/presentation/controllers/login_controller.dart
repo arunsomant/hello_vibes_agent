@@ -28,13 +28,6 @@ class LoginController extends GetxController
 
   final isIos = Platform.isIOS || Platform.isMacOS;
 
-  @override
-  void onClose() {
-    textEditingControllerMobile.dispose();
-    shakeControllerMobile.dispose();
-    super.onClose();
-  }
-
   void onMobileLoginPressed() {
     final mobile = textEditingControllerMobile.text.trim().removeAllWhitespace;
 

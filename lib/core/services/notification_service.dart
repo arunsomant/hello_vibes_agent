@@ -42,7 +42,7 @@ void _handleMessage(RemoteMessage message) async {
   if (call.notificationType == NotificationType.callEnded) {
     if (call.reason == AlertReason.webhookParticipantLeft) {
       if (Get.isRegistered<CallingController>()) {
-        Get.find<CallingController>().callForceEnd();
+        Get.find<CallingController>().callEnd(fromNotification: true);
       }
     }
   }
