@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mingle_talk_agent/data/models/call.dart';
-import 'package:mingle_talk_agent/data/repositories/call_repository.dart';
-import 'package:mingle_talk_agent/presentation/controllers/auth_controller.dart';
-import 'package:mingle_talk_agent/presentation/widgets/index.dart';
 
+import '../../data/models/call.dart';
+import '../../data/repositories/call_repository.dart';
+import '../../presentation/controllers/auth_controller.dart';
+import '../../presentation/controllers/calling_controller.dart';
+import '../../presentation/widgets/app_dialog.dart';
 import 'callkit_service.dart';
 
 /// Centralized service for handling AlertNotification from both
@@ -43,7 +44,9 @@ class AlertNotificationService {
       } else if (alert.reason == AlertReason.customerEnded) {
         AppDialog.showToast('Call ended by customer');
       }
-      await CallkitService().dismissCallNotification(alert);
+      if (Get.isRegistered<CallingController>()) {
+        Get.find<CallingController>().callEnd(fromNotification: true);
+      }
     }
 
     if (alert.notificationType == NotificationType.agentOnlineStatusChange) {
@@ -52,7 +55,8 @@ class AlertNotificationService {
       }
     }
 
-    if (alert.notificationType == NotificationType.withdrawalStatusChanged || alert.notificationType == NotificationType.agentAccountStatusChanged) {
+    if (alert.notificationType == NotificationType.withdrawalStatusChanged ||
+        alert.notificationType == NotificationType.agentAccountStatusChanged) {
       if (Get.isRegistered<AuthController>()) {
         Get.find<AuthController>().getUserProfile();
       }
