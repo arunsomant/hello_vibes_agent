@@ -320,9 +320,6 @@ class CallingController extends GetxController {
 
   void _endCall() async {
     try {
-      await CallkitService().dismissCallNotification(
-        AlertNotification(uuid: call.uuid, customerName: call.participant.name),
-      );
       final response = await callRepository.endCall(
         call: call,
         isClientInitiateEndCall: isClientInitiateEndCall,
@@ -378,6 +375,9 @@ class CallingController extends GetxController {
     _roomListener?.on<RoomDisconnectedEvent>((event) {
       callStatus(CallStatus.ended);
       debugPrint('LIVEKIT_EVENT - RoomDisconnectedEvent: ${event.reason}');
+      if (!isClientInitiateEndCall) {
+        _dismissCallNotification(isProgrammatically: true);
+      }
       _endCall();
       _roomListener?.dispose();
       liveKitService.dispose();

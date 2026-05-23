@@ -12,8 +12,10 @@ import '../../../data/models/transaction.dart';
 import '../../controllers/transactions_controller.dart';
 import '../../widgets/index.dart';
 
-class TransactionsTab extends GetView<TransactionsController> {
-  const TransactionsTab({super.key});
+class TransactionsTab extends StatelessWidget {
+  TransactionsTab({super.key});
+
+  final TransactionsController controller = Get.find<TransactionsController>();
 
   @override
   Widget build(BuildContext context) {
