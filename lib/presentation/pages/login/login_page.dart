@@ -34,57 +34,6 @@ class LoginPage extends GetView<LoginController> {
                             textAlign: TextAlign.center,
                             type: AppTextType.t24b,
                           ),
-                          ShakeView(
-                            controller: controller.shakeControllerMobile,
-                            child: Obx(() {
-                              return PhoneInputText(
-                                textEditingController:
-                                    controller.textEditingControllerMobile,
-                                onCountryCodeSelected:
-                                    controller.onCountryCodeSelected,
-                                selectedCountryCode:
-                                    controller.selectedCountryCode.value,
-                              );
-                            }),
-                          ),
-                          Obx(() {
-                            return AppButton(
-                              text: 'Get OTP',
-                              onPressed: controller.onMobileLoginPressed,
-                              height: 52,
-                              color: AppColors.primary,
-                              textColor: AppColors.textSecondary,
-                              busy: controller.loginBusy.isTrue,
-                            );
-                          }),
-                          Padding(
-                            padding: EdgeInsetsGeometry.symmetric(
-                              horizontal: AppSpacings.s60,
-                              vertical: AppSpacings.s8,
-                            ),
-                            child: Row(
-                              spacing: AppSpacings.s8,
-                              children: [
-                                Expanded(
-                                  child: Divider(
-                                    color: AppColors.textPrimary.withValues(
-                                      alpha: 0.5,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: AppSpacings.s8),
-                                AppText('or', type: AppTextType.t14m),
-                                const SizedBox(width: AppSpacings.s8),
-                                Expanded(
-                                  child: Divider(
-                                    color: AppColors.textPrimary.withValues(
-                                      alpha: 0.5,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             spacing: AppSpacings.s24,
@@ -117,6 +66,57 @@ class LoginPage extends GetView<LoginController> {
                               ],
                             ],
                           ),
+                          Padding(
+                            padding: EdgeInsetsGeometry.symmetric(
+                              horizontal: AppSpacings.s60,
+                              vertical: AppSpacings.s8,
+                            ),
+                            child: Row(
+                              spacing: AppSpacings.s8,
+                              children: [
+                                Expanded(
+                                  child: Divider(
+                                    color: AppColors.textPrimary.withValues(
+                                      alpha: 0.5,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: AppSpacings.s8),
+                                AppText('or', type: AppTextType.t14m),
+                                const SizedBox(width: AppSpacings.s8),
+                                Expanded(
+                                  child: Divider(
+                                    color: AppColors.textPrimary.withValues(
+                                      alpha: 0.5,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          ShakeView(
+                            controller: controller.shakeControllerMobile,
+                            child: Obx(() {
+                              return PhoneInputText(
+                                textEditingController:
+                                    controller.textEditingControllerMobile,
+                                onCountryCodeSelected:
+                                    controller.onCountryCodeSelected,
+                                selectedCountryCode:
+                                    controller.selectedCountryCode.value,
+                              );
+                            }),
+                          ),
+                          Obx(() {
+                            return AppButton(
+                              text: 'Get OTP',
+                              onPressed: controller.onMobileLoginPressed,
+                              height: 52,
+                              color: AppColors.primary,
+                              textColor: AppColors.textSecondary,
+                              busy: controller.loginBusy.isTrue,
+                            );
+                          }),
                         ],
                       ),
                       const SizedBox(height: AppSpacings.s24),

@@ -33,7 +33,7 @@ class App extends StatelessWidget {
       splitScreenMode: true,
       builder: (_, child) {
         return GetMaterialApp(
-          title: 'Hello Vibess Agen',
+          title: 'Mingle Talk Agent',
           theme: AppTheme.theme(),
           defaultTransition: Transition.fadeIn,
           debugShowCheckedModeBanner: false,

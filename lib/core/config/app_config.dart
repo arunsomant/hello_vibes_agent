@@ -32,11 +32,11 @@ class AppConfig {
     'Accept': 'application/json',
   };
 
-  static String supportMail = 'support-agent@mingletalk.com';
+  static String supportMail = 'demarreritsolutions@gmail.com';
 
-  static String supportNumber = '+919876543211';
+  static String supportNumber = '+918714449047';
 
-  // WebSocket (Reverb) Config - placeholder values, update later
+  // WebSocket (Reverb) Config
   static String websocketHost = 'app.demarrer.in';
   static int websocketPort = 443;
   static String websocketKey = 'lqt2kphzfzhgmwhktqi3';
