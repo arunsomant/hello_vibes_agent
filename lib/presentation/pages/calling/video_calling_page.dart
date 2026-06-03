@@ -59,142 +59,150 @@ class VideoCallingPage extends GetView<CallingController> {
                       right: 0,
                       left: 0,
                       bottom: 0,
-                      child: Column(
-                        children: [
-                          AppBar(
-                            backgroundColor: Colors.transparent,
-                            title: Obx(() {
-                              if (controller.callStatus.value ==
-                                  CallStatus.initiated) {
-                                return AppText(
-                                  'Connecting...',
-                                  type: AppTextType.t14r,
-                                );
-                              } else if (controller.callStatus.value ==
-                                  CallStatus.ringing) {
-                                return AppText(
-                                  'Ringing...',
-                                  type: AppTextType.t14r,
-                                );
-                              } else if (controller.callStatus.value ==
-                                  CallStatus.rejected) {
-                                return AppText(
-                                  'Call Rejected',
-                                  type: AppTextType.t14r,
-                                );
-                              }
-                              return Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  AppText(
-                                    AppFormatter.formathhmmss(
-                                      controller.duration.value,
-                                    ),
+                      child: SafeArea(
+                        bottom: true,
+                        child: Column(
+                          children: [
+                            AppBar(
+                              backgroundColor: Colors.transparent,
+                              title: Obx(() {
+                                if (controller.callStatus.value ==
+                                    CallStatus.initiated) {
+                                  return AppText(
+                                    'Connecting...',
                                     type: AppTextType.t14r,
-                                  ),
-                                  if (controller.callStatus.value ==
-                                      CallStatus.ended)
+                                  );
+                                } else if (controller.callStatus.value ==
+                                    CallStatus.ringing) {
+                                  return AppText(
+                                    'Ringing...',
+                                    type: AppTextType.t14r,
+                                  );
+                                } else if (controller.callStatus.value ==
+                                    CallStatus.rejected) {
+                                  return AppText(
+                                    'Call Rejected',
+                                    type: AppTextType.t14r,
+                                  );
+                                }
+                                return Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
                                     AppText(
-                                      'Call Ended',
+                                      AppFormatter.formathhmmss(
+                                        controller.duration.value,
+                                      ),
                                       type: AppTextType.t14r,
                                     ),
-                                ],
-                              );
-                            }),
-                            centerTitle: true,
-                          ),
-                          Expanded(
-                            child: Center(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const SizedBox(height: AppSpacings.s20),
-                                  if (controller
-                                      .participantVideoEnabled
-                                      .isFalse)
-                                    AppText(
-                                      controller.user.value.name,
-                                      type: AppTextType.t20sb,
-                                    ),
-                                  const SizedBox(height: AppSpacings.s8),
-                                  const Spacer(),
-                                  if (controller
-                                      .participantVideoEnabled
-                                      .isFalse)
-                                    HVProfileImage(
-                                      user: controller.user.value,
-                                      size: 150,
-                                      showOnlineStatus: false,
-                                    ),
-                                ],
+                                    if (controller.callStatus.value ==
+                                        CallStatus.ended)
+                                      AppText(
+                                        'Call Ended',
+                                        type: AppTextType.t14r,
+                                      ),
+                                  ],
+                                );
+                              }),
+                              centerTitle: true,
+                            ),
+                            Expanded(
+                              child: Center(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(height: AppSpacings.s20),
+                                    if (controller
+                                        .participantVideoEnabled
+                                        .isFalse)
+                                      AppText(
+                                        controller.user.value.name,
+                                        type: AppTextType.t20sb,
+                                      ),
+                                    const SizedBox(height: AppSpacings.s8),
+                                    const Spacer(),
+                                    if (controller
+                                        .participantVideoEnabled
+                                        .isFalse)
+                                      HVProfileImage(
+                                        user: controller.user.value,
+                                        size: 150,
+                                        showOnlineStatus: false,
+                                      ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                          Spacer(),
-                          SizedBox(height: controller.bottomSheetMaximumHeight),
-                        ],
+                            Spacer(),
+                            SizedBox(
+                              height: controller.bottomSheetMaximumHeight,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     Positioned(
                       right: AppSpacings.s16,
                       bottom:
                           (Get.height * controller.bottomSheetSize.value) + 16,
-                      child: Container(
-                        height: 200,
-                        width: 120,
-                        clipBehavior: Clip.antiAlias,
-                        decoration: BoxDecoration(
-                          color: AppColors.black,
-                          borderRadius: BorderRadius.circular(AppRadii.r20),
-                        ),
-                        child: Stack(
-                          children: [
-                            Positioned.fill(
-                              child: Obx(() {
-                                Widget localVideoTrackWidget = SizedBox();
-                                final localParticipant =
-                                    controller.localParticipant.value;
-                                final localVideoTrack = localParticipant
-                                    ?.videoTrackPublications
-                                    .firstOrNull
-                                    ?.track;
-                                if (localVideoTrack != null) {
-                                  localVideoTrackWidget = VideoTrackRenderer(
-                                    localVideoTrack,
-                                    fit: VideoViewFit.cover,
-                                  );
-                                }
-                                return localVideoTrackWidget;
-                              }),
-                            ),
-                            Positioned(
-                              top: 8,
-                              right: 8,
-                              child: AppButtonIcon(
-                                size: 44,
-                                svgAsset: AppAssetsMapper.icCameraSwitch,
-                                color: AppColors.iconSecondary,
-                                backgroundColor: AppColors.backgroundOverlay,
-                                onTap: controller.onFlipCameraTap,
+                      child: SafeArea(
+                        bottom: true,
+                        child: Container(
+                          height: 200,
+                          width: 120,
+                          clipBehavior: Clip.antiAlias,
+                          decoration: BoxDecoration(
+                            color: AppColors.black,
+                            borderRadius: BorderRadius.circular(AppRadii.r20),
+                          ),
+                          child: Stack(
+                            children: [
+                              Positioned.fill(
+                                child: Obx(() {
+                                  Widget localVideoTrackWidget = SizedBox();
+                                  final localParticipant =
+                                      controller.localParticipant.value;
+                                  final localVideoTrack = localParticipant
+                                      ?.videoTrackPublications
+                                      .firstOrNull
+                                      ?.track;
+                                  if (localVideoTrack != null) {
+                                    localVideoTrackWidget = VideoTrackRenderer(
+                                      localVideoTrack,
+                                      fit: VideoViewFit.cover,
+                                    );
+                                  }
+                                  return localVideoTrackWidget;
+                                }),
                               ),
-                            ),
-                            Positioned(
-                              bottom: 8,
-                              right: 8,
-                              child: AppButtonIcon(
-                                size: 44,
-                                svgAsset: controller.videoOn.isTrue
-                                    ? AppAssetsMapper.icVideoCall
-                                    : AppAssetsMapper.icVideSlash,
-                                color: AppColors.iconSecondary,
-                                backgroundColor: controller.videoOn.isTrue
-                                    ? AppColors.backgroundOverlay
-                                    : AppColors.buttonDisabled,
-                                onTap: controller.onVideoTap,
+                              Positioned(
+                                top: 8,
+                                right: 8,
+                                child: AppButtonIcon(
+                                  size: 44,
+                                  svgAsset: AppAssetsMapper.icCameraSwitch,
+                                  color: AppColors.iconSecondary,
+                                  backgroundColor: AppColors.backgroundOverlay,
+                                  onTap: controller.onFlipCameraTap,
+                                ),
                               ),
-                            ),
-                          ],
+                              Positioned(
+                                bottom: 8,
+                                right: 8,
+                                child: AppButtonIcon(
+                                  size: 44,
+                                  svgAsset: controller.videoOn.isTrue
+                                      ? AppAssetsMapper.icVideoCall
+                                      : AppAssetsMapper.icVideSlash,
+                                  color: AppColors.iconSecondary,
+                                  backgroundColor: controller.videoOn.isTrue
+                                      ? AppColors.backgroundOverlay
+                                      : AppColors.buttonDisabled,
+                                  onTap: controller.onVideoTap,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
