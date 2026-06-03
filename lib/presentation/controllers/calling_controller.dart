@@ -72,6 +72,8 @@ class CallingController extends GetxController {
 
   bool endCallBusy = false;
 
+  bool _callTerminated = false;
+
   @override
   void onInit() {
     // Enable showing over lock screen for calling
@@ -282,6 +284,7 @@ class CallingController extends GetxController {
         livekitToken = response.token;
         call = response.call;
         _initLiveKit();
+        _callTerminated = false;
       } else {
         callStatus(CallStatus.ended);
         _disconnectLiveKit();
@@ -321,14 +324,15 @@ class CallingController extends GetxController {
   }
 
   void _endCall() async {
-    if (endCallBusy) return;
+    if (endCallBusy || _callTerminated) return;
     endCallBusy = true;
     try {
       final response = await callRepository.endCall(
         call: call,
         isClientInitiateEndCall: isClientInitiateEndCall,
       );
-      if (response.success) {
+      if (response.success || !_callTerminated) {
+        _callTerminated = true;
         if (Get.isBottomSheetOpen == true) {
           Get.back();
         }
