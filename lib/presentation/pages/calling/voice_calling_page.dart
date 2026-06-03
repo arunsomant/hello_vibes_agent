@@ -25,11 +25,11 @@ class VoiceCallingPage extends GetView<CallingController> {
         },
         child: GestureDetector(
           onTap: controller.onScreenTap,
-          child: SafeArea(
-            bottom: true,
-            child: Scaffold(
-              extendBody: true,
-              body: Column(
+          child: Scaffold(
+            extendBody: true,
+            body: SafeArea(
+              bottom: true,
+              child: Column(
                 children: [
                   AppBar(
                     backgroundColor: Colors.transparent,
@@ -70,20 +70,20 @@ class VoiceCallingPage extends GetView<CallingController> {
                   SizedBox(height: controller.bottomSheetMaximumHeight),
                 ],
               ),
-              bottomSheet: Obx(() {
-                return CallControlButtonsBottomSheet(
-                  controller: controller.bottomSheetController,
-                  bottomSheetMaximumSize: controller.bottomSheetMaximumSize.value,
-                  bottomSheetInitialSize: controller.bottomSheetInitialSize,
-                  bottomSheetMaximumHeight: controller.bottomSheetMaximumHeight,
-                  onVolumeTap: controller.onVolumeTap,
-                  onCallEndTap: controller.onCallEndTap,
-                  onMicTap: controller.onMicTap,
-                  loudSpeakerOn: controller.loudSpeakerOn.value,
-                  micOn: controller.micOn.value,
-                );
-              }),
             ),
+            bottomSheet: Obx(() {
+              return CallControlButtonsBottomSheet(
+                controller: controller.bottomSheetController,
+                bottomSheetMaximumSize: controller.bottomSheetMaximumSize.value,
+                bottomSheetInitialSize: controller.bottomSheetInitialSize,
+                bottomSheetMaximumHeight: controller.bottomSheetMaximumHeight,
+                onVolumeTap: controller.onVolumeTap,
+                onCallEndTap: controller.onCallEndTap,
+                onMicTap: controller.onMicTap,
+                loudSpeakerOn: controller.loudSpeakerOn.value,
+                micOn: controller.micOn.value,
+              );
+            }),
           ),
         ),
       ),
