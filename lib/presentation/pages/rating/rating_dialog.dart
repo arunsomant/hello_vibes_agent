@@ -21,12 +21,7 @@ class RatingDialog extends GetView<RatingController> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: true,
-      onPopInvokedWithResult: (didPop,result) {
-        if (didPop) {
-          controller.onFeelingGoodPressed();
-        }
-      },
+      canPop: false,
       child: SizedBox(
         width: double.maxFinite,
         child: Padding(
@@ -103,12 +98,15 @@ class RatingDialog extends GetView<RatingController> {
   Widget _buildReport() {
     return Align(
       alignment: Alignment.centerLeft,
-      child:  Column(
+      child: Column(
         spacing: AppSpacings.s8,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Center(
-            child: AppText('More About Your Experience', type: AppTextType.t14m),
+            child: AppText(
+              'More About Your Experience',
+              type: AppTextType.t14m,
+            ),
           ),
           ...List.generate(controller.reportOptions.length, (index) {
             return _buildReportTile(
