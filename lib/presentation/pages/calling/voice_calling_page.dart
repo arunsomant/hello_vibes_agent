@@ -33,7 +33,7 @@ class VoiceCallingPage extends GetView<CallingController> {
                 children: [
                   AppBar(
                     backgroundColor: Colors.transparent,
-                    title: AppText('Hello Vibess Voice Call'),
+                    title: AppText('Mingle Talk Voice Call'),
                     centerTitle: true,
                   ),
                   Expanded(
