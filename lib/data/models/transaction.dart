@@ -74,13 +74,13 @@ class Transaction {
   final TransactionRawType rawType;
   final TransactionDirection direction;
   final CallType callType;
-  final int coins;
+  final double coins;
   final int callId;
   final int callDurationSeconds;
   final String callDuration;
   final double amountInr;
-  final int balanceBefore;
-  final int balanceAfter;
+  final double balanceBefore;
+  final double balanceAfter;
   final TransactionStatus status;
   final String description;
   final DateTime? createdAt;
@@ -110,13 +110,14 @@ class Transaction {
       rawType: TransactionRawType.values.fromJson(json['raw_type']),
       direction: TransactionDirection.values.fromJson(json['direction']),
       callType: CallType.values.fromJson(json['call_type']),
-      coins: json['coins'] ?? 0,
+      coins: double.tryParse((json['coins'] ?? '').toString()) ??
+          0,
       callId: json['call_id'] ?? 0,
       callDurationSeconds: json['call_duration_seconds'] ?? 0,
       callDuration: json['call_duration'] ?? '',
       amountInr: double.tryParse((json['amount_inr'] ?? '').toString()) ?? 0,
-      balanceBefore: json['balance_before'] ?? 0,
-      balanceAfter: json['balance_after'] ?? 0,
+      balanceBefore: double.tryParse((json['balance_before'] ?? '').toString()) ?? 0,
+      balanceAfter: double.tryParse((json['balance_after'] ?? '').toString()) ?? 0,
       status: TransactionStatus.values.fromJson(json['status']),
       description: json['description'] ?? '',
       createdAt: DateTime.tryParse(json['created_at'] ?? '')?.toLocal(),

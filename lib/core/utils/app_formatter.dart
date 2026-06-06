@@ -83,4 +83,11 @@ class AppFormatter {
 
     return "$hoursStr:$minutesStr:$secondsStr";
   }
+
+  static String formatDecimal(num value) {
+    if (value == value.truncateToDouble()) {
+      return value.toInt().toString();
+    }
+    return value.toString();
+  }
 }

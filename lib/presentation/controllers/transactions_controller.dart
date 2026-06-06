@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 import '../../core/utils/app_extensions.dart';
@@ -85,7 +86,8 @@ class TransactionsController extends GetxController {
           transactions.addAll(response.paginationResponse.data);
         }
       }
-    } catch (_) {
+    } catch (_,s) {
+      debugPrintStack(stackTrace: s);
     } finally {
       busyTransactions(false);
     }

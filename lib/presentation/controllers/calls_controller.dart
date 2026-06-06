@@ -18,7 +18,7 @@ class CallsController extends GetxController {
   final busyCalls = false.obs;
 
   double get walletBalance =>
-      Get.find<AuthController>().user.value.walletBalanceInInr;
+      Get.find<AuthController>().user.value.walletBalance;
 
   bool get isFilterApplied =>
       Get.find<CallsFilterController>().isFilterApplied.value;

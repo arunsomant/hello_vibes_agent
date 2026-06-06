@@ -47,8 +47,8 @@ class TransactionRemoteDataSource {
     return BankDetailResponse.fromMap(response);
   }
 
-  Future<BankDetailResponse> requestWithdrawal({required int coins}) async {
-    final body = {'coins': coins, 'confirm': true};
+  Future<BankDetailResponse> requestWithdrawal({required double coins}) async {
+    final body = {'amount': coins, 'confirm': true};
     final response = await apiHelper.post(
       ApiEndpoints.requestWithdrawal,
       body: body,

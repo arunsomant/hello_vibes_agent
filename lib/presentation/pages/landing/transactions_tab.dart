@@ -169,7 +169,7 @@ class TransactionsTab extends StatelessWidget {
                         ),
                       ),
                       AppText(
-                        transaction.callDuration.isNotEmpty
+                       transaction.type == TransactionType.withdrawal ? '' : transaction.callDuration.isNotEmpty
                             ? transaction.callDuration
                             : '₹${transaction.amountInr}',
                         dummy: busy,
@@ -191,13 +191,11 @@ class TransactionsTab extends StatelessWidget {
             Row(
               children: [
                 AppText(
-                  '${transaction.coins}',
+                  '₹${AppFormatter.formatDecimal(transaction.coins)}',
                   type: AppTextType.t20sb,
                   dummy: busy,
                   maxDummy: 2,
                 ),
-                const SizedBox(width: AppSpacings.s2),
-                AppSvgAsset(AppAssetsMapper.icCoin, height: 18, width: 18),
                 const SizedBox(width: AppSpacings.s8),
                 AppSvgAsset(
                   transaction.direction == TransactionDirection.out

@@ -39,7 +39,7 @@ class TransactionRepository {
     );
   }
 
-  Future<BankDetailResponse> requestWithdrawal({required int coins}) async {
+  Future<BankDetailResponse> requestWithdrawal({required double coins}) async {
     return await remoteDataSource.requestWithdrawal(coins: coins);
   }
 }

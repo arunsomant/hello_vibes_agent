@@ -219,18 +219,12 @@ class CallsTab extends GetView<CallsController> {
                     Row(
                       children: [
                         AppText(
-                          '${call.coins}',
+                          '₹${AppFormatter.formatDecimal(call.coins)}',
                           type: AppTextType.t12r,
                           maxLine: 2,
                           color: AppColors.textPositive,
                           dummy: busy,
                           maxDummy: 2,
-                        ),
-                        const SizedBox(width: AppSpacings.s2),
-                        AppSvgAsset(
-                          AppAssetsMapper.icCoin,
-                          width: 12,
-                          height: 12,
                         ),
                       ],
                     ),

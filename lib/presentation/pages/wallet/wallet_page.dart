@@ -65,7 +65,7 @@ class WalletPage extends GetView<WalletController> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             AppText(
-                              controller.walletBalanceInInr.toStringAsFixed(2),
+                              controller.walletBalance.toStringAsFixed(2),
                               type: AppTextType.t40b,
                               shadow: true,
                               color: AppColors.textSecondary,
@@ -137,13 +137,8 @@ class WalletPage extends GetView<WalletController> {
                                     spacing: AppSpacings.s8,
                                     children: [
                                       _buildInfoRow(
-                                        label: 'Redeemable Coins:',
-                                        value: '${controller.walletBalance}',
-                                      ),
-                                      Divider(),
-                                      _buildInfoRow(
                                         label: 'Redeemable Amount:',
-                                        value: '₹${controller.walletBalanceInInr}',
+                                        value: '₹${controller.walletBalance}',
                                       ),
                                       Divider(),
                                       _buildInfoRow(
@@ -171,7 +166,7 @@ class WalletPage extends GetView<WalletController> {
                             prefixIconAsset: AppAssetsMapper.icCard,
                             prefixIconColor: AppColors.iconSecondary,
                             text:
-                                'Request to Redeem ₹${controller.walletBalanceInInr.toStringAsFixed(2)}',
+                                'Request to Redeem ₹${controller.walletBalance.toStringAsFixed(2)}',
                             onPressed: controller.walletBalance > 0
                                 ? onRequestRedeemPressed
                                 : null,

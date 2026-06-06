@@ -33,7 +33,7 @@ class BankDetailsController extends GetxController
   final ifscCode = ''.obs;
 
   double get walletBalanceInInr =>
-      Get.find<AuthController>().user.value.walletBalanceInInr;
+      Get.find<AuthController>().user.value.walletBalance;
 
   final busyBankDetails = false.obs;
 
