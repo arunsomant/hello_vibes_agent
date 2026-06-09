@@ -100,7 +100,7 @@ class Call {
   final CallStatus status;
   final int durationSeconds;
   final String duration;
-  final int coins;
+  final double coins;
   final DateTime? initiatedAt;
   final DateTime? startedAt;
   final DateTime? endedAt;
@@ -135,7 +135,8 @@ class Call {
       status: CallStatus.values.fromJson(json['status']),
       durationSeconds: json['duration_seconds'] ?? 0,
       duration: json['duration'] ?? '',
-      coins: json['coins'] ?? 0,
+      coins: double.tryParse((json['coins'] ?? '').toString()) ??
+          0,
       initiatedAt: DateTime.tryParse(json['initiated_at'] ?? '')?.toLocal(),
       startedAt: DateTime.tryParse(json['started_at'] ?? '')?.toLocal(),
       endedAt: DateTime.tryParse(json['ended_at'] ?? '')?.toLocal(),

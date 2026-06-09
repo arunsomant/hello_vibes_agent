@@ -17,9 +17,7 @@ class WalletController extends GetxController {
 
   final user = Get.find<AuthController>().user;
 
-  int get walletBalance => user.value.walletBalance;
-
-  double get walletBalanceInInr => user.value.walletBalanceInInr;
+  double get walletBalance => user.value.walletBalance;
 
   double get lifetimeEarningsInInr => user.value.lifetimeEarningsInInr;
 

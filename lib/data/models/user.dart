@@ -70,8 +70,7 @@ class User {
   final String reason;
   final int status;
   final List<Language> languages;
-  final int walletBalance;
-  final double walletBalanceInInr;
+  final double walletBalance;
   final double lifetimeEarningsInInr;
   final double rating;
   final Avatar avatar;
@@ -93,7 +92,6 @@ class User {
     this.status = 0,
     this.languages = const [],
     this.walletBalance = 0,
-    this.walletBalanceInInr = 0,
     this.lifetimeEarningsInInr = 0,
     this.rating = 0,
     this.avatar = const Avatar(),
@@ -125,9 +123,7 @@ class User {
               json['languages'].map((x) => Language.fromMap(x)),
             )
           : const [],
-      walletBalance: json['wallet_balance'] ?? 0,
-      walletBalanceInInr:
-          double.tryParse((json['wallet_balance_in_inr'] ?? '').toString()) ??
+      walletBalance: double.tryParse((json['wallet_balance'] ?? '').toString()) ??
           0,
       lifetimeEarningsInInr:
           double.tryParse(
@@ -153,7 +149,6 @@ class User {
     'status': status,
     'languages': List<Language>.from(languages.map((x) => x)),
     'wallet_balance': walletBalance,
-    'wallet_balance_in_inr': walletBalanceInInr,
     'lifetime_earnings_in_inr': lifetimeEarningsInInr,
     'avatar_url': avatar.url,
     'avatar_id': avatar.id,
@@ -249,8 +244,7 @@ class User {
     ApprovalStatus? approvalStatus,
     int? status,
     List<Language>? languages,
-    int? walletBalance,
-    double? walletBalanceInInr,
+    double? walletBalance,
     dynamic lifetimeEarningsInInr,
     double? rating,
     Avatar? avatar,
@@ -271,7 +265,6 @@ class User {
       status: status ?? this.status,
       languages: languages ?? this.languages,
       walletBalance: walletBalance ?? this.walletBalance,
-      walletBalanceInInr: walletBalanceInInr ?? this.walletBalanceInInr,
       lifetimeEarningsInInr:
           lifetimeEarningsInInr ?? this.lifetimeEarningsInInr,
       rating: rating ?? this.rating,
