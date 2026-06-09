@@ -49,17 +49,6 @@ class ProfileSetupController extends GetxController
   bool fromProfileEdit = false;
 
   @override
-  void onClose() {
-    textEditingControllerName.dispose();
-    textEditingControllerDOB.dispose();
-    shakeControllerName.dispose();
-    shakeControllerGender.dispose();
-    shakeControllerTerms.dispose();
-    shakeControllerDOB.dispose();
-    super.onClose();
-  }
-
-  @override
   void onInit() {
     getAvatarList();
     _getUserProfile();

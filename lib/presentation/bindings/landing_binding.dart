@@ -6,7 +6,6 @@ import '../../data/datasources/call_remote_data_source.dart';
 import '../../data/datasources/transaction_remote_data_source.dart';
 import '../../data/datasources/users_remote_data_source.dart';
 import '../../data/repositories/call_repository.dart';
-import '../../data/repositories/firebase_repository.dart';
 import '../../data/repositories/transaction_repository.dart';
 import '../../data/repositories/user_repository.dart';
 import '../../data/repositories/users_repository.dart';
@@ -43,15 +42,13 @@ class LandingBinding extends Bindings {
           UsersRepository(remoteDataSource: Get.find<UsersRemoteDataSource>()),
       fenix: true,
     );
-
-    Get.lazyPut<FirebaseRepository>(
-      () => FirebaseRepository(apiHelper: Get.find<ApiBaseHelper>()),
+    Get.lazyPut<ConfigurationController>(
+      () => ConfigurationController(),
+      fenix: true,
     );
-    Get.lazyPut<ConfigurationController>(() => ConfigurationController(),fenix: true);
     Get.lazyPut<LandingController>(
       () => LandingController(
         userRepository: Get.find<UserRepository>(),
-        firebaseRepository: Get.find<FirebaseRepository>(),
         callRepository: Get.find<CallRepository>(),
       ),
     );
@@ -91,10 +88,6 @@ class LandingBinding extends Bindings {
       fenix: true,
     );
 
-    Get.lazyPut<WebSocketService>(
-          () =>
-              WebSocketService(),
-      fenix: true,
-    );
+    Get.lazyPut<WebSocketService>(() => WebSocketService(), fenix: true);
   }
 }

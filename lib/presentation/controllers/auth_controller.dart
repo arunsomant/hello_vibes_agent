@@ -1,20 +1,29 @@
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../core/services/callkit_service.dart';
+import '../../core/services/firebase_message_service.dart';
 import '../../core/utils/app_exception.dart';
 import '../../data/models/user.dart';
 import '../../data/repositories/auth_repository.dart';
+import '../../data/repositories/firebase_repository.dart';
 import '../../data/repositories/user_repository.dart';
 import '../routes/app_routes.dart';
 import '../widgets/index.dart';
 
 class AuthController extends GetxController {
-  AuthController({required this.authRepository, required this.userRepository});
+  AuthController({
+    required this.authRepository,
+    required this.userRepository,
+    required this.firebaseRepository,
+  });
 
   final AuthRepository authRepository;
   final UserRepository userRepository;
+  final FirebaseRepository firebaseRepository;
 
   final user = User().obs;
 
@@ -27,12 +36,14 @@ class AuthController extends GetxController {
             user.value.avatar.url.isEmpty ||
             user.value.gender.isEmpty ||
             user.value.dob == null) {
+          _updateFirebaseToken();
           _gotoProfileSetupPage();
         } else if (user.value.languages.isEmpty) {
           _gotoLanguageSelectionPage();
         } else if (user.value.approvalStatus != ApprovalStatus.approved) {
           _gotoProfileReviewPage();
         } else {
+          _updateFirebaseToken();
           _gotoLandingPage();
         }
       } else if (!await authRepository.getOnboardingCompleted()) {
@@ -178,5 +189,34 @@ class AuthController extends GetxController {
     final vName = version.split('+')[0];
     final vCode = int.tryParse(version.split('+')[1].split('\n')[0]) ?? 0;
     return (vName, vCode);
+  }
+
+  void _updateFirebaseToken() async {
+    try {
+      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+      final token = await FirebaseMessageService().getToken();
+      final String? voIPToken = await CallkitService().getVoIPToken();
+      String deviceType = 'Unknown';
+      String deviceFingerprint = 'Unknown';
+      if (GetPlatform.isAndroid) {
+        deviceType = 'android';
+        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+        deviceFingerprint =
+            'Android ${androidInfo.version.release}, ${androidInfo.model}, ${androidInfo.brand}';
+      } else if (GetPlatform.isIOS) {
+        deviceType = 'ios';
+        IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+        deviceFingerprint = 'Apple ${iosInfo.systemVersion}, ${iosInfo.model}';
+      }
+      if (token != null && token.isNotEmpty) {
+        var response = await firebaseRepository.updateFirebaseToken(
+          firebaseToken: token,
+          voIPToken: voIPToken ?? '',
+          deviceType: deviceType,
+          deviceFingerprint: deviceFingerprint,
+        );
+        firebaseRepository.saveDeviceDetailsAdded(response.success);
+      }
+    } catch (_) {}
   }
 }
