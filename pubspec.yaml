@@ -63,6 +63,7 @@ dependencies:
   firebase_remote_config: ^6.5.1
   firebase_analytics: ^12.4.1
   firebase_crashlytics: ^5.2.2
+  device_info_plus: ^12.3.0
 
 dependency_overrides:
   pointycastle: ^4.0.0

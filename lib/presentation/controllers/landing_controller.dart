@@ -2,14 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:get/get.dart';
 
-import '../../core/services/callkit_service.dart';
-import '../../core/services/firebase_message_service.dart';
 import '../../core/services/lock_screen_service.dart';
 import '../../core/services/websocket_service.dart';
 import '../../data/models/call.dart';
 import '../../data/models/user.dart';
 import '../../data/repositories/call_repository.dart';
-import '../../data/repositories/firebase_repository.dart';
 import '../../data/repositories/user_repository.dart';
 import '../pages/landing/welcome_dialog.dart';
 import '../pages/rating/rating_dialog.dart';
@@ -21,12 +18,10 @@ import 'configuration_controller.dart';
 class LandingController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final UserRepository userRepository;
-  final FirebaseRepository firebaseRepository;
   final CallRepository callRepository;
 
   LandingController({
     required this.userRepository,
-    required this.firebaseRepository,
     required this.callRepository,
   });
 
@@ -45,7 +40,6 @@ class LandingController extends GetxController
     tabController.addListener(() {
       activeTabIndex(tabController.index);
     });
-    _updateFirebaseToken();
     checkForPendingReview();
     super.onInit();
   }
@@ -75,8 +69,10 @@ class LandingController extends GetxController
         if (currentCall != null) {
           // Enable lock screen display before navigating to calling screen
           await LockScreenService().enableShowOnLockScreen();
-          
-          final call = AlertNotification.fromMap(Map<String, dynamic>.from(currentCall['extra']));
+
+          final call = AlertNotification.fromMap(
+            Map<String, dynamic>.from(currentCall['extra']),
+          );
           final uuid = call.uuid;
           final customerName = call.customerName;
           if (call.callType == CallType.video) {
@@ -140,30 +136,6 @@ class LandingController extends GetxController
       scrollPosition = currentScrollPosition;
     }
     return false;
-  }
-
-  void _updateFirebaseToken() async {
-    try {
-      bool tokenSaved = await firebaseRepository.getDeviceDetailsAdded();
-      if (!tokenSaved) {
-        final token = await FirebaseMessageService().getToken();
-        final String? voIPToken = await CallkitService().getVoIPToken();
-        String deviceType = 'Unknown';
-        if (GetPlatform.isAndroid) {
-          deviceType = 'android';
-        } else if (GetPlatform.isIOS) {
-          deviceType = 'ios';
-        }
-        if (token != null && token.isNotEmpty) {
-          var response = await firebaseRepository.updateFirebaseToken(
-            firebaseToken: token,
-            voIPToken: voIPToken ?? '',
-            deviceType: deviceType,
-          );
-          firebaseRepository.saveDeviceDetailsAdded(response.success);
-        }
-      }
-    } catch (_) {}
   }
 
   void onTabClicked(int index) {

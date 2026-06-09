@@ -25,8 +25,13 @@ class FirebaseRepository {
     required String firebaseToken,
     required String voIPToken,
     required String deviceType,
+    required String deviceFingerprint,
   }) async {
-    var body = {'fcm': firebaseToken, 'device_type': deviceType};
+    var body = {
+      'fcm': firebaseToken,
+      'device_type': deviceType,
+      'device_fingerprint': deviceFingerprint,
+    };
     if (voIPToken.isNotEmpty) {
       body.addAll({'voip_token': voIPToken});
     }
