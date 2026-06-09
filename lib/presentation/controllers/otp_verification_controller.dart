@@ -54,7 +54,6 @@ class OtpVerificationController extends GetxController
 
   @override
   void dispose() {
-    shakeControllerOtp.dispose();
     otpController.dispose();
     super.dispose();
   }
