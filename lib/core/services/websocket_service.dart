@@ -12,7 +12,7 @@ import '../../data/models/call.dart';
 import '../config/app_config.dart';
 import 'alert_notification_service.dart';
 
-class WebSocketService extends GetxService {
+class WebSocketService extends GetxService with WidgetsBindingObserver {
   static final WebSocketService _instance = WebSocketService._internal();
 
   factory WebSocketService() => _instance;
@@ -44,6 +44,32 @@ class WebSocketService extends GetxService {
       await _connect();
     } catch (e) {
       debugPrint('WebSocket: Failed to initialize - $e');
+    }
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void onClose() {
+    WidgetsBinding.instance.removeObserver(this);
+    dispose();
+    super.onClose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      debugPrint('WebSocket: App Resumed, triggering reconnect');
+      onAppResume();
+    } else if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      debugPrint('WebSocket: App Backgrounded, disconnecting proactively');
+      _client?.disconnect();
+      _isConnected = false;
     }
   }
 
@@ -85,9 +111,11 @@ class WebSocketService extends GetxService {
           debugPrint('WebSocket: Disconnected');
           _isConnected = false;
           _agentChannel = null;
+          _handleDisconnect();
         },
         onError: (error) {
           debugPrint('WebSocket: Error - $error');
+          _handleDisconnect();
         },
       );
 
