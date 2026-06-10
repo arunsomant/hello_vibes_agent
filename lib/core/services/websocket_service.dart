@@ -68,7 +68,9 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
     } else if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.detached) {
       debugPrint('WebSocket: App Backgrounded, disconnecting proactively');
-      _client?.disconnect();
+      if (_isConnected) {
+        _runZonedGuardedDisconnect();
+      }
       _isConnected = false;
     }
   }
@@ -187,7 +189,9 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
     try {
       final user = Get.find<AuthController>().user.value;
       if (user.id != 0) {
-        _client?.disconnect();
+        if (_isConnected) {
+          _runZonedGuardedDisconnect();
+        }
         _client = null;
         await _connect();
       }
@@ -212,13 +216,26 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
   void dispose() {
     _connectivitySubscription?.cancel();
     _connectionStateSubscription?.cancel();
-    _agentChannel?.unsubscribe();
-    _client?.disconnect();
+    if (_isConnected) {
+      _agentChannel?.unsubscribe();
+      _client?.disconnect();
+    }
     _client = null;
     _agentChannel = null;
     _agentId = null;
     _isConnected = false;
     _reconnectAttempts = 0;
     _isReconnecting = false;
+  }
+
+  void _runZonedGuardedDisconnect() {
+    runZonedGuarded(
+      () {
+        _client?.disconnect();
+      },
+      (error, stack) {
+        debugPrint('Ignored Exception caught: $error');
+      },
+    );
   }
 }
