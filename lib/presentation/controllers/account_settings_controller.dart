@@ -5,6 +5,8 @@ import '../routes/app_routes.dart';
 import 'auth_controller.dart';
 
 class AccountSettingsController extends GetxController {
+  final authController = Get.find<AuthController>();
+
   void onCommunityGuidelinesPressed() {
     _gotoGuidelinesPage();
   }
@@ -56,15 +58,11 @@ class AccountSettingsController extends GetxController {
   }
 
   void onDeleteAccountPressed() {
-    if (Get.isRegistered<AuthController>()) {
-      Get.find<AuthController>().deleteAccount();
-    }
+    authController.deleteAccount();
   }
 
   void onLogoutPressed() {
-    if (Get.isRegistered<AuthController>()) {
-      Get.find<AuthController>().logout();
-    }
+    authController.logout();
   }
 
   void _gotoHelpPage() {

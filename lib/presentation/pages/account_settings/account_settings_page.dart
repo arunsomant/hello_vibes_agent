@@ -24,55 +24,75 @@ class AccountSettingsPage extends GetView<AccountSettingsController> {
             topRight: Radius.circular(AppRadii.r10),
           ),
         ),
-        child: ListView(
-          physics: NeverScrollableScrollPhysics(),
-          padding: EdgeInsets.all(AppSpacings.s16),
-          shrinkWrap: true,
-          children: [
-            AppProfileTile(
-              onPressed: controller.onCommunityGuidelinesPressed,
-              assetIcon: AppAssetsMapper.icCommunity,
-              title: 'Community Guidelines ',
-            ),
-            _buildDivider(),
-            AppProfileTile(
-              onPressed: controller.onSafetyCenterPressed,
-              assetIcon: AppAssetsMapper.icFileShield,
-              title: 'Safety Center',
-            ),
-            _buildDivider(),
-            AppProfileTile(
-              onPressed: controller.onHelpSupportPressed,
-              assetIcon: AppAssetsMapper.icHeadset,
-              title: 'Help & Support',
-            ),
-            _buildDivider(),
-            AppProfileTile(
-              onPressed: controller.onPrivacyPolicyPressed,
-              assetIcon: AppAssetsMapper.icSecurity,
-              title: 'Privacy Policy',
-            ),
-            _buildDivider(),
-            AppProfileTile(
-              onPressed: controller.onTermsConditionsPressed,
-              assetIcon: AppAssetsMapper.icDocument,
-              title: 'Terms & Conditions',
-            ),
-            _buildDivider(),
-            AppProfileTile(
-              isDestructive: true,
-              onPressed: onDeleteAccountPressed,
-              assetIcon: AppAssetsMapper.icDelete,
-              title: 'Delete Account',
-            ),
-            _buildDivider(),
-            AppProfileTile(
-              isDestructive: true,
-              onPressed: onLogoutPressed,
-              assetIcon: AppAssetsMapper.icLogout,
-              title: 'Logout',
-            ),
-          ],
+        child: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView(
+                  physics: NeverScrollableScrollPhysics(),
+                  padding: EdgeInsets.all(AppSpacings.s16),
+                  shrinkWrap: true,
+                  children: [
+                    AppProfileTile(
+                      onPressed: controller.onCommunityGuidelinesPressed,
+                      assetIcon: AppAssetsMapper.icCommunity,
+                      title: 'Community Guidelines ',
+                    ),
+                    _buildDivider(),
+                    AppProfileTile(
+                      onPressed: controller.onSafetyCenterPressed,
+                      assetIcon: AppAssetsMapper.icFileShield,
+                      title: 'Safety Center',
+                    ),
+                    _buildDivider(),
+                    AppProfileTile(
+                      onPressed: controller.onHelpSupportPressed,
+                      assetIcon: AppAssetsMapper.icHeadset,
+                      title: 'Help & Support',
+                    ),
+                    _buildDivider(),
+                    AppProfileTile(
+                      onPressed: controller.onPrivacyPolicyPressed,
+                      assetIcon: AppAssetsMapper.icSecurity,
+                      title: 'Privacy Policy',
+                    ),
+                    _buildDivider(),
+                    AppProfileTile(
+                      onPressed: controller.onTermsConditionsPressed,
+                      assetIcon: AppAssetsMapper.icDocument,
+                      title: 'Terms & Conditions',
+                    ),
+                    _buildDivider(),
+                    AppProfileTile(
+                      isDestructive: true,
+                      onPressed: onDeleteAccountPressed,
+                      assetIcon: AppAssetsMapper.icDelete,
+                      title: 'Delete Account',
+                    ),
+                    _buildDivider(),
+                    AppProfileTile(
+                      isDestructive: true,
+                      onPressed: onLogoutPressed,
+                      assetIcon: AppAssetsMapper.icLogout,
+                      title: 'Logout',
+                    ),
+                  ],
+                ),
+              ),
+              Obx(() {
+                if (controller.authController.versionName.value.isEmpty) {
+                  return SizedBox.shrink();
+                }
+                return Padding(
+                  padding: EdgeInsets.all(AppSpacings.s8),
+                  child: AppText(
+                    'v${controller.authController.versionName.value}',
+                    type: AppTextType.t12r,
+                  ),
+                );
+              }),
+            ],
+          ),
         ),
       ),
     );
@@ -87,7 +107,6 @@ class AccountSettingsPage extends GetView<AccountSettingsController> {
       child: Divider(height: 0, color: AppColors.borderDivider),
     );
   }
-
 
   void onDeleteAccountPressed() {
     AppDialog.showAlertDialog(
