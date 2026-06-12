@@ -102,7 +102,6 @@ class WebSocketService extends GetxService {
           debugPrint('WebSocket: Error - $error');
           _isConnected = false;
           _isConnecting = false;
-          //_handleDisconnect();
         },
       );
 
