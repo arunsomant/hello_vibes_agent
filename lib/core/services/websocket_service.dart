@@ -12,7 +12,7 @@ import '../../data/models/call.dart';
 import '../config/app_config.dart';
 import 'alert_notification_service.dart';
 
-class WebSocketService extends GetxService with WidgetsBindingObserver {
+class WebSocketService extends GetxService {
   static final WebSocketService _instance = WebSocketService._internal();
 
   factory WebSocketService() => _instance;
@@ -26,11 +26,7 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
   // State Flags
   bool _isConnected = false;
   bool _isConnecting = false;
-  bool _isReconnecting = false;
-
-  int _reconnectAttempts = 0;
-  static const int _maxReconnectAttempts = 5;
-  static const int _reconnectDelaySeconds = 5;
+  bool isAppResumed = true;
 
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
 
@@ -42,7 +38,6 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
         return;
       }
       _agentId = user.id;
-      await _setupConnectivityListener();
       await _connect();
     } catch (e) {
       debugPrint('WebSocket: Failed to initialize - $e');
@@ -50,24 +45,9 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
   }
 
   @override
-  void onInit() {
-    super.onInit();
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
   void onClose() {
-    WidgetsBinding.instance.removeObserver(this);
     dispose();
     super.onClose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      debugPrint('WebSocket: App Resumed, checking connection');
-      onAppResume();
-    }
   }
 
   Future<void> _connect() async {
@@ -82,8 +62,6 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
     }
 
     _isConnecting = true;
-    _isReconnecting = false; // Reset reconnect flag when a fresh connect starts
-
     try {
       _client = ReverbClient.instance(
         host: AppConfig.websocketHost,
@@ -108,7 +86,6 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
           debugPrint('WebSocket: Connected successfully (socket: $socketId)');
           _isConnected = true;
           _isConnecting = false;
-          _reconnectAttempts = 0;
           _subscribeToAgentChannel();
         },
         onReconnecting: () {
@@ -120,13 +97,12 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
           _isConnected = false;
           _isConnecting = false;
           _agentChannel = null;
-          _handleDisconnect();
         },
         onError: (error) {
           debugPrint('WebSocket: Error - $error');
           _isConnected = false;
           _isConnecting = false;
-          _handleDisconnect();
+          //_handleDisconnect();
         },
       );
 
@@ -138,7 +114,6 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
           e.toString().contains('unauthorized')) {
         debugPrint('WebSocket: Auth failed, token may be expired');
       }
-      _handleDisconnect();
     }
   }
 
@@ -181,70 +156,6 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
     }
   }
 
-  void _handleDisconnect() {
-    // Do not attempt to reconnect if already trying, max attempts reached, or app is in background
-    if (_isReconnecting || _reconnectAttempts >= _maxReconnectAttempts) {
-      return;
-    }
-
-    _isReconnecting = true;
-    _reconnectAttempts++;
-    debugPrint(
-      'WebSocket: Triggering Reconnect ($_reconnectAttempts/$_maxReconnectAttempts) in $_reconnectDelaySeconds seconds',
-    );
-
-    Future.delayed(const Duration(seconds: _reconnectDelaySeconds), () {
-      _isReconnecting = false;
-      _reconnect();
-    });
-  }
-
-  Future<void> _reconnect() async {
-    // Double check before initiating reconnect
-    if (_isConnected || _isConnecting) {
-      debugPrint(
-        'WebSocket: Already connected or connecting, skipping reconnect.',
-      );
-      return;
-    }
-
-    try {
-      final user = Get.find<AuthController>().user.value;
-      if (user.id != 0) {
-        // IMPORTANT: Clean up old client before re-initializing
-        _disconnectSafely();
-        await _connect();
-      }
-    } catch (e) {
-      debugPrint('WebSocket: Reconnect failed - $e');
-    }
-  }
-
-  Future<void> _setupConnectivityListener() async {
-    _connectivitySubscription = Connectivity().onConnectivityChanged.listen((
-      result,
-    ) {
-      if (!result.contains(ConnectivityResult.none)) {
-        if (!_isConnected && !_isConnecting && !_isReconnecting) {
-          debugPrint('WebSocket: Network recovered, attempting reconnect...');
-          _reconnect();
-        }
-      }
-    });
-  }
-
-  void onAppResume() {
-    if (!_isConnected && !_isConnecting) {
-      debugPrint('WebSocket: App resumed and not connected, reconnecting...');
-      _reconnectAttempts = 0; // Reset attempts on manual resume
-      _reconnect();
-    } else {
-      debugPrint(
-        'WebSocket: App resumed but connection is already active/processing.',
-      );
-    }
-  }
-
   /// Safely unsubscribes and disconnects the existing client
   void _disconnectSafely() {
     runZonedGuarded(
@@ -267,7 +178,5 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
     _connectivitySubscription?.cancel();
     _disconnectSafely();
     _agentId = null;
-    _reconnectAttempts = 0;
-    _isReconnecting = false;
   }
 }
