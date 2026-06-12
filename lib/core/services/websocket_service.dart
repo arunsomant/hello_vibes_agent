@@ -12,7 +12,7 @@ import '../../data/models/call.dart';
 import '../config/app_config.dart';
 import 'alert_notification_service.dart';
 
-class WebSocketService extends GetxService {
+class WebSocketService extends GetxService with WidgetsBindingObserver {
   static final WebSocketService _instance = WebSocketService._internal();
 
   factory WebSocketService() => _instance;
@@ -44,6 +44,34 @@ class WebSocketService extends GetxService {
       await _connect();
     } catch (e) {
       debugPrint('WebSocket: Failed to initialize - $e');
+    }
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void onClose() {
+    WidgetsBinding.instance.removeObserver(this);
+    dispose();
+    super.onClose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      debugPrint('WebSocket: App Resumed, triggering reconnect');
+      onAppResume();
+    } else if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      debugPrint('WebSocket: App Backgrounded, disconnecting proactively');
+      if (_isConnected) {
+        _runZonedGuardedDisconnect();
+      }
+      _isConnected = false;
     }
   }
 
@@ -85,9 +113,11 @@ class WebSocketService extends GetxService {
           debugPrint('WebSocket: Disconnected');
           _isConnected = false;
           _agentChannel = null;
+          _handleDisconnect();
         },
         onError: (error) {
           debugPrint('WebSocket: Error - $error');
+          _handleDisconnect();
         },
       );
 
@@ -159,7 +189,9 @@ class WebSocketService extends GetxService {
     try {
       final user = Get.find<AuthController>().user.value;
       if (user.id != 0) {
-        _client?.disconnect();
+        if (_isConnected) {
+          _runZonedGuardedDisconnect();
+        }
         _client = null;
         await _connect();
       }
@@ -184,13 +216,26 @@ class WebSocketService extends GetxService {
   void dispose() {
     _connectivitySubscription?.cancel();
     _connectionStateSubscription?.cancel();
-    _agentChannel?.unsubscribe();
-    _client?.disconnect();
+    if (_isConnected) {
+      _agentChannel?.unsubscribe();
+      _client?.disconnect();
+    }
     _client = null;
     _agentChannel = null;
     _agentId = null;
     _isConnected = false;
     _reconnectAttempts = 0;
     _isReconnecting = false;
+  }
+
+  void _runZonedGuardedDisconnect() {
+    runZonedGuarded(
+      () {
+        _client?.disconnect();
+      },
+      (error, stack) {
+        debugPrint('Ignored Exception caught: $error');
+      },
+    );
   }
 }
