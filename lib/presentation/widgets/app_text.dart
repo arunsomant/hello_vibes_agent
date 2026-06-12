@@ -3,9 +3,9 @@ import 'dart:math';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/config/app_config.dart';
+
 class AppText extends StatelessWidget {
   const AppText(
     this.text, {
@@ -58,93 +58,135 @@ class AppText extends StatelessWidget {
 
   final VoidCallback? onMorePressed;
 
-  static TextStyle get t10l =>
-      GoogleFonts.poppins(fontSize: 10.sp, fontWeight: FontWeight.w300);
+  static String fontFamily = 'Poppins';
 
-  static TextStyle get t10sb =>
-      GoogleFonts.poppins(fontSize: 10.sp, fontWeight: FontWeight.w600);
+  static TextStyle get t10l => TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 10.sp,
+    fontWeight: FontWeight.w300,
+  );
+
+  static TextStyle get t10sb => TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 10.sp,
+    fontWeight: FontWeight.w600,
+  );
 
   static TextStyle get t12r =>
-      GoogleFonts.poppins(fontSize: 12.sp, height: 1.25);
+      TextStyle(fontFamily: fontFamily, fontSize: 12.sp, height: 1.25);
 
-  static TextStyle get t12m => GoogleFonts.poppins(
+  static TextStyle get t12m => TextStyle(
+    fontFamily: fontFamily,
     fontSize: 12.sp,
     height: 1.25,
     fontWeight: FontWeight.w500,
   );
 
-  static TextStyle get t12sb => GoogleFonts.poppins(
+  static TextStyle get t12sb => TextStyle(
+    fontFamily: fontFamily,
     fontSize: 12.sp,
     height: 1.25,
     fontWeight: FontWeight.w600,
   );
 
   static TextStyle get t14r =>
-      GoogleFonts.poppins(fontSize: 14.sp, height: 1.25);
+      TextStyle(fontFamily: fontFamily, fontSize: 14.sp, height: 1.25);
 
-  static TextStyle get t14m =>
-      GoogleFonts.poppins(fontSize: 14.sp, fontWeight: FontWeight.w500);
+  static TextStyle get t14m => TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 14.sp,
+    fontWeight: FontWeight.w500,
+  );
 
-  static TextStyle get t14sb => GoogleFonts.poppins(
+  static TextStyle get t14sb => TextStyle(
+    fontFamily: fontFamily,
     fontSize: 14.sp,
     fontWeight: FontWeight.w600,
     height: 1.3,
   );
 
-  static TextStyle get t16r => GoogleFonts.poppins(fontSize: 16.sp);
+  static TextStyle get t16r =>
+      TextStyle(fontFamily: fontFamily, fontSize: 16.sp);
 
-  static TextStyle get t16m =>
-      GoogleFonts.poppins(fontSize: 16.sp, fontWeight: FontWeight.w500);
+  static TextStyle get t16m => TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 16.sp,
+    fontWeight: FontWeight.w500,
+  );
 
-  static TextStyle get t16sb =>
-      GoogleFonts.poppins(fontSize: 16.sp, fontWeight: FontWeight.w600);
+  static TextStyle get t16sb => TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 16.sp,
+    fontWeight: FontWeight.w600,
+  );
 
-  static TextStyle get t16b =>
-      GoogleFonts.poppins(fontSize: 16.sp, fontWeight: FontWeight.w700);
+  static TextStyle get t16b => TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 16.sp,
+    fontWeight: FontWeight.w700,
+  );
 
-  static TextStyle get t18m => GoogleFonts.poppins(
+  static TextStyle get t18m => TextStyle(
+    fontFamily: fontFamily,
     fontSize: 18.sp,
     fontWeight: FontWeight.w500,
     height: 1.2,
   );
 
-  static TextStyle get t18sb => GoogleFonts.poppins(
+  static TextStyle get t18sb => TextStyle(
+    fontFamily: fontFamily,
     fontSize: 18.sp,
     fontWeight: FontWeight.w600,
     height: 1.2,
   );
 
-  static TextStyle get t18b =>
-      GoogleFonts.poppins(fontSize: 18.sp, fontWeight: FontWeight.bold);
+  static TextStyle get t18b => TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 18.sp,
+    fontWeight: FontWeight.bold,
+  );
 
-  static TextStyle get t20sb => GoogleFonts.poppins(
+  static TextStyle get t20sb => TextStyle(
+    fontFamily: fontFamily,
     fontSize: 20.sp,
     fontWeight: FontWeight.w600,
     height: 1.2,
   );
 
-  static TextStyle get t20b => GoogleFonts.poppins(
+  static TextStyle get t20b => TextStyle(
+    fontFamily: fontFamily,
     fontSize: 20.sp,
     fontWeight: FontWeight.bold,
     height: 1.2,
   );
 
-  static TextStyle get t24m =>
-      GoogleFonts.poppins(fontSize: 24.sp, fontWeight: FontWeight.w500);
+  static TextStyle get t24m => TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 24.sp,
+    fontWeight: FontWeight.w500,
+  );
 
-  static TextStyle get t24sb =>
-      GoogleFonts.poppins(fontSize: 24.sp, fontWeight: FontWeight.w600);
+  static TextStyle get t24sb => TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 24.sp,
+    fontWeight: FontWeight.w600,
+  );
 
-  static TextStyle get t24b =>
-      GoogleFonts.poppins(fontSize: 24.sp, fontWeight: FontWeight.bold);
+  static TextStyle get t24b => TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 24.sp,
+    fontWeight: FontWeight.bold,
+  );
 
-  static TextStyle get t40b => GoogleFonts.poppins(
+  static TextStyle get t40b => TextStyle(
+    fontFamily: fontFamily,
     fontSize: 40.sp,
     fontWeight: FontWeight.bold,
     height: 1,
   );
 
-  static TextStyle get t64b => GoogleFonts.poppins(
+  static TextStyle get t64b => TextStyle(
+    fontFamily: fontFamily,
     fontSize: 64.sp,
     fontWeight: FontWeight.bold,
     height: 1,
