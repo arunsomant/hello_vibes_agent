@@ -27,7 +27,6 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
   bool _isConnected = false;
   bool _isConnecting = false;
   bool _isReconnecting = false;
-  bool isAppResumed = true;
 
   int _reconnectAttempts = 0;
   static const int _maxReconnectAttempts = 5;
@@ -67,13 +66,7 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       debugPrint('WebSocket: App Resumed, checking connection');
-      isAppResumed = true;
       onAppResume();
-    } else if (state == AppLifecycleState.paused ||
-        state == AppLifecycleState.detached) {
-      debugPrint('WebSocket: App Backgrounded, disconnecting proactively');
-      isAppResumed = false;
-      _disconnectSafely();
     }
   }
 
@@ -190,9 +183,7 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
 
   void _handleDisconnect() {
     // Do not attempt to reconnect if already trying, max attempts reached, or app is in background
-    if (_isReconnecting ||
-        _reconnectAttempts >= _maxReconnectAttempts ||
-        !isAppResumed) {
+    if (_isReconnecting || _reconnectAttempts >= _maxReconnectAttempts) {
       return;
     }
 
