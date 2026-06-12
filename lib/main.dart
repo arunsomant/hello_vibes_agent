@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -6,6 +7,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
+import 'package:livekit_client/livekit_client.dart';
+import 'package:pusher_reverb_flutter/pusher_reverb_flutter.dart';
 
 import 'app/app.dart';
 import 'core/config/firebase_options.dart';
@@ -24,16 +27,32 @@ void main() async {
     await NotificationService().initialize();
     FirebaseAnalytics.instance;
     FlutterError.onError = (errorDetails) {
+      if (_isSuppressedError(errorDetails.exception)) return;
       FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
     };
     PlatformDispatcher.instance.onError = (error, stack) {
+      if (_isSuppressedError(error)) return true;
       FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
       return true;
     };
     runApp(const App());
   }, (error, stack) {
+    if (_isSuppressedError(error)) return;
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
   });
+}
+
+/// Returns true for transient, non-actionable errors that should not
+/// be recorded as crashes in Firebase Crashlytics.
+bool _isSuppressedError(Object error) {
+  if (error is SocketException) return true;
+  if (error is NegotiationError) return true;
+  if (error is ConnectionException) return true;
+  if (error is IOException) return true;
+  final msg = error.toString();
+  if (msg.contains('SocketException') || msg.contains('Reading from a closed socket')) return true;
+
+  return false;
 }
 
 /// Check for active calls and enable lock screen display if found
