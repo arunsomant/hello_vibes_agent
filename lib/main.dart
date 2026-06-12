@@ -8,6 +8,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:livekit_client/livekit_client.dart';
+import 'package:pusher_reverb_flutter/pusher_reverb_flutter.dart';
 
 import 'app/app.dart';
 import 'core/config/firebase_options.dart';
@@ -46,6 +47,11 @@ void main() async {
 bool _isSuppressedError(Object error) {
   if (error is SocketException) return true;
   if (error is NegotiationError) return true;
+  if (error is ConnectionException) return true;
+  if (error is IOException) return true;
+  final msg = error.toString();
+  if (msg.contains('SocketException') || msg.contains('Reading from a closed socket')) return true;
+
   return false;
 }
 
