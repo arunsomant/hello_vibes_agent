@@ -12,7 +12,7 @@ import '../../data/models/call.dart';
 import '../config/app_config.dart';
 import 'alert_notification_service.dart';
 
-class WebSocketService extends GetxService with WidgetsBindingObserver {
+class WebSocketService extends GetxService {
   static final WebSocketService _instance = WebSocketService._internal();
 
   factory WebSocketService() => _instance;
@@ -20,15 +20,13 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
   WebSocketService._internal();
 
   ReverbClient? _client;
-  int? _agentId;
-  bool _isConnected = false;
   Channel? _agentChannel;
-  StreamSubscription<ConnectionState>? _connectionStateSubscription;
+  int? _agentId;
 
-  bool _isReconnecting = false;
-  int _reconnectAttempts = 0;
-  static const int _maxReconnectAttempts = 5;
-  static const int _reconnectDelaySeconds = 5;
+  // State Flags
+  bool _isConnected = false;
+  bool _isConnecting = false;
+  bool isAppResumed = true;
 
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
 
@@ -40,7 +38,6 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
         return;
       }
       _agentId = user.id;
-      await _setupConnectivityListener();
       await _connect();
     } catch (e) {
       debugPrint('WebSocket: Failed to initialize - $e');
@@ -48,50 +45,36 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
   }
 
   @override
-  void onInit() {
-    super.onInit();
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
   void onClose() {
-    WidgetsBinding.instance.removeObserver(this);
     dispose();
     super.onClose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      debugPrint('WebSocket: App Resumed, triggering reconnect');
-      onAppResume();
-    } else if (state == AppLifecycleState.paused ||
-        state == AppLifecycleState.detached) {
-      debugPrint('WebSocket: App Backgrounded, disconnecting proactively');
-      if (_isConnected) {
-        _runZonedGuardedDisconnect();
-      }
-      _isConnected = false;
-    }
   }
 
   Future<void> _connect() async {
     if (_agentId == null) return;
 
+    // STRICT GUARD: Prevent multiple connection attempts
+    if (_isConnected || _isConnecting) {
+      debugPrint(
+        'WebSocket: Connection already active or in progress. Skipping.',
+      );
+      return;
+    }
+
+    _isConnecting = true;
     try {
       _client = ReverbClient.instance(
         host: AppConfig.websocketHost,
         port: AppConfig.websocketPort,
         appKey: AppConfig.websocketKey,
         useTLS: true,
-        pingInterval: Duration(seconds: 20),
+        pingInterval: const Duration(seconds: 20),
         authEndpoint:
             '${AppConfig.apiBaseUrl}${AppConfig.websocketAuthEndpoint}',
         authorizer: (channelName, socketId) async {
           final t = await Get.find<AuthRepository>().getAccessToken();
           if (t.isEmpty) {
             debugPrint('WebSocket: Auth token empty for auth request');
-            debugPrint('TODO: Add token refresh logic here');
           }
           return {'Authorization': 'Bearer $t', 'Accept': 'application/json'};
         },
@@ -102,34 +85,34 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
         onConnected: (socketId) {
           debugPrint('WebSocket: Connected successfully (socket: $socketId)');
           _isConnected = true;
-          _reconnectAttempts = 0;
+          _isConnecting = false;
           _subscribeToAgentChannel();
         },
         onReconnecting: () {
-          debugPrint('WebSocket: Reconnecting...');
+          debugPrint('WebSocket: Reconnecting (Internal Reverb)...');
           _isConnected = false;
         },
         onDisconnected: () {
           debugPrint('WebSocket: Disconnected');
           _isConnected = false;
+          _isConnecting = false;
           _agentChannel = null;
-          _handleDisconnect();
         },
         onError: (error) {
           debugPrint('WebSocket: Error - $error');
-          _handleDisconnect();
+          _isConnected = false;
+          _isConnecting = false;
         },
       );
 
       await _client!.connect();
     } catch (e) {
+      _isConnecting = false;
       debugPrint('WebSocket: Initial connection failed - $e');
       if (e.toString().contains('403') ||
           e.toString().contains('unauthorized')) {
         debugPrint('WebSocket: Auth failed, token may be expired');
-        debugPrint('TODO: Add token refresh logic here');
       }
-      _handleDisconnect();
     }
   }
 
@@ -158,84 +141,41 @@ class WebSocketService extends GetxService with WidgetsBindingObserver {
               return;
             }
             final alert = AlertNotification.fromMap(jsonData);
-            // Use centralized handler in AlertNotificationService
             AlertNotificationService().handleAlertNotification(alert);
           } catch (e) {
             debugPrint('WebSocket: Failed to parse notification: $e');
           }
         }
       });
-      debugPrint('WebSocket: Connected successfully and subscribed');
+      debugPrint(
+        'WebSocket: Connected and subscribed to private-agent.$_agentId',
+      );
     } catch (e) {
       debugPrint('WebSocket: Subscription failed - $e');
     }
   }
 
-  void _handleDisconnect() {
-    if (_isReconnecting || _reconnectAttempts >= _maxReconnectAttempts) return;
-
-    _isReconnecting = true;
-    _reconnectAttempts++;
-    debugPrint(
-      'WebSocket: Reconnecting ($_reconnectAttempts/$_maxReconnectAttempts)',
-    );
-    Future.delayed(Duration(seconds: _reconnectDelaySeconds), () {
-      _isReconnecting = false;
-      _reconnect();
-    });
-  }
-
-  Future<void> _reconnect() async {
-    try {
-      final user = Get.find<AuthController>().user.value;
-      if (user.id != 0) {
-        if (_isConnected) {
-          _runZonedGuardedDisconnect();
-        }
-        _client = null;
-        await _connect();
-      }
-    } catch (e) {
-      debugPrint('WebSocket: Reconnect failed - $e');
-    }
-  }
-
-  Future<void> _setupConnectivityListener() async {
-    _connectivitySubscription = Connectivity().onConnectivityChanged.listen((
-      result,
-    ) {
-      if (!result.contains(ConnectivityResult.none) && !_isConnected) {
-        debugPrint('WebSocket: Network recovered, reconnecting...');
-        _reconnect();
-      }
-    });
-  }
-
-  void onAppResume() => _reconnect();
-
-  void dispose() {
-    _connectivitySubscription?.cancel();
-    _connectionStateSubscription?.cancel();
-    if (_isConnected) {
-      _agentChannel?.unsubscribe();
-      _client?.disconnect();
-    }
-    _client = null;
-    _agentChannel = null;
-    _agentId = null;
-    _isConnected = false;
-    _reconnectAttempts = 0;
-    _isReconnecting = false;
-  }
-
-  void _runZonedGuardedDisconnect() {
+  /// Safely unsubscribes and disconnects the existing client
+  void _disconnectSafely() {
     runZonedGuarded(
       () {
+        _agentChannel?.unsubscribe();
         _client?.disconnect();
       },
       (error, stack) {
-        debugPrint('Ignored Exception caught: $error');
+        debugPrint('WebSocket: Ignored Exception during disconnect: $error');
       },
     );
+
+    _client = null;
+    _agentChannel = null;
+    _isConnected = false;
+    _isConnecting = false;
+  }
+
+  void dispose() {
+    _connectivitySubscription?.cancel();
+    _disconnectSafely();
+    _agentId = null;
   }
 }

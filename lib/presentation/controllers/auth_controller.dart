@@ -25,6 +25,8 @@ class AuthController extends GetxController {
   final UserRepository userRepository;
   final FirebaseRepository firebaseRepository;
 
+  final versionName = ''.obs;
+
   final user = User().obs;
 
   void gotoLandingPage() async {
@@ -188,6 +190,7 @@ class AuthController extends GetxController {
     final version = pubspec.split('version: ')[1];
     final vName = version.split('+')[0];
     final vCode = int.tryParse(version.split('+')[1].split('\n')[0]) ?? 0;
+    versionName(vName);
     return (vName, vCode);
   }
 
@@ -202,11 +205,12 @@ class AuthController extends GetxController {
         deviceType = 'android';
         AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
         deviceFingerprint =
-            'Android ${androidInfo.version.release}, ${androidInfo.model}, ${androidInfo.brand}';
+            'Android ${androidInfo.version.release}, ${androidInfo.model}, ${androidInfo.brand}, v${versionName.value}';
       } else if (GetPlatform.isIOS) {
         deviceType = 'ios';
         IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-        deviceFingerprint = 'Apple ${iosInfo.systemVersion}, ${iosInfo.model}';
+        deviceFingerprint =
+            'Apple ${iosInfo.systemVersion}, ${iosInfo.model}, v${versionName.value}';
       }
       if (token != null && token.isNotEmpty) {
         var response = await firebaseRepository.updateFirebaseToken(

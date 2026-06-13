@@ -53,9 +53,9 @@ class LandingController extends GetxController
   }
 
   @override
-  void dispose() {
+  void onClose() {
     Get.find<WebSocketService>().dispose();
-    super.dispose();
+    super.onClose();
   }
 
   void _checkForActiveCalls() async {

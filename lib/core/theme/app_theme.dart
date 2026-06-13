@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../presentation/widgets/index.dart';
 import '../config/app_assets_mapper.dart';
@@ -28,7 +27,9 @@ class AppTheme {
         );
       },
     ),
-    textTheme: GoogleFonts.poppinsTextTheme().apply(
+
+    fontFamily: AppText.fontFamily,
+    textTheme: textThemeApply(
       bodyColor: AppColors.textPrimary,
       displayColor: AppColors.textPrimary,
       decorationColor: AppColors.textPrimary,
@@ -40,4 +41,52 @@ class AppTheme {
       ),
     ),
   );
+
+  static TextTheme? textThemeApply({
+    Color? bodyColor,
+    Color? displayColor,
+    Color? decorationColor,
+  }) {
+    return TextTheme(
+      displayLarge: TextStyle(
+        color: displayColor,
+        decorationColor: decorationColor,
+      ),
+      displayMedium: TextStyle(
+        color: displayColor,
+        decorationColor: decorationColor,
+      ),
+      displaySmall: TextStyle(decorationColor: decorationColor),
+      headlineLarge: TextStyle(
+        color: displayColor,
+        decorationColor: decorationColor,
+      ),
+      headlineMedium: TextStyle(
+        color: displayColor,
+        decorationColor: decorationColor,
+      ),
+      headlineSmall: TextStyle(
+        color: bodyColor,
+        decorationColor: decorationColor,
+      ),
+      titleLarge: TextStyle(color: bodyColor, decorationColor: decorationColor),
+      titleMedium: TextStyle(
+        color: bodyColor,
+        decorationColor: decorationColor,
+      ),
+      titleSmall: TextStyle(color: bodyColor, decorationColor: decorationColor),
+      bodyLarge: TextStyle(color: bodyColor, decorationColor: decorationColor),
+      bodyMedium: TextStyle(color: bodyColor, decorationColor: decorationColor),
+      bodySmall: TextStyle(
+        color: displayColor,
+        decorationColor: decorationColor,
+      ),
+      labelLarge: TextStyle(color: bodyColor, decorationColor: decorationColor),
+      labelMedium: TextStyle(
+        color: bodyColor,
+        decorationColor: decorationColor,
+      ),
+      labelSmall: TextStyle(color: bodyColor, decorationColor: decorationColor),
+    );
+  }
 }
